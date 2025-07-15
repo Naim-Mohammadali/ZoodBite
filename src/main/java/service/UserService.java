@@ -6,9 +6,15 @@ import model.User;
 
 public class UserService {
 
-    private final UserDAO userDAO = new UserDAOImpl();
+    protected final UserDAO userDAO = new UserDAOImpl();
 
-    public void registerUser(User user) {
+    public void registerUser(User user) throws Exception {
+        if (userDAO.findByEmail(user.getEmail()) != null) {
+            throw new Exception("Email already registered");
+        }
+        if (userDAO.findByPhone(user.getPhone()) != null) {
+            throw new Exception("Phone already registered");
+        }
         userDAO.save(user);
     }
 

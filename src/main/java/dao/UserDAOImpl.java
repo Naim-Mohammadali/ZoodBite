@@ -47,4 +47,26 @@ public class UserDAOImpl implements UserDAO {
         tx.commit();
         em.close();
     }
+    @Override
+    public User findByEmail(String email) {
+        EntityManager em = EntityManagerFactorySingleton.getInstance().createEntityManager();
+        User user = em.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class)
+                .setParameter("email", email)
+                .getResultStream()
+                .findFirst()
+                .orElse(null);
+        em.close();
+        return user;
+    }
+    @Override
+    public User findByPhone(String phone) {
+        EntityManager em = EntityManagerFactorySingleton.getInstance().createEntityManager();
+        User user = em.createQuery("SELECT u FROM User u WHERE u.phone = :phone", User.class)
+                .setParameter("phone", phone)
+                .getResultStream()
+                .findFirst()
+                .orElse(null);
+        em.close();
+        return user;
+    }
 }

@@ -1,10 +1,11 @@
 package model;
 
 import jakarta.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,10 +26,14 @@ public class User {
 
     private String address;
 
+    public enum Role {
+        CUSTOMER,
+        SELLER,
+        COURIER,
+        ADMIN
+    }
 
-
-    // Getters and Setters
-
+    // Getters & Setters
 
     public Long getId() {
         return id;
@@ -84,10 +89,6 @@ public class User {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public enum Role {
-        CUSTOMER, SELLER, COURIER
     }
 
     @Override
