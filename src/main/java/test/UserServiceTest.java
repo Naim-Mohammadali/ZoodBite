@@ -3,7 +3,7 @@ package test;
 import model.User;
 import service.CustomerService;
 
-public class CustomerServiceTest {
+public class UserServiceTest {
     public static void main(String[] args) {
         CustomerService cs = new CustomerService();
 

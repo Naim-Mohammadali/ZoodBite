@@ -5,6 +5,8 @@ import jakarta.persistence.EntityTransaction;
 import model.User;
 import util.EntityManagerFactorySingleton;
 
+import java.util.List;
+
 public class UserDAOImpl implements UserDAO {
 
     @Override
@@ -68,5 +70,31 @@ public class UserDAOImpl implements UserDAO {
                 .orElse(null);
         em.close();
         return user;
+    }
+    @Override
+    public List<User> findAll()
+    {
+        EntityManager em = EntityManagerFactorySingleton.getInstance().createEntityManager();
+        List<User> users = em.createQuery("Select u FROM User u", User.class).getResultList();
+        em.close();
+        return users;
+    }
+    @Override
+    public List<User> findByRole(User.Role role) {
+        EntityManager em = EntityManagerFactorySingleton.getInstance().createEntityManager();
+        List<User> users = em.createQuery("SELECT u FROM User u WHERE u.ROLE = :role", User.class)
+                .setParameter("role", role)
+                .getResultList();
+        em.close();
+        return users;
+    }
+    @Override
+    public List<User> findByStatus(User.Status status) {
+        EntityManager em = EntityManagerFactorySingleton.getInstance().createEntityManager();
+        List<model.User> users = em.createQuery("SELECT u FROM User u WHERE u.Status = :status", model.User.class)
+                .setParameter("status", status)
+                .getResultList();
+        em.close();
+        return users;
     }
 }

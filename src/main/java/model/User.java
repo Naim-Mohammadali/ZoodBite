@@ -33,6 +33,23 @@ public class User implements Serializable {
         ADMIN
     }
 
+    @Enumerated(EnumType.STRING)
+    private Status status = Status.PENDING;
+
+    public enum Status {
+        PENDING,
+        ACTIVE,
+        BLOCKED
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
     // Getters & Setters
 
     public Long getId() {
