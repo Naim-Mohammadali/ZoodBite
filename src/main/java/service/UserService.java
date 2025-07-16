@@ -15,6 +15,11 @@ public class UserService {
         if (userDAO.findByPhone(user.getPhone()) != null) {
             throw new Exception("Phone already registered");
         }
+        if (user.getRole() == User.Role.CUSTOMER || user.getRole() == User.Role.ADMIN) {
+            user.setStatus(User.Status.ACTIVE);
+        } else if (user.getRole() == User.Role.SELLER || user.getRole() == User.Role.COURIER) {
+            user.setStatus(User.Status.PENDING);
+        }
         userDAO.save(user);
     }
 
