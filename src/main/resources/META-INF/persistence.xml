@@ -21,5 +21,15 @@
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.format_sql" value="true"/>
         </properties>
+
+      <dependencies> 
+        <dependency> 
+          <groupId> org.hibernate </groupId> 
+          <artifactId>hibernate-core </artifactId> 
+          <version> 6.1.2.Final </version> 
+        </dependency> 
+      </dependencies> 
+
+      
     </persistence-unit>
 </persistence>
