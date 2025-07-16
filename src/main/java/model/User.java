@@ -10,7 +10,7 @@ public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    private boolean available;
     private String name;
 
     @Column(unique = true)
@@ -51,6 +51,14 @@ public class User implements Serializable {
     }
 
     // Getters & Setters
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
 
     public Long getId() {
         return id;
