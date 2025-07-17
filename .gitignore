@@ -1,76 +1,28 @@
-    # =============== #
-# Maven & Java    #
-# =============== #
+# === Maven ===
+/target/
+!.mvn/wrapper/maven-wrapper.jar
 
-# Maven build output
-target/
-!**/src/main/**/target/
-!**/src/test/**/target/
-
-# Logs
-*.log
-
-# Compiled class files
-*.class
-
-# =============== #
-# IntelliJ IDEA   #
-# =============== #
-
-# User-specific stuff
+# === IntelliJ IDEA ===
 .idea/
 *.iml
 *.iws
-*.ipr
 
-# IntelliJ library files
-*.iml
-.idea/modules.xml
-.idea/jarRepositories.xml
-.idea/compiler.xml
-.idea/libraries/
-
-# Workspace and tasks (optional)
-.idea/workspace.xml
-.idea/tasks.xml
-
-# =============== #
-# VS Code         #
-# =============== #
-.vscode/
-
-# =============== #
-# OS Specific     #
-# =============== #
+# === OS files ===
 .DS_Store
 Thumbs.db
 
-# =============== #
-# Other IDEs      #
-# =============== #
+# === Logs ===
+*.log
 
-# Eclipse
-.apt_generated/
-.classpath
-.factorypath
-.project
-.settings/
-.springBeans
-.sts4-cache
+# === Build outputs ===
+/out/
 
-# NetBeans
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
+# === Test coverage ===
+jacoco.exec
 
-# =============== #
-# Maven Wrapper   #
-# =============== #
+# === SQL dumps ===
+*.sql
 
-# Keep Maven wrapper JAR
-!.mvn/wrapper/maven-wrapper.jar
+# === Others ===
+/database/tmp/
+/database/dumps/
