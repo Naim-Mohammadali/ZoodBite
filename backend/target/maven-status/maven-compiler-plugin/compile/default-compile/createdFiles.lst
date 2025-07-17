@@ -1,0 +1,15 @@
+model\FoodOrder$Status.class
+service\UserService$1.class
+test\OfflineServerTest.class
+model\Role.class
+model\Seller.class
+dao\UserDAOImpl.class
+model\Customer.class
+model\User$Role.class
+model\User.class
+model\FoodOrder.class
+service\CourierService.class
+model\MenuItem.class
+model\Courier.class
+model\User$Status.class
+model\Admin.class

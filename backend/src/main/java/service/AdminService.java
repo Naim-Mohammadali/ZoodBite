@@ -1,20 +1,26 @@
 package service;
 
+import dao.UserDAO;
+import model.Admin;
 import model.User;
+
 import java.util.List;
+public class AdminService {
 
-public class AdminService extends UserService {
+    private final UserDAO userDAO;
 
-    public List<User> getAllUsers() {
-        return userDAO.findAll();
+    public AdminService(UserDAO userDAO) {
+        this.userDAO = userDAO;
     }
 
-    public void approveUser(User user) throws Exception {
-        if (user.getStatus() != User.Status.PENDING) {
-            throw new Exception("Cannot approve: User is not pending approval.");
-        }
-        user.setStatus(User.Status.ACTIVE);
-        userDAO.update(user);
+    public Admin changePassword(Admin admin, String newPassword) {
+        admin.setPassword(newPassword);
+        return (Admin) userDAO.update(admin);
+    }
+
+
+    public List<User> listAllUsers() {
+        return userDAO.findAll();
     }
 
     public void blockUser(User user) {
@@ -23,7 +29,11 @@ public class AdminService extends UserService {
     }
 
     public void unblockUser(User user) {
-        user.setStatus(User.Status.PENDING);
+        user.setStatus(User.Status.ACTIVE);
         userDAO.update(user);
+    }
+
+    public User findUserById(Long id) {
+        return userDAO.findById(id);
     }
 }

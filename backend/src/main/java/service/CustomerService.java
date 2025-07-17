@@ -1,36 +1,29 @@
 package service;
-import model.User;
 
-public class CustomerService extends UserService{
-    public void updateAddress (User customer, String newAddress) throws Exception{
-        if (customer.getRole() != User.Role.CUSTOMER) {
-            throw new Exception("Not a customer!");
-        }
+import model.Customer;
+
+public class CustomerService extends UserService {
+
+
+    public void updateAddress(Customer customer, String newAddress) {
         customer.setAddress(newAddress);
         userDAO.update(customer);
     }
-    public void changePhone (User customer, String newPhone) throws Exception{
-        if (customer.getRole() != User.Role.CUSTOMER) {
-            throw new Exception("Not a customer!");
-        }
-        if (userDAO.findByPhone(newPhone) != null)
-        {
+
+    public void changePhone(Customer customer, String newPhone) throws Exception {
+        if (userDAO.findByPhone(newPhone) != null) {
             throw new Exception("Phone already in use!");
         }
         customer.setPhone(newPhone);
         userDAO.update(customer);
     }
-    public void changePassword (User customer, String newPassword) throws Exception{
-        if (customer.getRole() != User.Role.CUSTOMER) {
-            throw new Exception("Not a customer!");
-        }
+
+    public void changePassword(Customer customer, String newPassword) {
         customer.setPassword(newPassword);
         userDAO.update(customer);
     }
-    public User viewProfile(User customer) throws Exception {
-        if (customer.getRole() != User.Role.CUSTOMER) {
-            throw new Exception("Not a customer!");
-        }
-        return userDAO.findById(customer.getId());
+
+    public Customer viewProfile(Customer customer) {
+        return (Customer) userDAO.findById(customer.getId());
     }
 }

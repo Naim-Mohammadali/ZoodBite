@@ -9,6 +9,14 @@
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
         <class>model.User</class>
+        <class>model.Customer</class>
+        <class>model.Seller</class>
+        <class>model.Courier</class>
+        <class>model.Admin</class>
+        <class>model.Restaurant</class>
+        <class>model.MenuItem</class>
+        <class>model.FoodOrder</class>
+
 
         <properties>
             <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/foodappdb"/>

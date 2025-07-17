@@ -1,25 +1,23 @@
 package service;
 
-import model.User;
-
+import model.Seller;
 public class SellerService extends UserService {
 
-    public void updateProfile(User seller, String newPhone, String newAddress) throws Exception {
-        if (seller.getRole() != User.Role.SELLER) {
-            throw new Exception("Not a seller!");
-        }
+
+    public Seller updatePhone(Seller seller, String newPhone) throws Exception {
         if (userDAO.findByPhone(newPhone) != null) {
             throw new Exception("Phone already in use!");
         }
         seller.setPhone(newPhone);
-        seller.setAddress(newAddress);
-        userDAO.update(seller);
+        return (Seller) userDAO.update(seller);
     }
 
-    public boolean hasApprovedRestaurant(User seller) throws Exception {
-        if (seller.getRole() != User.Role.SELLER) {
-            throw new Exception("Not a seller!");
-        }
-        return false;
+    public Seller changePassword(Seller seller, String newPassword) {
+        seller.setPassword(newPassword);
+        return (Seller) userDAO.update(seller);
+    }
+
+    public Seller viewProfile(Seller seller) {
+        return (Seller) userDAO.findById(seller.getId());
     }
 }

@@ -1,27 +1,45 @@
 package service;
-
+import model.*;
 import dao.UserDAO;
 import dao.UserDAOImpl;
-import model.User;
+
+import java.util.List;
 
 public class UserService {
 
     protected final UserDAO userDAO = new UserDAOImpl();
 
-    public void registerUser(User user) throws Exception {
-        if (userDAO.findByEmail(user.getEmail()) != null) {
-            throw new Exception("Email already registered");
+    public User register(String name, String phone, String password,
+                         Role role, String address) {
+
+        if (userDAO.findByPhone(phone) != null)
+            throw new IllegalArgumentException("Phone already exists");
+
+        User user;
+        switch (role) {
+            case CUSTOMER -> user = new Customer(name, phone, password, address);
+            case SELLER   -> user = new Seller(name, phone, password, address);
+            case COURIER  -> user = new Courier(name, phone, password, address);
+            case ADMIN    -> user = new Admin(name, phone, password);
+            default -> throw new IllegalStateException("Unexpected role: " + role);
         }
-        if (userDAO.findByPhone(user.getPhone()) != null) {
-            throw new Exception("Phone already registered");
-        }
-        if (user.getRole() == User.Role.CUSTOMER || user.getRole() == User.Role.ADMIN) {
-            user.setStatus(User.Status.ACTIVE);
-        } else if (user.getRole() == User.Role.SELLER || user.getRole() == User.Role.COURIER) {
-            user.setStatus(User.Status.PENDING);
-        }
+
         userDAO.save(user);
+        return user;
     }
+    public List<User> listUsersByRole(Role role) {
+        return switch (role) {
+            case CUSTOMER -> userDAO.findByType(Customer.class);
+            case SELLER   -> userDAO.findByType(Seller.class);
+            case COURIER  -> userDAO.findByType(Courier.class);
+            case ADMIN    -> userDAO.findByType(Admin.class);
+        };
+    }
+    public List<User> listAll() {
+        return userDAO.findAll();
+    }
+
+
 
     public User getUser(Long id) {
         return userDAO.findById(id);

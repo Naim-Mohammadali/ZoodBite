@@ -5,12 +5,14 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "users")
-public class User implements Serializable {
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "user_type")
+public abstract class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private boolean available;
+    private long id;
+
     private String name;
 
     @Column(unique = true)
@@ -21,111 +23,65 @@ public class User implements Serializable {
 
     private String password;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
-
     private String address;
 
-    public enum Role {
-        CUSTOMER,
-        SELLER,
-        COURIER,
-        ADMIN
-    }
+    public abstract Role getRole();
 
     @Enumerated(EnumType.STRING)
     private Status status = Status.PENDING;
 
+
+    public enum Role {
+        CUSTOMER, SELLER, COURIER, ADMIN
+    }
+
     public enum Status {
-        PENDING,
-        ACTIVE,
-        BLOCKED
+        PENDING, ACTIVE, BLOCKED
     }
 
-    public Status getStatus() {
-        return status;
-    }
+    // Constructors
+    public User() {} // required by JPA
 
-    public void setStatus(Status status) {
-        this.status = status;
-    }
-
-    // Getters & Setters
-
-    public boolean isAvailable() {
-        return available;
-    }
-
-    public void setAvailable(boolean available) {
-        this.available = available;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
+    public User(String name, String phone, String password, String address) {
         this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
         this.phone = phone;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
         this.password = password;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
         this.address = address;
+        this.status = Status.PENDING;
     }
+
+
+    // Getters and setters
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
+
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
+
+
+    public Status getStatus() { return status; }
+    public void setStatus(Status status) { this.status = status; }
 
     @Override
     public String toString() {
-        return "User{" +
+        return getClass().getSimpleName() + "{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
                 ", phone='" + phone + '\'' +
-                ", password='" + password + '\'' +
-                ", role=" + role +
-                ", address='" + address + '\'' +
+                ", email='" + email + '\'' +
                 '}';
     }
 }
