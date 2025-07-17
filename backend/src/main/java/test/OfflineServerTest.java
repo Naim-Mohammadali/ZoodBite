@@ -11,7 +11,7 @@ public class OfflineServerTest {
     public static void main(String[] args) {
 
         /* ---------- bootstrap JPA ---------- */
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("default");
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("foodappPU");
         EntityManager em  = emf.createEntityManager();
 
         /* ---------- quick transaction ---------- */
