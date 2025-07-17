@@ -41,7 +41,7 @@ public class MenuItemDAOImpl implements MenuItemDAO{
         }
         tx.commit();
         em.close();
-    };
+    }
 
     @Override
     public MenuItem findById(Long id) {
@@ -63,8 +63,8 @@ public class MenuItemDAOImpl implements MenuItemDAO{
     public List<MenuItem> findByRestaurant(Restaurant restaurant)
     {
         EntityManager em = EntityManagerFactorySingleton.getInstance().createEntityManager();
-        List<MenuItem> restaurantMenu = em.createQuery("SELECT m FROM MenuItem m WHERE m.Restaurant = :Restaurant", MenuItem.class)
-                .setParameter("Restaurant", restaurant)
+        List<MenuItem> restaurantMenu = em.createQuery("SELECT m FROM MenuItem m WHERE m.restaurant = :restaurant", MenuItem.class)
+                .setParameter("restaurant", restaurant)
                 .getResultList();
         em.close();
         return restaurantMenu;
