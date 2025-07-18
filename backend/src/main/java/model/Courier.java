@@ -9,7 +9,7 @@ import jakarta.persistence.Entity;
 public class Courier extends User {
 
     @Column(name = "available", nullable = false)
-    private boolean available;
+    private boolean available = false;
 
     public Courier() {
         super();
