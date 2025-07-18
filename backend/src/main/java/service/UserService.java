@@ -27,6 +27,9 @@ public class UserService {
         userDAO.save(user);
         return user;
     }
+    public void update(User user) {
+        userDAO.update(user);
+    }
     public List<User> listUsersByRole(Role role) {
         return switch (role) {
             case CUSTOMER -> userDAO.findByType(Customer.class);
@@ -51,5 +54,13 @@ public class UserService {
 
     public void deleteUser(User user) {
         userDAO.delete(user);
+    }
+
+    public User findByPhone(String number) {
+        return userDAO.findByPhone(number);
+    }
+
+    public User getByEmail(String mail) {
+        return userDAO.findByEmail(mail);
     }
 }
