@@ -4,27 +4,40 @@ import model.Courier;
 
 public class CourierService extends UserService {
 
+    public Courier setAvailability(Long courierId, boolean available) {
+        Courier courier = (Courier) userDAO.findById(courierId);
+        if (courier == null) throw new IllegalArgumentException("Courier not found");
 
-    public Courier setAvailability(Courier courier, boolean available) {
         courier.setAvailable(available);
-        return (Courier) userDAO.update(courier);
+        userDAO.update(courier);
+        return courier;
     }
 
+    public Courier changePhone(Long courierId, String newPhone) throws Exception {
+        Courier courier = (Courier) userDAO.findById(courierId);
+        if (courier == null) throw new IllegalArgumentException("Courier not found");
 
-    public Courier changePhone(Courier courier, String newPhone) throws Exception {
-        if (userDAO.findByPhone(newPhone) != null) {
+        if (userDAO.findByPhone(newPhone) != null)
             throw new Exception("Phone already in use!");
-        }
+
         courier.setPhone(newPhone);
-        return (Courier) userDAO.update(courier);
+        userDAO.update(courier);
+        return courier;
     }
 
-    public Courier changePassword(Courier courier, String newPassword) {
+    public Courier changePassword(Long courierId, String newPassword) {
+        Courier courier = (Courier) userDAO.findById(courierId);
+        if (courier == null) throw new IllegalArgumentException("Courier not found");
+
         courier.setPassword(newPassword);
-        return (Courier) userDAO.update(courier);
+        userDAO.update(courier);
+        return courier;
     }
 
-    public Courier viewProfile(Courier courier) {
-        return (Courier) userDAO.findById(courier.getId());
+    public Courier viewProfile(Long courierId) {
+        Courier courier = (Courier) userDAO.findById(courierId);
+        if (courier == null) throw new IllegalArgumentException("Courier not found");
+
+        return courier;
     }
 }

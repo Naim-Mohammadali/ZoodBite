@@ -1,23 +1,27 @@
 package service;
 
 import model.Seller;
+
 public class SellerService extends UserService {
 
+    public Seller viewProfile(Long sellerId) {
+        return (Seller) userDAO.findById(sellerId);
+    }
 
-    public Seller updatePhone(Seller seller, String newPhone) throws Exception {
-        if (userDAO.findByPhone(newPhone) != null) {
-            throw new Exception("Phone already in use!");
-        }
+    public Seller updatePhone(Long sellerId, String newPhone) {
+        if (userDAO.findByPhone(newPhone) != null)
+            throw new IllegalArgumentException("Phone already in use!");
+
+        Seller seller = (Seller) userDAO.findById(sellerId);
         seller.setPhone(newPhone);
-        return (Seller) userDAO.update(seller);
+        userDAO.update(seller);
+        return seller;
     }
 
-    public Seller changePassword(Seller seller, String newPassword) {
+    public Seller changePassword(Long sellerId, String newPassword) {
+        Seller seller = (Seller) userDAO.findById(sellerId);
         seller.setPassword(newPassword);
-        return (Seller) userDAO.update(seller);
-    }
-
-    public Seller viewProfile(Seller seller) {
-        return (Seller) userDAO.findById(seller.getId());
+        userDAO.update(seller);
+        return seller;
     }
 }

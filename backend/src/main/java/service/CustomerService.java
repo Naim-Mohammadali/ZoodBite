@@ -1,29 +1,36 @@
 package service;
 
+import dao.UserDAO;
 import model.Customer;
 
 public class CustomerService extends UserService {
 
+    public CustomerService() {
+        super();
+    }
 
-    public void updateAddress(Customer customer, String newAddress) {
+    public Customer viewProfile(Long id) {
+        return (Customer) userDAO.findById(id);
+    }
+
+    public void updateAddress(Long customerId, String newAddress) {
+        Customer customer = (Customer) userDAO.findById(customerId);
         customer.setAddress(newAddress);
         userDAO.update(customer);
     }
 
-    public void changePhone(Customer customer, String newPhone) throws Exception {
-        if (userDAO.findByPhone(newPhone) != null) {
-            throw new Exception("Phone already in use!");
-        }
+    public void changePhone(Long customerId, String newPhone) {
+        if (userDAO.findByPhone(newPhone) != null)
+            throw new IllegalArgumentException("Phone already in use!");
+
+        Customer customer = (Customer) userDAO.findById(customerId);
         customer.setPhone(newPhone);
         userDAO.update(customer);
     }
 
-    public void changePassword(Customer customer, String newPassword) {
+    public void changePassword(Long customerId, String newPassword) {
+        Customer customer = (Customer) userDAO.findById(customerId);
         customer.setPassword(newPassword);
         userDAO.update(customer);
-    }
-
-    public Customer viewProfile(Customer customer) {
-        return (Customer) userDAO.findById(customer.getId());
     }
 }
