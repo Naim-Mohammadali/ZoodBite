@@ -1,28 +1,63 @@
 package service;
+
 import dao.MenuItemDAO;
 import dao.MenuItemDAOImpl;
 import model.MenuItem;
 import model.Restaurant;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
+
 public class MenuItemService {
+
     private final MenuItemDAO menuItemDAO = new MenuItemDAOImpl();
-    public void addMenuItem(MenuItem menuItem, Restaurant restaurant) throws Exception {
-        if (restaurant.getStatus() != Restaurant.Status.ACTIVE){
-            throw new Exception("Cannot add menu to inactive restaurant!");
+
+    // Add new menu item
+    public void addMenuItem(@NotNull MenuItem item) throws Exception {
+        if (item.getRestaurant() == null) {
+            throw new Exception("MenuItem must be linked to a restaurant.");
         }
-        menuItem.setRestaurant(restaurant);
-        menuItemDAO.save(menuItem);
+        if (item.getPrice() < 0) {
+            throw new Exception("Price cannot be negative.");
+        }
+        menuItemDAO.save(item);
     }
-    public void updateMenuItem(MenuItem menuItem) {
-        menuItemDAO.update(menuItem);
+
+    // Update existing item
+    public void updateMenuItem(@NotNull MenuItem item) throws Exception {
+        if (item.getId() == 0) {
+            throw new Exception("MenuItem ID is required for update.");
+        }
+        menuItemDAO.update(item);
     }
-    public void deleteMenuItem(MenuItem menuItem) {
-        menuItemDAO.delete(menuItem);
+
+    // Delete item
+    public void deleteMenuItem(@NotNull MenuItem item) throws Exception {
+        if (item.getId() == 0) {
+            throw new Exception("MenuItem ID is required for deletion.");
+        }
+        menuItemDAO.delete(item);
     }
-    public List<MenuItem> getMenuByRestaurant (Restaurant restaurant) {
-        return menuItemDAO.findByRestaurant(restaurant);
+
+    // View menu item by ID
+    public MenuItem getById(Long id) throws Exception {
+        MenuItem item = menuItemDAO.findById(id);
+        if (item == null) {
+            throw new Exception("MenuItem not found with ID: " + id);
+        }
+        return item;
     }
-    public List<MenuItem> getAllItemsByName (String name) {
+
+    // Get items by name (exact)
+    public List<MenuItem> searchByName(String name) {
         return menuItemDAO.findByName(name);
+    }
+
+    // Get menu for a restaurant
+    public List<MenuItem> getRestaurantMenu(Restaurant restaurant) throws Exception {
+        if (restaurant == null || restaurant.getId() == null) {
+            throw new Exception("Valid restaurant is required.");
+        }
+        return menuItemDAO.findByRestaurant(restaurant);
     }
 }
