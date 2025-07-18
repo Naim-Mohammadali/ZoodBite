@@ -25,6 +25,7 @@ public class MenuItem {
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
 
+
     //Getters & Setters
 
     public long getId() {

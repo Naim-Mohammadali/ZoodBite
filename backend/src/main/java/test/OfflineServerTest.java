@@ -16,7 +16,7 @@ public class OfflineServerTest {
 
         /* ---------- quick transaction ---------- */
         em.getTransaction().begin();
-        Customer ali = new Customer("Ali", "09120001122", "abc123", "Beirut");
+        Customer ali = new Customer("Ali", "090000000", "abc123", "Beirut");
         em.persist(ali);
         em.getTransaction().commit();
 

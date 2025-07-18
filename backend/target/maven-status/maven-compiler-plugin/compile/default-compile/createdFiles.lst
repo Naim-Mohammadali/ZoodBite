@@ -30,3 +30,4 @@ dao\RestaurantDAO.class
 service\RestaurantService.class
 model\Admin.class
 model\Restaurant.class
+test\SQLConnectionTest.class

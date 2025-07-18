@@ -51,6 +51,7 @@ public abstract class User implements Serializable {
     }
 
 
+
     // Getters and setters
 
     public Long getId() { return id; }
