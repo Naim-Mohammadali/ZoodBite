@@ -12,9 +12,10 @@ public class UserService {
     public User register(String name, String phone, String password,
                          Role role, String address) {
 
-        if (userDAO.findByPhone(phone) != null)
+        if (userDAO.findByPhone(phone) != null) {
+            System.out.println("User with phone " + phone + " already exists.");
             throw new IllegalArgumentException("Phone already exists");
-
+        }
         User user;
         switch (role) {
             case CUSTOMER -> user = new Customer(name, phone, password, address);
@@ -48,12 +49,15 @@ public class UserService {
         return userDAO.findById(id);
     }
 
-    public void updateUser(User user) {
-        userDAO.update(user);
-    }
-
     public void deleteUser(User user) {
         userDAO.delete(user);
+    }
+
+    public User findById(Long id) {
+        User u = userDAO.findById(id);
+        if (u == null)
+            throw new IllegalArgumentException("No user found with ID " + id);
+        return u;
     }
 
     public User findByPhone(String number) {
