@@ -9,11 +9,6 @@ public class Seller extends User {
     public Seller() {}
 
     public Seller(String name, String phone, String password, String address) {
-        super(name, phone, password, address);
+        super(Role.SELLER, name, phone, password, address);
     }
-    @Override
-    public Role getRole() {
-        return Role.SELLER;
-    }
-
 }

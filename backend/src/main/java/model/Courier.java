@@ -8,22 +8,24 @@ import jakarta.persistence.Entity;
 @DiscriminatorValue("COURIER")
 public class Courier extends User {
 
-    @Column(name = "available")
-    private boolean available = true;
+    @Column(name = "available", nullable = false)
+    private boolean available;
 
-    public Courier() {}
-
-    public Courier(String name, String phone, String password, String address) {
-        super(name, phone, password, address);
+    public Courier() {
+        super();
         this.available = true;
     }
 
-    public boolean isAvailable() { return available; }
-    public void setAvailable(boolean available) { this.available = available; }
-
-    @Override
-    public Role getRole() {
-        return Role.COURIER;
+    public Courier(String name, String phone, String password, String address) {
+        super(Role.COURIER, name, phone, password, address);
+        this.available = true;
     }
 
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
 }

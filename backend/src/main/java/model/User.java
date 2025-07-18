@@ -9,6 +9,14 @@ import java.io.Serializable;
 @DiscriminatorColumn(name = "user_type")
 public abstract class User implements Serializable {
 
+    public enum Role {
+        CUSTOMER, SELLER, COURIER, ADMIN
+    }
+
+    public enum Status {
+        PENDING, ACTIVE, BLOCKED
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -25,24 +33,17 @@ public abstract class User implements Serializable {
 
     private String address;
 
-    public abstract Role getRole();
-
     @Enumerated(EnumType.STRING)
     private Status status = Status.PENDING;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
 
-    public enum Role {
-        CUSTOMER, SELLER, COURIER, ADMIN
-    }
+    protected User() {} // for JPA only
 
-    public enum Status {
-        PENDING, ACTIVE, BLOCKED
-    }
-
-    // Constructors
-    public User() {} // required by JPA
-
-    public User(String name, String phone, String password, String address) {
+    protected User(Role role, String name, String phone, String password, String address) {
+        this.role = role;
         this.name = name;
         this.phone = phone;
         this.password = password;
@@ -50,12 +51,9 @@ public abstract class User implements Serializable {
         this.status = Status.PENDING;
     }
 
+    // --- Getters and setters ---
 
-
-    // Getters and setters
-
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public long getId() { return id; }
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
@@ -72,9 +70,10 @@ public abstract class User implements Serializable {
     public String getAddress() { return address; }
     public void setAddress(String address) { this.address = address; }
 
-
     public Status getStatus() { return status; }
     public void setStatus(Status status) { this.status = status; }
+
+    public Role getRole() { return role; }
 
     @Override
     public String toString() {

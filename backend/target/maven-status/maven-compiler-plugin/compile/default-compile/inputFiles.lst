@@ -23,6 +23,7 @@ B:\JAVA\MyProjects\MainProjects\foodApp\backend\src\main\java\service\OrderServi
 B:\JAVA\MyProjects\MainProjects\foodApp\backend\src\main\java\service\RestaurantService.java
 B:\JAVA\MyProjects\MainProjects\foodApp\backend\src\main\java\service\SellerService.java
 B:\JAVA\MyProjects\MainProjects\foodApp\backend\src\main\java\service\UserService.java
+B:\JAVA\MyProjects\MainProjects\foodApp\backend\src\main\java\test\IntegrationTest.java
 B:\JAVA\MyProjects\MainProjects\foodApp\backend\src\main\java\test\OfflineServerTest.java
 B:\JAVA\MyProjects\MainProjects\foodApp\backend\src\main\java\test\SQLConnectionTest.java
 B:\JAVA\MyProjects\MainProjects\foodApp\backend\src\main\java\util\EntityManagerFactorySingleton.java

@@ -25,6 +25,7 @@ model\MenuItem.class
 dao\OrderDAOImpl.class
 model\Courier.class
 service\CustomerService.class
+test\IntegrationTest.class
 model\User$Status.class
 dao\RestaurantDAO.class
 service\RestaurantService.class
