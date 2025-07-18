@@ -8,58 +8,89 @@ import util.EntityManagerFactorySingleton;
 
 import java.util.List;
 
-public class OrderDAOImpl implements OrderDAO{
+public class OrderDAOImpl implements OrderDAO {
+
+    @Override
     public void save(FoodOrder order) {
         EntityManager em = EntityManagerFactorySingleton.getInstance().createEntityManager();
         EntityTransaction tx = em.getTransaction();
-        tx.begin();
-        em.persist(order);
-        tx.commit();
-        em.close();
+        try {
+            tx.begin();
+            em.persist(order);
+            tx.commit();
+        } catch (Exception e) {
+            if (tx.isActive()) tx.rollback();
+            throw e;
+        } finally {
+            em.close();
+        }
     }
+
     @Override
-    public void update(FoodOrder order)
-    {
+    public void update(FoodOrder order) {
         EntityManager em = EntityManagerFactorySingleton.getInstance().createEntityManager();
         EntityTransaction tx = em.getTransaction();
-        tx.begin();
-        em.merge(order);
-        tx.commit();
-        em.close();
-    };
+        try {
+            tx.begin();
+            em.merge(order);
+            tx.commit();
+        } catch (Exception e) {
+            if (tx.isActive()) tx.rollback();
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+
     @Override
     public FoodOrder findById(long id) {
         EntityManager em = EntityManagerFactorySingleton.getInstance().createEntityManager();
-        FoodOrder order = em.find(FoodOrder.class, id);
-        em.close();
-        return order;
+        try {
+            return em.find(FoodOrder.class, id);
+        } finally {
+            em.close();
+        }
     }
+
     @Override
-    public List<FoodOrder> findByCustomer (User customer) {
+    public List<FoodOrder> findByCustomer(User customer) {
         EntityManager em = EntityManagerFactorySingleton.getInstance().createEntityManager();
-        List<FoodOrder> orders = em.createQuery("SELECT o FROM FoodOrder o WHERE o.customer = :customer", FoodOrder.class)
-                .setParameter("customer", customer)
-                .getResultList();
-        em.close();
-        return orders;
+        try {
+            return em.createQuery(
+                            "SELECT o FROM FoodOrder o WHERE o.customer = :customer",
+                            FoodOrder.class
+                    ).setParameter("customer", customer)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
     }
+
     @Override
-    public List<FoodOrder> findByCourier (User courier) {
+    public List<FoodOrder> findByCourier(User courier) {
         EntityManager em = EntityManagerFactorySingleton.getInstance().createEntityManager();
-        List<FoodOrder> orders = em.createQuery("SELECT o FROM FoodOrder o WHERE o.courier = :courier", FoodOrder.class)
-                .setParameter("courier", courier)
-                .getResultList();
-        em.close();
-        return orders;
+        try {
+            return em.createQuery(
+                            "SELECT o FROM FoodOrder o WHERE o.courier = :courier",
+                            FoodOrder.class
+                    ).setParameter("courier", courier)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
     }
+
     @Override
     public List<FoodOrder> findByStatus(FoodOrder.Status status) {
         EntityManager em = EntityManagerFactorySingleton.getInstance().createEntityManager();
-        List<FoodOrder> orders = em.createQuery("SELECT o FROM FoodOrder o WHERE o.status = :status", FoodOrder.class)
-                .setParameter("status", status)
-                .getResultList();
-        em.close();
-        return orders;
+        try {
+            return em.createQuery(
+                            "SELECT o FROM FoodOrder o WHERE o.status = :status",
+                            FoodOrder.class
+                    ).setParameter("status", status)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
     }
-
 }
