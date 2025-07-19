@@ -1,4 +1,4 @@
-package test;
+package controller;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;

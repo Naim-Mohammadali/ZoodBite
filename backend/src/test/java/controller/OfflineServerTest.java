@@ -1,10 +1,9 @@
-package test;
+package controller;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import model.*;
-import java.util.*;
 import service.*;
 
 public class OfflineServerTest {
