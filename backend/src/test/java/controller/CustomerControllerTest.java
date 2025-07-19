@@ -18,9 +18,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-/**
- * Unit-tests for CustomerController.
- */
 @ExtendWith(MockitoExtension.class)
 class CustomerControllerTest {
 
@@ -28,14 +25,12 @@ class CustomerControllerTest {
     private Validator               validator;
     private CustomerController      controller;
 
-    /* ---------- setup ---------- */
     @BeforeEach
     void setUp() {
         validator  = Validation.buildDefaultValidatorFactory().getValidator();
         controller = new CustomerController(service, validator);
     }
 
-    /* ---------- register ---------- */
     @Test
     void register_success() {
         var req   = new UserRegisterRequest(
@@ -53,7 +48,6 @@ class CustomerControllerTest {
         verify(service).registerCustomer(any(UserRegisterRequest.class));
     }
 
-    /* ---------- change phone ---------- */
     @Test
     void change_phone_success() {
         var updated = new Customer("Sara", "+96176667777", "secret88", "Byblos");
@@ -66,7 +60,6 @@ class CustomerControllerTest {
         verify(service).changePhone(1L, "+96176667777");
     }
 
-    /* ---------- view profile ---------- */
     @Test
     void view_profile_success() {
         var cust = new Customer("Sara", "+96171123456", "secret88", "Byblos");
