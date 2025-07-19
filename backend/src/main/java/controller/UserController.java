@@ -1,81 +1,85 @@
 package controller;
 
-import model.*;
-import org.jetbrains.annotations.NotNull;
-import service.*;
+import dto.user.*;
+import model.Role;
+import model.User;
+import service.UserService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class UserController {
 
     private final UserService userService = new UserService();
 
-    public User register(String name, String phone, String password, Role role, String address) {
+    // Register a new user
+    public UserProfileDTO register(RegisterRequestDTO dto) {
         try {
-            User user = userService.register(name, phone, password, role, address);
-            System.out.println("Registered " + role + ": " + user.getName());
-            return user;
+            User user = userService.register(
+                    dto.name,
+                    dto.phone,
+                    dto.password,
+                    dto.role,
+                    dto.address
+            );
+            return mapToDTO(user);
         } catch (Exception e) {
             System.out.println("Registration failed: " + e.getMessage());
             return null;
         }
     }
 
-    public User login(String phone, String password) {
-        User user = userService.findByPhone(phone);
+    // Login with phone + password
+    public UserProfileDTO login(LoginRequestDTO dto) {
+        User user = userService.findByPhone(dto.phone);
         if (user == null) {
             System.out.println("User not found.");
             return null;
         }
-        if (!user.getPassword().equals(password)) {
+        if (!user.getPassword().equals(dto.password)) {
             System.out.println("Incorrect password.");
             return null;
         }
-        System.out.println("Welcome back, " + user.getName() + "!");
-        return user;
+        return mapToDTO(user);
     }
 
-    public void viewProfile(@NotNull User user) {
-        System.out.println("Profile of " + user.getName() + ":");
-        System.out.println(user);
+    // View profile
+    public UserProfileDTO viewProfile(User user) {
+        return mapToDTO(user);
     }
 
-    public void updateBasicInfo(@NotNull User user, String newName, String newAddress) {
-        user.setName(newName);
-        user.setAddress(newAddress);
+    // Update user info
+    public UserProfileDTO update(UpdateUserDTO dto, User user) {
+        if (dto.getName() != null) user.setName(dto.getName());
+        if (dto.getAddress() != null) user.setAddress(dto.getAddress());
         userService.update(user);
-        System.out.println("Info updated for " + user.getName());
+        return mapToDTO(user);
     }
 
-    public void listAllUsers() {
-        List<User> users = userService.listAll();
-        System.out.println("All users:");
-        users.forEach(System.out::println);
+    // List all users
+    public List<UserProfileDTO> listAllUsers() {
+        return userService.listAll().stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
     }
 
-    public void listByRole(Role role) {
-        List<User> users = userService.listUsersByRole(role);
-        System.out.println("Users with role " + role + ":");
-        users.forEach(System.out::println);
-    }
-    public void deleteUser(Long id) {
-        User user = userService.findById(id);
-        if (user != null) {
-            userService.deleteUser(user);
-            System.out.println("Deleted user: " + user.getName());
-        } else {
-            System.out.println("No user found with ID: " + id);
-        }
+    // List by role
+    public List<UserProfileDTO> listByRole(Role role) {
+        return userService.listUsersByRole(role).stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
     }
 
-    public User findUserById(Long id) {
-        return userService.findById(id);
+    // Helper to convert User → DTO
+    private UserProfileDTO mapToDTO(User user) {
+        return new UserProfileDTO(
+                user.getId(),
+                user.getName(),
+                user.getPhone(),
+                user.getEmail(),
+                user.getAddress(),
+                user.getStatus(),
+                user.getRole()
+        );
     }
-
-    public void changePassword(@NotNull User user, String newPassword) {
-        user.setPassword(newPassword);
-        userService.update(user);
-        System.out.println("Password updated.");
-    }
-
 }

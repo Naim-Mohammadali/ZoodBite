@@ -1,15 +1,15 @@
 package util;
 
-import dto.RegisterDTO;
-import dto.UserDTO;
+import dto.user.RegisterDTO;
+import dto.user.UserProfileDTO;
 import model.*;
 
 public class UserMapper {
 
-    // Convert User → UserDTO
-    public static UserDTO toDTO(User user) {
+    // Convert User → UserProfileDTO
+    public static UserProfileDTO toDTO(User user) {
         if (user == null) return null;
-        return new UserDTO(
+        return new UserProfileDTO(
                 user.getId(),
                 user.getName(),
                 user.getPhone(),
@@ -19,7 +19,7 @@ public class UserMapper {
         );
     }
 
-    // Convert RegisterDTO → concrete User subclass
+    // Convert RegisterRequestDTO → concrete User subclass
     public static User fromRegisterDTO(RegisterDTO dto) {
         return switch (dto.getRole()) {
             case CUSTOMER -> new Customer(dto.getName(), dto.getPhone(), dto.getPassword(), dto.getAddress());
