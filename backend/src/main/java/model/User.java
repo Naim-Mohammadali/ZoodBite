@@ -9,6 +9,14 @@ import java.io.Serializable;
 @DiscriminatorColumn(name = "user_type")
 public abstract class User implements Serializable {
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
     public enum Status {
         PENDING, ACTIVE, BLOCKED
     }
