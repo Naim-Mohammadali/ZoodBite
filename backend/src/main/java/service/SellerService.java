@@ -1,27 +1,50 @@
 package service;
 
+import dto.user.request.UserRegisterRequest;
+import util.mapper.UserMapper;
+import model.Role;
 import model.Seller;
+
 
 public class SellerService extends UserService {
 
-    public Seller viewProfile(Long sellerId) {
-        return (Seller) userDAO.findById(sellerId);
+
+    public SellerService() {
+        super();
     }
 
-    public Seller updatePhone(Long sellerId, String newPhone) {
-        if (userDAO.findByPhone(newPhone) != null)
+
+    public Seller registerSeller(UserRegisterRequest dto) {
+        if (dto == null) throw new IllegalArgumentException("DTO must not be null");
+
+        if (dto.role() != Role.SELLER) {
+            dto = new UserRegisterRequest(
+                    dto.name(), dto.phone(), dto.email(),
+                    dto.password(), dto.address(), Role.SELLER);
+        }
+
+        Seller seller = (Seller) UserMapper.toEntity(dto);
+        return (Seller) register(seller);
+    }
+
+
+    public Seller viewProfile(long sellerId) {
+        return (Seller) findById(sellerId);
+    }
+
+
+    public Seller updatePhone(long sellerId, String newPhone) {
+        if (findByPhone(newPhone) != null)
             throw new IllegalArgumentException("Phone already in use!");
 
-        Seller seller = (Seller) userDAO.findById(sellerId);
-        seller.setPhone(newPhone);
-        userDAO.update(seller);
-        return seller;
+        Seller s = (Seller) findById(sellerId);
+        s.setPhone(newPhone);
+        return (Seller) update(s);
     }
 
-    public Seller changePassword(Long sellerId, String newPassword) {
-        Seller seller = (Seller) userDAO.findById(sellerId);
-        seller.setPassword(newPassword);
-        userDAO.update(seller);
-        return seller;
+    public Seller changePassword(long sellerId, String newPassword) {
+        Seller s = (Seller) findById(sellerId);
+        s.setPassword(newPassword);
+        return (Seller) update(s);
     }
 }

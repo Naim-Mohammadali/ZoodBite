@@ -9,10 +9,6 @@ import java.io.Serializable;
 @DiscriminatorColumn(name = "user_type")
 public abstract class User implements Serializable {
 
-    public enum Role {
-        CUSTOMER, SELLER, COURIER, ADMIN
-    }
-
     public enum Status {
         PENDING, ACTIVE, BLOCKED
     }
@@ -38,11 +34,11 @@ public abstract class User implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role;
+    private model.Role role;
 
     protected User() {} // for JPA only
 
-    protected User(Role role, String name, String phone, String password, String address) {
+    protected User(model.Role role, String name, String phone, String password, String address) {
         this.role = role;
         this.name = name;
         this.phone = phone;

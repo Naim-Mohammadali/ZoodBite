@@ -1,85 +1,83 @@
 package controller;
 
-import dto.user.*;
+import dto.user.request.*;
+import dto.user.response.UserProfileResponse;
+import jakarta.validation.*;
+import util.mapper.UserMapper;
 import model.Role;
 import model.User;
 import service.UserService;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+
 
 public class UserController {
 
-    private final UserService userService = new UserService();
 
-    // Register a new user
-    public UserProfileDTO register(RegisterRequestDTO dto) {
-        try {
-            User user = userService.register(
-                    dto.name,
-                    dto.phone,
-                    dto.password,
-                    dto.role,
-                    dto.address
-            );
-            return mapToDTO(user);
-        } catch (Exception e) {
-            System.out.println("Registration failed: " + e.getMessage());
-            return null;
-        }
+    private final UserService userService;
+    private final Validator   validator;
+
+    public UserController() {
+        this(new UserService(),
+                Validation.buildDefaultValidatorFactory().getValidator());
     }
 
-    // Login with phone + password
-    public UserProfileDTO login(LoginRequestDTO dto) {
-        User user = userService.findByPhone(dto.phone);
-        if (user == null) {
-            System.out.println("User not found.");
-            return null;
-        }
-        if (!user.getPassword().equals(dto.password)) {
-            System.out.println("Incorrect password.");
-            return null;
-        }
-        return mapToDTO(user);
+    public UserController(UserService userService, Validator validator) {
+        this.userService = userService;
+        this.validator   = validator;
     }
 
-    // View profile
-    public UserProfileDTO viewProfile(User user) {
-        return mapToDTO(user);
+
+    public UserProfileResponse register(UserRegisterRequest dto) {
+        validate(dto);
+        User saved = userService.register(UserMapper.toEntity(dto));
+        return UserMapper.toDto(saved);
     }
 
-    // Update user info
-    public UserProfileDTO update(UpdateUserDTO dto, User user) {
-        if (dto.getName() != null) user.setName(dto.getName());
-        if (dto.getAddress() != null) user.setAddress(dto.getAddress());
-        userService.update(user);
-        return mapToDTO(user);
+    public UserProfileResponse login(UserLoginRequest dto) {
+        validate(dto);
+        User logged = userService.login(dto.phone(), dto.password());
+        return UserMapper.toDto(logged);
     }
 
-    // List all users
-    public List<UserProfileDTO> listAllUsers() {
-        return userService.listAll().stream()
-                .map(this::mapToDTO)
+
+    public UserProfileResponse update(long id, UserUpdateRequest dto) {
+        validate(dto);
+
+        User user = userService.findById(id);
+
+        if (dto.name()    != null) user.setName(dto.name());
+        if (dto.address() != null) user.setAddress(dto.address());
+        if (dto.email()   != null) user.setEmail(dto.email());
+
+        User saved = userService.update(user);
+        return UserMapper.toDto(saved);
+    }
+
+
+    public List<UserProfileResponse> listAll() {
+        return userService.findAll()
+                .stream()
+                .map(UserMapper::toDto)
                 .collect(Collectors.toList());
     }
 
-    // List by role
-    public List<UserProfileDTO> listByRole(Role role) {
-        return userService.listUsersByRole(role).stream()
-                .map(this::mapToDTO)
+    public List<UserProfileResponse> listByRole(Role role) {
+        return userService.findByRole(role)
+                .stream()
+                .map(UserMapper::toDto)
                 .collect(Collectors.toList());
     }
 
-    // Helper to convert User → DTO
-    private UserProfileDTO mapToDTO(User user) {
-        return new UserProfileDTO(
-                user.getId(),
-                user.getName(),
-                user.getPhone(),
-                user.getEmail(),
-                user.getAddress(),
-                user.getStatus(),
-                user.getRole()
-        );
+    public UserProfileResponse view(long id) {
+        return UserMapper.toDto(userService.findById(id));
+    }
+
+    private <T> void validate(T dto) {
+        Set<ConstraintViolation<T>> violations = validator.validate(dto);
+        if (!violations.isEmpty())
+            throw new ConstraintViolationException(violations);
     }
 }

@@ -1,36 +1,56 @@
 package service;
 
-import dao.UserDAO;
+import dto.user.request.UserRegisterRequest;
+import util.mapper.UserMapper;
 import model.Customer;
+import model.Role;
+
 
 public class CustomerService extends UserService {
 
+
     public CustomerService() {
-        super();
+        super();                 // pulls in the shared UserDAO
     }
 
-    public Customer viewProfile(Long id) {
-        return (Customer) userDAO.findById(id);
+    public Customer registerCustomer(UserRegisterRequest dto) {
+        if (dto == null) throw new IllegalArgumentException("DTO must not be null");
+
+        // Enforce correct role (records are immutable, so create a new one)
+        if (dto.role() != Role.CUSTOMER) {
+            dto = new UserRegisterRequest(
+                    dto.name(), dto.phone(), dto.email(),
+                    dto.password(), dto.address(), Role.CUSTOMER);
+        }
+
+        Customer customer = (Customer) UserMapper.toEntity(dto);
+        return (Customer) register(customer);   // inherited from UserService
     }
 
-    public void updateAddress(Long customerId, String newAddress) {
-        Customer customer = (Customer) userDAO.findById(customerId);
-        customer.setAddress(newAddress);
-        userDAO.update(customer);
+
+    public Customer viewProfile(long id) {
+        return (Customer) findById(id);          // inherited helper
     }
 
-    public void changePhone(Long customerId, String newPhone) {
-        if (userDAO.findByPhone(newPhone) != null)
+
+    public Customer updateAddress(long id, String newAddress) {
+        Customer c = (Customer) findById(id);
+        c.setAddress(newAddress);
+        return (Customer) update(c);             // persists & returns
+    }
+
+    public Customer changePhone(long id, String newPhone) {
+        if (findByPhone(newPhone) != null)
             throw new IllegalArgumentException("Phone already in use!");
 
-        Customer customer = (Customer) userDAO.findById(customerId);
-        customer.setPhone(newPhone);
-        userDAO.update(customer);
+        Customer c = (Customer) findById(id);
+        c.setPhone(newPhone);
+        return (Customer) update(c);
     }
 
-    public void changePassword(Long customerId, String newPassword) {
-        Customer customer = (Customer) userDAO.findById(customerId);
-        customer.setPassword(newPassword);
-        userDAO.update(customer);
+    public Customer changePassword(long id, String newPassword) {
+        Customer c = (Customer) findById(id);
+        c.setPassword(newPassword);
+        return (Customer) update(c);
     }
 }

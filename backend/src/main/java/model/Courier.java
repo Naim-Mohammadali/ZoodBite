@@ -17,7 +17,7 @@ public class Courier extends User {
     }
 
     public Courier(String name, String phone, String password, String address) {
-        super(Role.COURIER, name, phone, password, address);
+        super(model.Role.COURIER, name, phone, password, address);
         this.available = true;
     }
 

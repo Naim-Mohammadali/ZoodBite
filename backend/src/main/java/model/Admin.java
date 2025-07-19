@@ -9,6 +9,6 @@ public class Admin extends User {
     public Admin() {}
 
     public Admin(String name, String phone, String password) {
-        super(Role.ADMIN, name, phone, password, null);
+        super(model.Role.ADMIN, name, phone, password, null);
     }
 }

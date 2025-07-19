@@ -1,42 +1,61 @@
 package service;
 
-import model.User;
+import dto.user.request.UserRegisterRequest;
+import util.mapper.UserMapper;
 import model.Admin;
+import model.Role;
+import model.User;
+import model.User.Status;
 
 import java.util.List;
 
 public class AdminService extends UserService {
 
-    public Admin changePassword(Long adminId, String newPassword) {
-        Admin admin = (Admin) userDAO.findById(adminId);
-        if (admin == null) throw new IllegalArgumentException("Admin not found");
 
-        admin.setPassword(newPassword);
-        userDAO.update(admin);
-        return admin;
+    public AdminService() {
+        super();
     }
+
+    public Admin registerAdmin(UserRegisterRequest dto) {
+        if (dto == null) throw new IllegalArgumentException("DTO must not be null");
+
+        // Enforce correct role (records are immutable ➜ build a new one if needed)
+        if (dto.role() != Role.ADMIN) {
+            dto = new UserRegisterRequest(
+                    dto.name(), dto.phone(), dto.email(),
+                    dto.password(), dto.address(), Role.ADMIN);
+        }
+
+        Admin admin = (Admin) UserMapper.toEntity(dto);
+        return (Admin) register(admin);              // inherited helper
+    }
+
+
+    public Admin changePassword(long adminId, String newPassword) {
+        Admin admin = (Admin) findById(adminId);     // inherited helper
+        admin.setPassword(newPassword);
+        return (Admin) update(admin);                // persists & returns
+    }
+
 
     public List<User> listAllUsers() {
-        return userDAO.findAll();
+        return findAll();                            // inherited helper
     }
 
-    public void blockUser(Long userId) {
-        User user = userDAO.findById(userId);
-        if (user == null) throw new IllegalArgumentException("User not found");
-
-        user.setStatus(User.Status.BLOCKED);
-        userDAO.update(user);
+    public User blockUser(long userId) {
+        User u = findById(userId);
+        u.setStatus(Status.BLOCKED);
+        return update(u);
     }
 
-    public void unblockUser(Long userId) {
-        User user = userDAO.findById(userId);
-        if (user == null) throw new IllegalArgumentException("User not found");
-
-        user.setStatus(User.Status.ACTIVE);
-        userDAO.update(user);
+    public User unblockUser(long userId) {
+        User u = findById(userId);
+        u.setStatus(Status.ACTIVE);
+        return update(u);
     }
 
-    public User findUserById(Long id) {
-        return userDAO.findById(id);
+
+    public User findUserById(long id) {
+        return findById(id);                         // thin wrapper
     }
 }

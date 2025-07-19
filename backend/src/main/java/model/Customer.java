@@ -12,6 +12,6 @@ public class Customer extends User {
     }
 
     public Customer(String name, String phone, String password, String address) {
-        super(Role.CUSTOMER, name, phone, password, address);
+        super(model.Role.CUSTOMER, name, phone, password, address);
     }
 }

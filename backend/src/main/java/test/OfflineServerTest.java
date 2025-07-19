@@ -27,7 +27,7 @@ public class OfflineServerTest {
         /* ---------- service layer sanity ---------- */
         UserService us  = new UserService();      // assumes userDAO injected inside
         CustomerService cs  = new CustomerService();  // inherits DAO
-        System.out.println("DAO call, total users = " + us.listAll().size());
+        System.out.println("DAO call, total users = " + us.findAll().size());
 
         em.close();
         emf.close();

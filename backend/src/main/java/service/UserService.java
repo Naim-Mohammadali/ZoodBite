@@ -1,70 +1,79 @@
 package service;
-import model.*;
+
 import dao.UserDAO;
 import dao.UserDAOImpl;
+import model.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+
 
 public class UserService {
 
     protected final UserDAO userDAO = new UserDAOImpl();
 
-    public User register(String name, String phone, String password,
-                         Role role, String address) {
 
-        if (userDAO.findByPhone(phone) != null) {
-            System.out.println("User with phone " + phone + " already exists.");
+    public User register(User user) {
+        if (user == null) throw new IllegalArgumentException("User must not be null");
+        if (userDAO.findByPhone(user.getPhone()) != null)
             throw new IllegalArgumentException("Phone already exists");
-        }
-        User user;
-        switch (role) {
-            case CUSTOMER -> user = new Customer(name, phone, password, address);
-            case SELLER   -> user = new Seller(name, phone, password, address);
-            case COURIER  -> user = new Courier(name, phone, password, address);
-            case ADMIN    -> user = new Admin(name, phone, password);
-            default -> throw new IllegalStateException("Unexpected role: " + role);
-        }
 
         userDAO.save(user);
         return user;
     }
-    public void update(User user) {
-        userDAO.update(user);
-    }
-    public List<User> listUsersByRole(Role role) {
-        return switch (role) {
-            case CUSTOMER -> userDAO.findByType(Customer.class);
-            case SELLER   -> userDAO.findByType(Seller.class);
-            case COURIER  -> userDAO.findByType(Courier.class);
-            case ADMIN    -> userDAO.findByType(Admin.class);
+
+    @Deprecated
+    public User register(String name, String phone, String password,
+                         @NotNull Role role, String address) {
+
+        User u = switch (role) {
+            case CUSTOMER -> new Customer(name, phone, password, address);
+            case SELLER   -> new Seller  (name, phone, password, address);
+            case COURIER  -> new Courier (name, phone, password, address);
+            case ADMIN    -> new Admin   (name, phone, password);
         };
-    }
-    public List<User> listAll() {
-        return userDAO.findAll();
+        return register(u);
     }
 
-
-
-    public User getUser(Long id) {
-        return userDAO.findById(id);
-    }
-
-    public void deleteUser(User user) {
-        userDAO.delete(user);
-    }
 
     public User findById(Long id) {
         User u = userDAO.findById(id);
-        if (u == null)
-            throw new IllegalArgumentException("No user found with ID " + id);
+        if (u == null) throw new IllegalArgumentException("No user found with ID " + id);
         return u;
     }
 
-    public User findByPhone(String number) {
-        return userDAO.findByPhone(number);
+    public User findByPhone(String phone) {
+        return userDAO.findByPhone(phone);
     }
 
-    public User getByEmail(String mail) {
-        return userDAO.findByEmail(mail);
+    public List<User> findAll() {
+        return userDAO.findAll();
+    }
+
+    public List<User> findByRole(@NotNull Role role) {
+        Class<? extends User> type = switch (role) {
+            case CUSTOMER -> Customer.class;
+            case SELLER   -> Seller.class;
+            case COURIER  -> Courier.class;
+            case ADMIN    -> Admin.class;
+        };
+        return userDAO.findByType(type);
+    }
+
+
+    public User update(User user) {
+        return userDAO.update(user);
+    }
+
+    public User login(String phone, String rawPassword) {
+        User u = userDAO.findByPhone(phone);
+        if (u == null || !u.getPassword().equals(rawPassword))
+            throw new IllegalArgumentException("Invalid credentials");
+        return u;
+    }
+
+
+    public void deleteUser(User user) {
+        userDAO.delete(user);
     }
 }
