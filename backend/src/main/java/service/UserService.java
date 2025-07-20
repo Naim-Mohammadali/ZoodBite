@@ -1,5 +1,5 @@
 package service;
-
+import org.mindrot.jbcrypt.BCrypt;
 import dao.UserDAO;
 import dao.UserDAOImpl;
 import model.*;
@@ -17,7 +17,8 @@ public class UserService {
         if (user == null) throw new IllegalArgumentException("User must not be null");
         if (userDAO.findByPhone(user.getPhone()) != null)
             throw new IllegalArgumentException("Phone already exists");
-
+        String hashed = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+        user.setPassword(hashed);
         userDAO.save(user);
         return user;
     }
@@ -67,8 +68,12 @@ public class UserService {
 
     public User login(String phone, String rawPassword) {
         User u = userDAO.findByPhone(phone);
-        if (u == null || !u.getPassword().equals(rawPassword))
-            throw new IllegalArgumentException("Invalid credentials");
+        if (u == null)  {
+            new IllegalArgumentException("Phone not registered");
+        }
+        if (!BCrypt.checkpw(rawPassword, u.getPassword()))
+            throw new IllegalArgumentException("Bad credentials");
+
         return u;
     }
 
