@@ -54,12 +54,12 @@ public class SellerController {
     public UserProfileResponse update(long id, UserUpdateRequest patch) {
         validate(patch);
 
-        Seller s = (Seller) service.findById(id);   // inherited helper
+        Seller s = (Seller) service.findById(id);
         if (patch.name()    != null) s.setName(patch.name());
         if (patch.email()   != null) s.setEmail(patch.email());
         if (patch.address() != null) s.setAddress(patch.address());
 
-        Seller saved = (Seller) service.update(s);  // persists & returns
+        Seller saved = (Seller) service.update(s);
         return UserMapper.toDto(saved);
     }
     private <T> void validate(T obj) {

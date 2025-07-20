@@ -49,11 +49,11 @@ public class AdminController {
     public UserProfileResponse update(long id, UserUpdateRequest patch) {
         validate(patch);
 
-        Admin admin = (Admin) service.findById(id);  // inherited helper
+        Admin admin = (Admin) service.findById(id);
         if (patch.name()  != null) admin.setName(patch.name());
         if (patch.email() != null) admin.setEmail(patch.email());
 
-        Admin saved = (Admin) service.update(admin); // inherited helper
+        Admin saved = (Admin) service.update(admin);
         return UserMapper.toDto(saved);
     }
 
