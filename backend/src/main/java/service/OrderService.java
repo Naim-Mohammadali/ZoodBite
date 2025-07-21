@@ -1,15 +1,22 @@
 package service;
 
+import dao.MenuItemDAO;
+import dao.MenuItemDAOImpl;
 import dao.OrderDAO;
 import dao.OrderDAOImpl;
+import dto.order.request.CustomerOrderRequest;
 import model.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 public class OrderService {
     private final OrderDAO orderDAO = new OrderDAOImpl();
+    private final RestaurantService restaurantService = new RestaurantService();
+    private final MenuItemDAO menuItemDAO = new MenuItemDAOImpl();
+
 
     public void placeOrder(Customer customer, @NotNull Restaurant restaurant, List<MenuItem> items) throws Exception {
         if (restaurant.getStatus() != Restaurant.Status.ACTIVE) {
@@ -39,6 +46,27 @@ public class OrderService {
 
         orderDAO.save(order);
     }
+    public FoodOrder placeOrder(Customer customer, CustomerOrderRequest dto) throws Exception {
+        Restaurant restaurant = restaurantService.findById(dto.restaurantId());
+        List<MenuItem> items = dto.itemIds().stream()
+                .map(menuItemDAO::findById)
+                .filter(Objects::nonNull)
+                .toList();
+
+        if (items.isEmpty())
+            throw new Exception("No valid items selected.");
+
+        this.placeOrder(customer, restaurant, items);
+        FoodOrder latest = new FoodOrder();
+        latest.setCustomer(customer);
+        latest.setItems(items);
+        latest.setRestaurant(restaurant);
+        latest.setTotal(items.stream().mapToDouble(MenuItem::getPrice).sum()
+                + restaurant.getAdditionalFee() + restaurant.getTaxFee());
+        latest.setStatus(FoodOrder.Status.PLACED);
+        return latest;
+    }
+
 
     public void assignCourier(Seller seller, @NotNull FoodOrder order, Courier courier) throws Exception {
         if (!order.getRestaurant().getSeller().equals(seller)) {
@@ -52,8 +80,6 @@ public class OrderService {
         order.setStatus(FoodOrder.Status.IN_TRANSIT);
         orderDAO.update(order);
     }
-
-
     public void updateOrderStatus(@NotNull FoodOrder order, FoodOrder.Status newStatus) {
         order.setStatus(newStatus);
         orderDAO.update(order);
@@ -110,7 +136,7 @@ public class OrderService {
                 : orderDAO.findByCourierAndStatus(courier, status);
     }
 
-    public FoodOrder updateStatusByCourier(Courier courier,
+        public FoodOrder updateStatusByCourier(Courier courier,
                                            FoodOrder order,
                                            FoodOrder.Status newStatus) throws Exception {
 
