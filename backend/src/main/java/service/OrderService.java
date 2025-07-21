@@ -102,6 +102,33 @@ public class OrderService {
         orderDAO.update(order);
         return order;
     }
+
+    public List<FoodOrder> listByCourier(Courier courier,
+                                         FoodOrder.Status status) {
+        return status == null
+                ? orderDAO.findByCourier(courier)
+                : orderDAO.findByCourierAndStatus(courier, status);
+    }
+
+    public FoodOrder updateStatusByCourier(Courier courier,
+                                           FoodOrder order,
+                                           FoodOrder.Status newStatus) throws Exception {
+
+        if (!courier.equals(order.getCourier()))
+            throw new Exception("Order not assigned to this courier");
+
+        boolean ok = switch (order.getStatus()) {
+            case READY_FOR_PICKUP -> newStatus == FoodOrder.Status.IN_TRANSIT;
+            case IN_TRANSIT       -> newStatus == FoodOrder.Status.DELIVERED;
+            default               -> false;
+        };
+        if (!ok) throw new IllegalStateException("Illegal status transition");
+
+        order.setStatus(newStatus);
+        orderDAO.update(order);
+        return order;
+    }
+
     private void validateOwnership(@NotNull Seller s, @NotNull Restaurant r) throws Exception {
         if (!s.getId().equals(r.getSeller().getId()))
             throw new Exception("Seller does not own this restaurant");

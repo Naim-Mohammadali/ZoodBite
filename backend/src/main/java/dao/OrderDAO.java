@@ -1,4 +1,5 @@
 package dao;
+import model.Courier;
 import model.Restaurant;
 import model.User;
 import model.FoodOrder;
@@ -13,7 +14,8 @@ public interface OrderDAO {
     List<FoodOrder> findByCourier (User courier);
     List<FoodOrder> findByStatus (FoodOrder.Status status);
     List<FoodOrder> findByRestaurant(Restaurant restaurant);
-    List<FoodOrder> findByRestaurantAndStatus(Restaurant restaurant,
-                                              FoodOrder.Status status);
+    List<FoodOrder> findByRestaurantAndStatus(Restaurant restaurant, FoodOrder.Status status);
+    List<FoodOrder> findByCourier(Courier courier);
+    List<FoodOrder> findByCourierAndStatus(Courier courier,FoodOrder.Status status);
 
 }
