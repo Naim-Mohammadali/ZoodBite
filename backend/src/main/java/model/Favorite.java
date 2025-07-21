@@ -19,11 +19,9 @@ public class Favorite implements Serializable {
     @JoinColumn(name = "restaurant_id", nullable = false)
     private Restaurant restaurant;
 
-    /* ---------- ctors ---------- */
     public Favorite() {}
     public Favorite(Customer c, Restaurant r) { this.customer = c; this.restaurant = r; }
 
-    /* ---------- getters ---------- */
     public Long getId()               { return id; }
     public Customer getCustomer()     { return customer; }
     public Restaurant getRestaurant() { return restaurant; }
