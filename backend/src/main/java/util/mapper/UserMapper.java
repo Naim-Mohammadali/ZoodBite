@@ -21,4 +21,14 @@ public final class UserMapper {
                 u.getId(), u.getName(), u.getPhone(), u.getEmail(),
                 u.getAddress(), u.getStatus(), u.getRole());
     }
+
+    public static UserRegisterRequest toRequest(User u) {
+        return new UserRegisterRequest(
+                u.getName(),
+                u.getPhone(),
+                u.getEmail(),
+                u.getPassword(),        // hashed or plain – test only
+                u.getAddress(),
+                u.getRole());
+    }
 }

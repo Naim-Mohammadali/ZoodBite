@@ -1,0 +1,11 @@
+controller\CustomerControllerTest.class
+controller\CourierControllerTest.class
+controller\RestaurantControllerTest.class
+controller\AdminControllerTest.class
+controller\UserControllerTest.class
+general\SQLConnectionTest.class
+controller\SellerControllerTest.class
+general\OfflineServerTest.class
+controller\OrderControllerTest.class
+general\IntegrationTest.class
+controller\MenuItemControllerTest.class

@@ -1,4 +1,3 @@
-// rest/AuthResource.java
 package rest;
 
 import dto.user.request.UserLoginRequest;

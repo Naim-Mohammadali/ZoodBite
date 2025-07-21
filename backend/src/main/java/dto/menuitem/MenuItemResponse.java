@@ -7,4 +7,4 @@ public record MenuItemResponse(
         double price,
         int quantity,
         String imgURL,
-        String category) { }
+        String category) {}
