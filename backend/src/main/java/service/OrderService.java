@@ -4,7 +4,7 @@ import dao.MenuItemDAO;
 import dao.MenuItemDAOImpl;
 import dao.OrderDAO;
 import dao.OrderDAOImpl;
-import dto.order.request.CustomerOrderRequest;
+import dto.order.CustomerOrderRequest;
 import model.*;
 import org.jetbrains.annotations.NotNull;
 

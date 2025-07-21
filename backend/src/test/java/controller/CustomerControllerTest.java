@@ -5,6 +5,8 @@ import dto.user.request.UserUpdateRequest;
 import dto.user.response.UserProfileResponse;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
+import service.OrderService;
+import service.UserService;
 import util.mapper.UserMapper;
 import model.*;
 import model.Role;
@@ -23,12 +25,14 @@ class CustomerControllerTest {
 
     @Mock   private CustomerService service;
     private Validator               validator;
+    private UserService userService;
+    private OrderService orderService;
     private CustomerController      controller;
 
     @BeforeEach
     void setUp() {
         validator  = Validation.buildDefaultValidatorFactory().getValidator();
-        controller = new CustomerController(service, validator);
+        controller = new CustomerController(service, userService, orderService, validator );
     }
 
     @Test

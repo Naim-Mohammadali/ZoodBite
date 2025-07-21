@@ -1,4 +1,4 @@
-package dto.order.request;
+package dto.order;
 
 import java.util.List;
 
