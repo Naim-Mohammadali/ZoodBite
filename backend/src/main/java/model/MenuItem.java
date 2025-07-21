@@ -30,7 +30,11 @@ public class MenuItem implements Serializable {
     @JoinColumn(name = "restaurant_id", nullable = false)
     private Restaurant restaurant;
 
-    // Getters & Setters
+    public MenuItem(String name, double price) {
+        this.name = name;
+        this.price = price;
+    }
+    public MenuItem() {}
 
     public long getId() { return id; }
     public void setId(long id) { this.id = id; }
