@@ -19,7 +19,8 @@ public class MenuItemDAOImpl implements MenuItemDAO {
             tx.begin();
             em.persist(menuItem);
             tx.commit();
-        } finally {
+        } catch (Exception e) { if (tx.isActive()) tx.rollback(); throw e; }
+        finally {
             em.close();
         }
     }
@@ -32,7 +33,8 @@ public class MenuItemDAOImpl implements MenuItemDAO {
             tx.begin();
             em.merge(menuItem);
             tx.commit();
-        } finally {
+        } catch (Exception e) { if (tx.isActive()) tx.rollback(); throw e; }
+        finally {
             em.close();
         }
     }
@@ -48,7 +50,8 @@ public class MenuItemDAOImpl implements MenuItemDAO {
                 em.remove(managed);
             }
             tx.commit();
-        } finally {
+        } catch (Exception e) { if (tx.isActive()) tx.rollback(); throw e; }
+        finally {
             em.close();
         }
     }
@@ -86,4 +89,25 @@ public class MenuItemDAOImpl implements MenuItemDAO {
             em.close();
         }
     }
+
+    @Override
+    public MenuItem findByIdAndRestaurant(Long itemId, Long restaurantId) {
+        EntityManager em = EntityManagerFactorySingleton
+                .getInstance().createEntityManager();
+        try {
+            return em.createQuery(
+                            "SELECT m FROM MenuItem m " +
+                                    "WHERE m.id = :itemId AND m.restaurant.id = :restId",
+                            MenuItem.class)
+                    .setParameter("itemId", itemId)
+                    .setParameter("restId", restaurantId)
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
+        } finally {
+            em.close();
+        }
+    }
+
+
 }

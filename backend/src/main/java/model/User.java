@@ -57,7 +57,7 @@ public abstract class User implements Serializable {
 
     // --- Getters and setters ---
 
-    public long getId() { return id; }
+    public Long getId() { return id; }
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }

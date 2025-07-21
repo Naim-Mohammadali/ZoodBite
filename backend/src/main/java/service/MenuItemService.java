@@ -13,9 +13,6 @@ public class MenuItemService {
 
     private final MenuItemDAO menuItemDAO = new MenuItemDAOImpl();
 
-    /**
-     * Seller adds a new menu item to their restaurant.
-     */
     public void addMenuItem(@NotNull Seller seller, @NotNull Restaurant restaurant, @NotNull MenuItem item) throws Exception {
         validateOwnership(seller, restaurant);
 
@@ -65,7 +62,7 @@ public class MenuItemService {
 
 
     private void validateOwnership(@NotNull Seller seller, @NotNull Restaurant restaurant) throws Exception {
-        if (restaurant.getSeller() == null || restaurant.getSeller().getId() != seller.getId()) {
+        if (restaurant.getSeller() == null || !seller.getId().equals(restaurant.getSeller().getId())) {
             throw new Exception("You do not own this restaurant.");
         }
     }

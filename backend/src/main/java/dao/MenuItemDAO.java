@@ -12,4 +12,4 @@ public interface MenuItemDAO {
     MenuItem findById(Long id);
     List<MenuItem> findByName(String menuItemName);
     List<MenuItem> findByRestaurant(Restaurant restaurant);
-}
+    MenuItem findByIdAndRestaurant(Long itemId, Long restaurantId);}

@@ -17,6 +17,16 @@ public class OrderService {
         if (items == null || items.isEmpty()) {
             throw new Exception("No items selected.");
         }
+        boolean mismatch = items.stream()
+                .anyMatch(i -> !i.getRestaurant().getId()
+                        .equals(restaurant.getId()));
+        if (mismatch)
+            throw new Exception("One or more items do not belong to the selected restaurant.");
+
+        double total = items.stream().mapToDouble(MenuItem::getPrice).sum();
+        total += restaurant.getAdditionalFee();
+        total += restaurant.getTaxFee();
+
 
         FoodOrder order = new FoodOrder();
         order.setCustomer(customer);
@@ -24,8 +34,6 @@ public class OrderService {
         order.setItems(items);
         order.setCreatedAt(LocalDateTime.now());
         order.setStatus(FoodOrder.Status.PLACED);
-
-        double total = items.stream().mapToDouble(MenuItem::getPrice).sum();
         order.setTotal(total);
 
         orderDAO.save(order);

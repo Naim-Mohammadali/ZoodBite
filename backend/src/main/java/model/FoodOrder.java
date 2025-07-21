@@ -42,6 +42,8 @@ public class FoodOrder implements Serializable {
 
     public enum Status {
         PLACED,
+        ACCEPTED,
+        REJECTED,
         PREPARING,
         READY_FOR_PICKUP,
         IN_TRANSIT,
