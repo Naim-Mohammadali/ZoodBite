@@ -73,4 +73,11 @@ public class RestaurantService {
         }
         return null;
     }
+
+    public List<Restaurant> search(String keyword,
+                                   String category,
+                                   Double minPrice,
+                                   Double maxPrice) {
+        return restaurantDAO.search(keyword, category, minPrice, maxPrice);
+    }
 }

@@ -1,5 +1,6 @@
 package controller;
 
+import dto.menuitem.MenuItemResponse;
 import dto.restaurant.RestaurantBriefDto;
 import dto.restaurant.RestaurantCreateDto;
 import dto.restaurant.RestaurantUpdateDto;
@@ -8,6 +9,7 @@ import jakarta.validation.*;
 import model.Restaurant;
 import model.Seller;
 import service.RestaurantService;
+import util.mapper.MenuItemMapper;
 import util.mapper.RestaurantMapper;
 import java.util.List;
 import java.util.Set;
@@ -101,10 +103,21 @@ public class RestaurantController {
         return RestaurantMapper.toDto(r);
     }
 
-    public List<RestaurantBriefDto> search(String kw, String cat,
-                                           Double min, Double max) {
-        return restaurantService.listActive().stream() // fallback
+    public List<RestaurantBriefDto> search(String kw,
+                                           String cat,
+                                           Double min,
+                                           Double max) {
+        return restaurantService.search(kw, cat, min, max)
+                .stream()
                 .map(RestaurantMapper::toBriefDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<MenuItemResponse> menu(long restaurantId) throws Exception {
+        Restaurant r = restaurantService.findById(restaurantId);
+        return r.getMenuItems()
+                .stream()
+                .map(MenuItemMapper::toDto)
                 .collect(Collectors.toList());
     }
 

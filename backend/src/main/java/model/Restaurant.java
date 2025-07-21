@@ -2,6 +2,7 @@ package model;
 
 import jakarta.persistence.*;
 import java.io.Serializable;
+import java.util.*;
 
 @Entity
 @Table(name = "restaurants")
@@ -44,6 +45,14 @@ public class Restaurant implements Serializable {
 
     /* ---------- enum ---------- */
     public enum Status { PENDING, ACTIVE, BLOCKED }
+
+    @OneToMany(mappedBy = "restaurant",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    private List<MenuItem> menuItems = new ArrayList<>();
+
+    public List<MenuItem> getMenuItems()      { return menuItems; }
+    public void setMenuItems(List<MenuItem> l){ this.menuItems = l; }
 
     /* ---------- constructors ---------- */
     public Restaurant() {}                       // JPA only
