@@ -76,9 +76,13 @@ public class UserService {
 
         return u;
     }
-
-
     public void deleteUser(User user) {
         userDAO.delete(user);
     }
+
+    public User changeRole(User user, Role newRole) {
+        user.setRole(newRole);
+        return userDAO.update(user);
+    }
+
 }

@@ -12,7 +12,7 @@ public final class RestaurantMapper {
     public static RestaurantResponseDto toDto(Restaurant r) {
         return new RestaurantResponseDto(
                 r.getId(), r.getName(), r.getAddress(), r.getPhone(),
-                r.getLogoBase64(), r.getTaxFee(), r.getAdditionalFee());
+                r.getLogoBase64(), r.getTaxFee(), r.getAdditionalFee(), r.getStatus());
     }
     public static RestaurantBriefDto toBriefDto(Restaurant r) {
         return new RestaurantBriefDto(r.getId(), r.getName(), r.getLogoBase64());

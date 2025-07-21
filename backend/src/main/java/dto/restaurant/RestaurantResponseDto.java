@@ -1,5 +1,5 @@
 package dto.restaurant;
-
+import model.Restaurant;
 public record RestaurantResponseDto(
         Long id,
         String name,
@@ -7,4 +7,5 @@ public record RestaurantResponseDto(
         String phone,
         String logoBase64,
         Integer taxFee,
-        Integer additionalFee) { }
+        Integer additionalFee,
+        Restaurant.Status status) { }

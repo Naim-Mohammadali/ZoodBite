@@ -80,4 +80,8 @@ public class RestaurantService {
                                    Double maxPrice) {
         return restaurantDAO.search(keyword, category, minPrice, maxPrice);
     }
+
+    public List<Restaurant> getByStatus(Restaurant.Status status) {
+        return restaurantDAO.findByStatus(status);
+    }
 }
