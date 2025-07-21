@@ -3,6 +3,7 @@ package service;
 import dao.OrderDAO;
 import dao.OrderDAOImpl;
 import model.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.List;
 public class OrderService {
     private final OrderDAO orderDAO = new OrderDAOImpl();
 
-    public void placeOrder(Customer customer, Restaurant restaurant, List<MenuItem> items) throws Exception {
+    public void placeOrder(Customer customer, @NotNull Restaurant restaurant, List<MenuItem> items) throws Exception {
         if (restaurant.getStatus() != Restaurant.Status.ACTIVE) {
             throw new Exception("Restaurant is not active.");
         }
@@ -39,7 +40,7 @@ public class OrderService {
         orderDAO.save(order);
     }
 
-    public void assignCourier(Seller seller, FoodOrder order, Courier courier) throws Exception {
+    public void assignCourier(Seller seller, @NotNull FoodOrder order, Courier courier) throws Exception {
         if (!order.getRestaurant().getSeller().equals(seller)) {
             throw new Exception("Only the restaurant owner can assign a courier.");
         }
@@ -53,7 +54,7 @@ public class OrderService {
     }
 
 
-    public void updateOrderStatus(FoodOrder order, FoodOrder.Status newStatus) {
+    public void updateOrderStatus(@NotNull FoodOrder order, FoodOrder.Status newStatus) {
         order.setStatus(newStatus);
         orderDAO.update(order);
     }
@@ -73,4 +74,37 @@ public class OrderService {
     public FoodOrder getOrderById(Long id) {
         return orderDAO.findById(id);
     }
+
+    public List<FoodOrder> listByRestaurant(Seller seller,
+                                            Restaurant restaurant,
+                                            FoodOrder.Status status) throws Exception {
+        validateOwnership(seller, restaurant);
+        return status == null
+                ? orderDAO.findByRestaurant(restaurant)
+                : orderDAO.findByRestaurantAndStatus(restaurant, status);
+    }
+
+    public FoodOrder updateStatusBySeller(Seller seller,
+                                          @NotNull FoodOrder order,
+                                          FoodOrder.Status newStatus) throws Exception {
+        validateOwnership(seller, order.getRestaurant());
+
+        boolean ok = switch (order.getStatus()) {
+            case PLACED     -> newStatus == FoodOrder.Status.ACCEPTED
+                    || newStatus == FoodOrder.Status.REJECTED;
+            case ACCEPTED   -> newStatus == FoodOrder.Status.PREPARING;
+            case PREPARING  -> newStatus == FoodOrder.Status.READY_FOR_PICKUP;
+            default         -> false;
+        };
+        if (!ok) throw new IllegalStateException("Illegal status transition");
+
+        order.setStatus(newStatus);
+        orderDAO.update(order);
+        return order;
+    }
+    private void validateOwnership(@NotNull Seller s, @NotNull Restaurant r) throws Exception {
+        if (!s.getId().equals(r.getSeller().getId()))
+            throw new Exception("Seller does not own this restaurant");
+    }
+
 }
