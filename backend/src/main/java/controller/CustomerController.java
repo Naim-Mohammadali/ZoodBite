@@ -102,13 +102,6 @@ public class CustomerController {
                 .toList();
     }
 
-    @POST
-    @Path("/ratings")
-    @RolesAllowed("customer")
-    public void rateRestaurant(RatingRequestDto dto, @QueryParam("userId") long userId) throws Exception {
-        Customer customer = (Customer) userService.findById(userId);
-        rating.rate(customer, dto.restaurantId(), dto.score(), dto.comment());
-    }
     @GET
     @Path("/favorites")
     @RolesAllowed("customer")
