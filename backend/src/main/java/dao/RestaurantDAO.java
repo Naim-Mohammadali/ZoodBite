@@ -16,4 +16,6 @@ public interface RestaurantDAO {
     List<Restaurant> findActive();
 
     Restaurant findByIdAndSeller(Long restaurantId, Long sellerId);
+    List<Restaurant> search(String keyword, String category,
+                            Double minPrice, Double maxPrice);
 }

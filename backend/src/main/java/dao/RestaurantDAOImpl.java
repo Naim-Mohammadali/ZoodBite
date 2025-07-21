@@ -111,4 +111,29 @@ public class RestaurantDAOImpl implements RestaurantDAO {
             em.close();
         }
     }
+
+    @Override
+    public List<Restaurant> search(String kw, String cat,
+                                   Double min, Double max) {
+        try (EntityManager em = emf.createEntityManager()) {
+            String jpql = """
+            SELECT DISTINCT r FROM Restaurant r
+            JOIN r.menuItems i
+            WHERE r.status = :active
+              AND (:kw  IS NULL OR LOWER(r.name) LIKE LOWER(CONCAT('%',:kw,'%'))
+                   OR LOWER(i.name) LIKE LOWER(CONCAT('%',:kw,'%')))
+              AND (:cat IS NULL OR LOWER(i.category) = LOWER(:cat))
+              AND (:min IS NULL OR i.price >= :min)
+              AND (:max IS NULL OR i.price <= :max)
+        """;
+            return em.createQuery(jpql, Restaurant.class)
+                    .setParameter("active", Restaurant.Status.ACTIVE)
+                    .setParameter("kw",  kw)
+                    .setParameter("cat", cat)
+                    .setParameter("min", min)
+                    .setParameter("max", max)
+                    .getResultList();
+        }
+    }
+
 }
