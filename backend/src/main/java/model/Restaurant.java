@@ -7,17 +7,34 @@ import java.io.Serializable;
 @Table(name = "restaurants")
 public class Restaurant implements Serializable {
 
+    /* ---------- identity ---------- */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    /* ---------- business fields (spec-compliant) ---------- */
+    @Column(nullable = false)
+    private String name;                         // was already here
 
-    private String address;
+    @Column(nullable = false)
+    private String address;                      // was already here
 
-    @Column(unique = true)
-    private String phone;
+    @Column(unique = true, nullable = false)
+    private String phone;                        // was already here
 
+    /* NEW → optional logo stored as base64 */
+    @Lob
+    @Column(name = "logo_base64")
+    private String logoBase64;                   // nullable until seller uploads
+
+    /* NEW → mandatory fees with sane defaults */
+    @Column(name = "tax_fee", nullable = false)
+    private Integer taxFee = 0;
+
+    @Column(name = "additional_fee", nullable = false)
+    private Integer additionalFee = 0;
+
+    /* ---------- status & relations ---------- */
     @Enumerated(EnumType.STRING)
     private Status status = Status.PENDING;
 
@@ -25,46 +42,56 @@ public class Restaurant implements Serializable {
     @JoinColumn(name = "seller_id", nullable = false)
     private Seller seller;
 
-    public enum Status {
-        PENDING, ACTIVE, BLOCKED
-    }
+    /* ---------- enum ---------- */
+    public enum Status { PENDING, ACTIVE, BLOCKED }
 
-    public Restaurant() {} // JPA
+    /* ---------- constructors ---------- */
+    public Restaurant() {}                       // JPA only
 
-    public Restaurant(String name, String address, String phone, Seller seller) {
+    public Restaurant(String name, String address, String phone,
+                      Seller seller,
+                      String logoBase64,
+                      Integer taxFee,
+                      Integer additionalFee) {
         this.name = name;
         this.address = address;
         this.phone = phone;
         this.seller = seller;
-        this.status = Status.PENDING;
+        this.logoBase64 = logoBase64;
+        if (taxFee != null)        this.taxFee = taxFee;
+        if (additionalFee != null) this.additionalFee = additionalFee;
     }
 
-    // Getters & Setters
+    /* ---------- getters / setters ---------- */
 
-    public Long getId() { return id; }
+    public Long getId()               { return id; }
+    public void setId(Long id)        { this.id = id; }
 
-    public void setId(Long id) { this.id = id; }
+    public String getName()           { return name; }
+    public void setName(String name)  { this.name = name; }
 
-    public String getName() { return name; }
-
-    public void setName(String name) { this.name = name; }
-
-    public String getAddress() { return address; }
-
+    public String getAddress()        { return address; }
     public void setAddress(String address) { this.address = address; }
 
-    public String getPhone() { return phone; }
+    public String getPhone()          { return phone; }
+    public void setPhone(String phone){ this.phone = phone; }
 
-    public void setPhone(String phone) { this.phone = phone; }
+    public String getLogoBase64()                     { return logoBase64; }
+    public void setLogoBase64(String logoBase64)      { this.logoBase64 = logoBase64; }
 
-    public Status getStatus() { return status; }
+    public Integer getTaxFee()                        { return taxFee; }
+    public void setTaxFee(Integer taxFee)             { this.taxFee = taxFee; }
 
-    public void setStatus(Status status) { this.status = status; }
+    public Integer getAdditionalFee()                 { return additionalFee; }
+    public void setAdditionalFee(Integer additionalFee){ this.additionalFee = additionalFee; }
 
-    public Seller getSeller() { return seller; }
+    public Status getStatus()         { return status; }
+    public void setStatus(Status s)   { this.status = s; }
 
-    public void setSeller(Seller seller) { this.seller = seller; }
+    public Seller getSeller()         { return seller; }
+    public void setSeller(Seller s)   { this.seller = s; }
 
+    /* ---------- toString ---------- */
     @Override
     public String toString() {
         return "Restaurant{" +
