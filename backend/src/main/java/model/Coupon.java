@@ -12,12 +12,16 @@ public class Coupon {
 
     @Column(unique = true, nullable = false)
     private String code;
-
+    @Column(nullable = false)
     private int discountPercent; // e.g. 10 = 10%
+    private boolean active = true;
+
+    @Column(unique = true, nullable = false) public boolean isActive() { return active; }
+    public void setActive(boolean active) { this.active = active; }
 
     private LocalDate validFrom;
     private LocalDate validUntil;
-
+    @Column(nullable = false)
     private int usageLimit;     // max total uses allowed
     private int usedCount = 0;  // incremented per use
 

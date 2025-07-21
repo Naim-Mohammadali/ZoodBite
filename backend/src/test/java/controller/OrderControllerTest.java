@@ -73,7 +73,7 @@ class OrderControllerTest {
         OrderResponse resp = controller.place(customer, req);
 
         assertEquals(10L, resp.id());
-        assertEquals(restaurant.getId(), resp.restaurantId());
+        assertEquals(restaurant.getId(), resp.id());
         verify(orderService).placeOrder(eq(customer),
                 any(Restaurant.class),
                 eq(List.of(item)));    }

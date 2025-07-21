@@ -11,14 +11,11 @@ import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.*;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.Path;
-import model.FoodOrder;
-import model.Restaurant;
+import model.*;
 import service.*;
 import util.mapper.OrderMapper;
 import util.mapper.RestaurantMapper;
 import util.mapper.UserMapper;
-import model.Customer;
-import model.Role;
 
 import java.util.List;
 import java.util.Set;
@@ -31,24 +28,26 @@ public class CustomerController {
     private final Validator       validator;
     private final RatingService rating;
     private final FavoriteService favorite;
+    private final CouponService couponService;
 
-    public CustomerController(RatingService rating, FavoriteService favorite) {
+    public CustomerController(RatingService rating, FavoriteService favorite, CouponService couponService) {
         this(new CustomerService(),
                 new UserService(),
                 new OrderService(),
-                Validation.buildDefaultValidatorFactory().getValidator(), rating, favorite);
+                Validation.buildDefaultValidatorFactory().getValidator(), rating, favorite, couponService);
     }
 
     public CustomerController(CustomerService service,
                               UserService userService,
                               OrderService orderService,
-                              Validator validator, RatingService rating, FavoriteService favorite) {
+                              Validator validator, RatingService rating, FavoriteService favorite, CouponService couponService) {
         this.service      = service;
         this.userService  = userService;
         this.orderService = orderService;
         this.validator    = validator;
         this.rating = rating;
         this.favorite = favorite;
+        this.couponService = couponService;
     }
 
 
@@ -86,11 +85,27 @@ public class CustomerController {
     @POST
     @Path("/orders")
     @RolesAllowed("customer")
-    public OrderResponse placeOrder(CustomerOrderRequest dto, @QueryParam("userId") long userId) throws Exception {
+    public OrderResponse placeOrder(CustomerOrderRequest dto,
+                                    @QueryParam("userId") long userId) throws Exception {
         Customer customer = (Customer) userService.findById(userId);
+        if (dto.couponCode() == null || dto.couponCode().isBlank()) {
+            FoodOrder saved = orderService.placeOrder(customer, dto);
+            return OrderMapper.toDto(saved);
+        }
+        Coupon coupon = couponService.findValidCoupon(dto.couponCode());
+
         FoodOrder saved = orderService.placeOrder(customer, dto);
+
+        double discounted = saved.getTotal() * (100 - coupon.getDiscountPercent()) / 100.0;
+        saved.setTotal(discounted);
+        saved.setCouponCode(coupon.getCode());
+
+        couponService.incrementUsage(coupon);
+        orderService.updateOrder(saved); // this must call DAO update
+
         return OrderMapper.toDto(saved);
     }
+
     @GET
     @Path("/orders")
     @RolesAllowed("customer")

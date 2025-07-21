@@ -1,12 +1,15 @@
 package dto.order;
 
+import model.FoodOrder;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
 public record OrderResponse(
         Long id,
+        String restaurantName,
         LocalDateTime createdAt,
-        String status,
+        FoodOrder.Status status,
+        String couponCode,
         double total,
-        Long restaurantId,
         List<Long> itemIds) { }

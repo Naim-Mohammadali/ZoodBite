@@ -31,13 +31,14 @@ class CustomerControllerTest {
     @Mock private Validator validator;
     @Mock private RatingService rating;
     @Mock private FavoriteService favorite;
+    @Mock private CouponService coupon;
 
     private CustomerController controller;
 
     @BeforeEach
     void setUp() {
         validator = Validation.buildDefaultValidatorFactory().getValidator();
-        controller = new CustomerController(service, userService, orderService, validator, rating, favorite);
+        controller = new CustomerController(service, userService, orderService, validator, rating, favorite, coupon);
     }
 
     @Test

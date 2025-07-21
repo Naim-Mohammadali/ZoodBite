@@ -16,25 +16,30 @@ public class OrderService {
     private final OrderDAO orderDAO = new OrderDAOImpl();
     private final RestaurantService restaurantService = new RestaurantService();
     private final MenuItemDAO menuItemDAO = new MenuItemDAOImpl();
+    private final CouponService couponService = new CouponService();
 
+    public FoodOrder placeOrder(Customer customer, @NotNull Restaurant restaurant,
+                                List<MenuItem> items, Coupon coupon) throws Exception {
 
-    public void placeOrder(Customer customer, @NotNull Restaurant restaurant, List<MenuItem> items) throws Exception {
-        if (restaurant.getStatus() != Restaurant.Status.ACTIVE) {
+        if (restaurant.getStatus() != Restaurant.Status.ACTIVE)
             throw new Exception("Restaurant is not active.");
-        }
-        if (items == null || items.isEmpty()) {
+
+        if (items == null || items.isEmpty())
             throw new Exception("No items selected.");
-        }
+
         boolean mismatch = items.stream()
-                .anyMatch(i -> !i.getRestaurant().getId()
-                        .equals(restaurant.getId()));
+                .anyMatch(i -> !i.getRestaurant().getId().equals(restaurant.getId()));
         if (mismatch)
-            throw new Exception("One or more items do not belong to the selected restaurant.");
+            throw new Exception("Items do not match the restaurant.");
 
         double total = items.stream().mapToDouble(MenuItem::getPrice).sum();
         total += restaurant.getAdditionalFee();
         total += restaurant.getTaxFee();
 
+        if (coupon != null) {
+            total = couponService.applyDiscount(coupon, total);
+            couponService.incrementUsage(coupon);
+        }
 
         FoodOrder order = new FoodOrder();
         order.setCustomer(customer);
@@ -43,9 +48,12 @@ public class OrderService {
         order.setCreatedAt(LocalDateTime.now());
         order.setStatus(FoodOrder.Status.PLACED);
         order.setTotal(total);
+        if (coupon != null) order.setCouponCode(coupon.getCode());
 
         orderDAO.save(order);
+        return order;
     }
+
     public FoodOrder placeOrder(Customer customer, CustomerOrderRequest dto) throws Exception {
         Restaurant restaurant = restaurantService.findById(dto.restaurantId());
         List<MenuItem> items = dto.itemIds().stream()
@@ -56,17 +64,13 @@ public class OrderService {
         if (items.isEmpty())
             throw new Exception("No valid items selected.");
 
-        this.placeOrder(customer, restaurant, items);
-        FoodOrder latest = new FoodOrder();
-        latest.setCustomer(customer);
-        latest.setItems(items);
-        latest.setRestaurant(restaurant);
-        latest.setTotal(items.stream().mapToDouble(MenuItem::getPrice).sum()
-                + restaurant.getAdditionalFee() + restaurant.getTaxFee());
-        latest.setStatus(FoodOrder.Status.PLACED);
-        return latest;
-    }
+        Coupon coupon = null;
+        if (dto.couponCode() != null && !dto.couponCode().isBlank()) {
+            coupon = couponService.findValidCoupon(dto.couponCode());
+        }
 
+        return placeOrder(customer, restaurant, items, coupon);
+    }
 
     public void assignCourier(Seller seller, @NotNull FoodOrder order, Courier courier) throws Exception {
         if (!order.getRestaurant().getSeller().equals(seller)) {
@@ -163,6 +167,10 @@ public class OrderService {
     private void validateOwnership(@NotNull Seller s, @NotNull Restaurant r) throws Exception {
         if (!s.getId().equals(r.getSeller().getId()))
             throw new Exception("Seller does not own this restaurant");
+    }
+
+    public void updateOrder(FoodOrder order) {
+        orderDAO.update(order);
     }
 
 }

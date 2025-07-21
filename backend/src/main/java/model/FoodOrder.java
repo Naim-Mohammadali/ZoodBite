@@ -40,6 +40,14 @@ public class FoodOrder implements Serializable {
     )
     private List<MenuItem> items;
 
+    private String couponCode;
+
+    public String getCouponCode() { return couponCode; }
+
+    public void setCouponCode(String couponCode) { this.couponCode = couponCode; }
+
+
+
     public enum Status {
         PLACED,
         ACCEPTED,
