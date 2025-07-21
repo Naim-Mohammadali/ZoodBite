@@ -1,13 +1,22 @@
 package service;
 
+import dao.RatingDAO;
+import dto.rating.RatingRequestDto;
+import dto.restaurant.RestaurantResponseDto;
 import dto.user.request.UserRegisterRequest;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ws.rs.*;
+import model.Restaurant;
 import util.mapper.UserMapper;
 import model.Customer;
 import model.Role;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class CustomerService extends UserService {
-
+    private final RatingDAO ratingDAO = new RatingDAO();
 
     public CustomerService() {
         super();                 // pulls in the shared UserDAO
@@ -53,4 +62,20 @@ public class CustomerService extends UserService {
         c.setPassword(newPassword);
         return (Customer) update(c);
     }
+    @POST
+    @Path("/favorites")
+    @RolesAllowed("customer")
+    public void addFavorite(Customer customer, Restaurant restaurant) {
+        customer.getFavorites().add(restaurant);
+        userDAO.update(customer);
+    }
+    @DELETE
+    @Path("/favorites")
+    @RolesAllowed("customer")
+    public List<Restaurant> getFavorites(Customer customer) {
+        return new ArrayList<>(customer.getFavorites());
+    }
+
+
+
 }

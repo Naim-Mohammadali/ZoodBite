@@ -13,9 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-import service.CustomerService;
-import service.OrderService;
-import service.UserService;
+import service.*;
 import util.mapper.UserMapper;
 
 import java.util.List;
@@ -30,14 +28,16 @@ class CustomerControllerTest {
     @Mock private CustomerService service;
     @Mock private UserService userService;
     @Mock private OrderService orderService;
-    private Validator validator;
+    @Mock private Validator validator;
+    @Mock private RatingService rating;
+    @Mock private FavoriteService favorite;
 
     private CustomerController controller;
 
     @BeforeEach
     void setUp() {
         validator = Validation.buildDefaultValidatorFactory().getValidator();
-        controller = new CustomerController(service, userService, orderService, validator);
+        controller = new CustomerController(service, userService, orderService, validator, rating, favorite);
     }
 
     @Test

@@ -28,4 +28,8 @@ public class FavoriteService {
                 .map(Favorite::getRestaurant)
                 .collect(Collectors.toList());
     }
+    public List<Restaurant> getFavorites(Customer customer) {
+        return list(customer);
+    }
+
 }
