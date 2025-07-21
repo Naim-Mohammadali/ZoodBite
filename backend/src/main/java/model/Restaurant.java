@@ -21,7 +21,11 @@ public class Restaurant implements Serializable {
     private String address;                      // was already here
 
     @Column(unique = true, nullable = false)
-    private String phone;                        // was already here
+    private String phone;
+
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
+    private Set<Rating> ratings = new HashSet<>();
+
 
     /* NEW → optional logo stored as base64 */
     @Lob
