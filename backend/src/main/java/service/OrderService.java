@@ -155,6 +155,11 @@ public class OrderService {
         return order;
     }
 
+    public List<FoodOrder> getOrderHistory(Customer customer) {
+        return orderDAO.findByCustomer(customer);
+    }
+
+
     private void validateOwnership(@NotNull Seller s, @NotNull Restaurant r) throws Exception {
         if (!s.getId().equals(r.getSeller().getId()))
             throw new Exception("Seller does not own this restaurant");

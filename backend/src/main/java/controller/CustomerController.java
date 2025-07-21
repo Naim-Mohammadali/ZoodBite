@@ -7,6 +7,7 @@ import dto.user.request.UserUpdateRequest;
 import dto.user.response.UserProfileResponse;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.*;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.QueryParam;
@@ -19,6 +20,7 @@ import model.Customer;
 import model.Role;
 import service.CustomerService;
 
+import java.util.List;
 import java.util.Set;
 
 public class CustomerController {
@@ -85,6 +87,17 @@ public class CustomerController {
         FoodOrder saved = orderService.placeOrder(customer, dto);
         return OrderMapper.toDto(saved);
     }
+    @GET
+    @Path("/orders")
+    @RolesAllowed("customer")
+    public List<OrderResponse> getOrderHistory(@QueryParam("userId") long userId) {
+        Customer customer = (Customer) userService.findById(userId);
+        return orderService.getOrderHistory(customer)
+                .stream()
+                .map(OrderMapper::toDto)
+                .toList();
+    }
+
 
 
     private <T> void validate(T obj) {
