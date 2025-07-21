@@ -1,5 +1,6 @@
 package controller;
 
+import dto.restaurant.RestaurantBriefDto;
 import dto.restaurant.RestaurantCreateDto;
 import dto.restaurant.RestaurantUpdateDto;
 import dto.restaurant.RestaurantResponseDto;
@@ -98,6 +99,13 @@ public class RestaurantController {
         Restaurant r = restaurantService.findById(id);
         restaurantService.unblockRestaurant(r);      // BLOCKED → ACTIVE
         return RestaurantMapper.toDto(r);
+    }
+
+    public List<RestaurantBriefDto> search(String kw, String cat,
+                                           Double min, Double max) {
+        return restaurantService.listActive().stream() // fallback
+                .map(RestaurantMapper::toBriefDto)
+                .collect(Collectors.toList());
     }
 
     private <T> void validate(T dto) {
