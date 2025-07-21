@@ -3,6 +3,7 @@ package dao;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import model.FoodOrder;
+import model.Restaurant;
 import model.User;
 import util.EntityManagerFactorySingleton;
 
@@ -93,4 +94,31 @@ public class OrderDAOImpl implements OrderDAO {
             em.close();
         }
     }
+
+    @Override
+    public List<FoodOrder> findByRestaurant(Restaurant r) {
+        EntityManager em = EntityManagerFactorySingleton.getInstance().createEntityManager();
+        try {
+            return em.createQuery(
+                            "SELECT o FROM FoodOrder o WHERE o.restaurant = :r",
+                            FoodOrder.class)
+                    .setParameter("r", r)
+                    .getResultList();
+        } finally { em.close(); }
+    }
+
+    @Override
+    public List<FoodOrder> findByRestaurantAndStatus(Restaurant r,
+                                                     FoodOrder.Status s) {
+        EntityManager em = EntityManagerFactorySingleton.getInstance().createEntityManager();
+        try {
+            return em.createQuery(
+                            "SELECT o FROM FoodOrder o WHERE o.restaurant = :r AND o.status = :s",
+                            FoodOrder.class)
+                    .setParameter("r", r)
+                    .setParameter("s", s)
+                    .getResultList();
+        } finally { em.close(); }
+    }
+
 }
