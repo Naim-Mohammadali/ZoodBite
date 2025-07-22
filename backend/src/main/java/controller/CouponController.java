@@ -40,7 +40,8 @@ public class CouponController {
             @ApiResponse(responseCode = "400", description = "Invalid input"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
-    public void create(CouponCreateDto dto) {
+    public void create(@Valid CouponCreateDto dto)
+    {
         validate(dto);
         Coupon c = new Coupon();
         c.setCode(dto.code());

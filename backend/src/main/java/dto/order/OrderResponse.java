@@ -12,4 +12,5 @@ public record OrderResponse(
         FoodOrder.Status status,
         String couponCode,
         double total,
-        List<Long> itemIds) { }
+        List<Long> itemIds) {
+}

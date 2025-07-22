@@ -6,9 +6,14 @@ import java.io.InputStream;
 
 @Path("/openapi.yaml")
 public class SwaggerController {
+
     @GET
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces("application/yaml")
     public InputStream serveOpenApi() {
-        return getClass().getClassLoader().getResourceAsStream("openapi.yaml");
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("openapi.yaml");
+        if (stream == null) {
+            throw new WebApplicationException("OpenAPI spec not found", 404);
+        }
+        return stream;
     }
 }

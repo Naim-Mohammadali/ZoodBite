@@ -8,6 +8,7 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import service.CustomerService;
 import service.MenuItemService;
 import service.OrderService;
 
@@ -35,11 +36,12 @@ class OrderControllerTest {
     private Restaurant  restaurant;
     private MenuItem    item;
     private FoodOrder   persisted;
+    private CustomerService customerService;
 
     @BeforeEach
     void setUp() {
         validator  = Validation.buildDefaultValidatorFactory().getValidator();
-        controller = new OrderController(orderService, menuItemService, validator);
+        controller = new OrderController(orderService, menuItemService, customerService, validator);
 
         customer   = new Customer("Ali","+9617111111","pwasdfgh","Beirut"); customer.setId(1L);
         restaurant = new Restaurant("Grill","Hamra","+9617000000",null, null,5,2);
@@ -68,7 +70,7 @@ class OrderControllerTest {
         when(orderService.getOrdersByCustomer(customer))
                 .thenReturn(List.of(persisted));
 
-        OrderResponse resp = controller.place(customer, req);
+        OrderResponse resp = controller.place(customer.getId(), req);
 
         assertEquals(10L, resp.id());
         assertEquals(restaurant.getId(), resp.id());
@@ -83,7 +85,7 @@ class OrderControllerTest {
         when(orderService.getOrdersByCustomer(customer))
                 .thenReturn(List.of(persisted));
 
-        List<OrderResponse> list = controller.myOrders(customer);
+        List<OrderResponse> list = controller.myOrders(customer.getId());
 
         assertEquals(1, list.size());
         assertEquals("PLACED", list.getFirst().status());

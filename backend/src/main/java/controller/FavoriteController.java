@@ -10,6 +10,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.MediaType;
 import model.*;
+import service.CustomerService;
 import service.FavoriteService;
 import service.RestaurantService;
 import util.mapper.RestaurantMapper;
@@ -25,18 +26,22 @@ public class FavoriteController {
 
     private final FavoriteService   favService;
     private final RestaurantService restService;
+    private final CustomerService   customerService;
     private final Validator         validator;
 
     public FavoriteController() {
-        this(new FavoriteService(), new RestaurantService(),
+        this(new FavoriteService(), new RestaurantService(), new CustomerService(),
                 Validation.buildDefaultValidatorFactory().getValidator());
     }
+
     public FavoriteController(FavoriteService favService,
                               RestaurantService restService,
+                              CustomerService customerService,
                               Validator validator) {
-        this.favService  = favService;
-        this.restService = restService;
-        this.validator   = validator;
+        this.favService       = favService;
+        this.restService      = restService;
+        this.customerService  = customerService;
+        this.validator        = validator;
     }
 
     @POST
@@ -47,10 +52,13 @@ public class FavoriteController {
             @ApiResponse(responseCode = "404", description = "Restaurant not found"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
-    public void add(Customer customer, FavoriteActionDto dto) throws Exception {
-        validate(dto);
+    public void add(
+            @QueryParam("customerId") long customerId,
+            @Valid FavoriteActionDto dto) throws Exception {
+
         Restaurant r = restService.findById(dto.restaurantId());
-        favService.add(customer, r);
+        Customer c = (Customer) customerService.findById(customerId);
+        favService.add(c, r);
     }
 
     @DELETE
@@ -61,19 +69,26 @@ public class FavoriteController {
             @ApiResponse(responseCode = "404", description = "Restaurant not found"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
-    public void remove(Customer customer, @PathParam("restaurantId") long restaurantId) throws Exception
-    {
+    public void remove(
+            @QueryParam("customerId") long customerId,
+            @PathParam("restaurantId") long restaurantId) throws Exception {
+
         Restaurant r = restService.findById(restaurantId);
-        favService.remove(customer, r);
+        Customer c = (Customer) customerService.findById(customerId);
+        favService.remove(c, r);
     }
+
     @GET
     @Operation(summary = "List customer's favorite restaurants")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Favorite restaurants retrieved successfully"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
-    public List<RestaurantBriefDto> list(Customer customer) {
-        return favService.list(customer).stream()
+    public List<RestaurantBriefDto> list(
+            @QueryParam("customerId") long customerId) {
+
+        Customer c = (Customer) customerService.findById(customerId);
+        return favService.list(c).stream()
                 .map(RestaurantMapper::toBriefDto)
                 .collect(Collectors.toList());
     }

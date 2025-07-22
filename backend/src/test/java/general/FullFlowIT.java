@@ -48,10 +48,10 @@ class FullFlowIT {
 
         Validator v = Validation.buildDefaultValidatorFactory().getValidator();
         userCtl  = new UserController(new UserService(), v);
-        restCtl  = new RestaurantController(new RestaurantService(), v);
-        itemCtl  = new MenuItemController(new MenuItemService(), v);
-        favCtl   = new FavoriteController(new FavoriteService(), new RestaurantService(), v);
-        orderCtl = new OrderController(new OrderService(), new MenuItemService(), v);
+        restCtl  = new RestaurantController(new RestaurantService(),new SellerService(), v);
+        itemCtl  = new MenuItemController(new MenuItemService(),new RestaurantService(), new SellerService(), v);
+        favCtl   = new FavoriteController(new FavoriteService(), new RestaurantService(), new CustomerService(), v);
+        orderCtl = new OrderController(new OrderService(), new MenuItemService(), new CustomerService(), v);
     }
 
     /* ---------- 1. register users ---------- */
@@ -83,8 +83,8 @@ class FullFlowIT {
     /* ---------- 3. customer favourites restaurant ---------- */
     @Test @Order(3)
     void favourite() throws Exception {
-        favCtl.add(customer, new FavoriteActionDto(restaurant.getId()));
-        List<?> list = favCtl.list(customer);
+        favCtl.add(customer.getId(), new FavoriteActionDto(restaurant.getId()));
+        List<?> list = favCtl.list(customer.getId());
         assertEquals(1, list.size());
     }
 
@@ -98,11 +98,11 @@ class FullFlowIT {
     /* ---------- 5. place order ---------- */
     @Test @Order(5)
     void place_order() throws Exception {
-        OrderResponse resp = orderCtl.place(customer,
+        OrderResponse resp = orderCtl.place(customer.getId(),
                 new OrderCreateRequest(restaurant.getId(), List.of(burger.getId())));
 
         assertEquals("PLACED", resp.status());
-        assertEquals(restaurant.getId(), resp.restaurantId());
+        assertEquals(restaurant.getId(), resp.id());
     }
 
     /* ---------- clean-up ---------- */

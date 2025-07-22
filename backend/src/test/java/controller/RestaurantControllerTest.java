@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import service.RestaurantService;
+import service.SellerService;
 import util.mapper.RestaurantMapper;
 
 import java.util.List;
@@ -32,13 +33,13 @@ class RestaurantControllerTest {
     /* ---------- common fixtures ---------- */
     private Seller seller;           // “current” authenticated seller
     private Restaurant existing;     // persisted entity used in multiple tests
-
+    private SellerService sellerService;
     /* ---------- setup ---------- */
 
     @BeforeEach
     void setUp() {
         validator  = Validation.buildDefaultValidatorFactory().getValidator();
-        controller = new RestaurantController(restaurantService, validator);
+        controller = new RestaurantController(restaurantService, sellerService,validator);
 
         seller   = new Seller("Bob","+96170000000","pw","Beirut");
         seller.setId(55L);
@@ -60,7 +61,7 @@ class RestaurantControllerTest {
         doNothing().when(restaurantService)
                 .registerRestaurant(any(Restaurant.class), eq(seller));
 
-        RestaurantResponseDto resp = controller.register(seller, req);
+        RestaurantResponseDto resp = controller.register(seller.getId(), req);
 
         assertEquals("Bob's Grill", resp.name());
         verify(restaurantService).registerRestaurant(any(Restaurant.class), eq(seller));
@@ -77,7 +78,7 @@ class RestaurantControllerTest {
                 .thenReturn(existing);
         doNothing().when(restaurantService).updateRestaurant(existing);
 
-        RestaurantResponseDto resp = controller.update(1L, seller, patch);
+        RestaurantResponseDto resp = controller.update(1L, seller.getId(), patch);
 
         assertEquals("Grill 2", resp.name());
         verify(restaurantService).updateRestaurant(existing);
@@ -90,7 +91,7 @@ class RestaurantControllerTest {
         when(restaurantService.getRestaurantsBySeller(seller))
                 .thenReturn(List.of(existing));
 
-        List<RestaurantResponseDto> list = controller.listMine(seller);
+        List<RestaurantResponseDto> list = controller.listMine(seller.getId());
 
         assertEquals(1, list.size());
         verify(restaurantService).getRestaurantsBySeller(seller);

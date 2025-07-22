@@ -173,4 +173,7 @@ public class OrderService {
         orderDAO.update(order);
     }
 
+    public Object findCourierById(long courierId) {
+        return (new CourierService()).findById(courierId);
+    }
 }

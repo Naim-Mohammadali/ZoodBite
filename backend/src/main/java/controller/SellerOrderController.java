@@ -11,8 +11,8 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.MediaType;
 import model.*;
 import service.OrderService;
-import service.RatingService;
 import service.RestaurantService;
+import service.SellerService;
 import util.mapper.OrderMapper;
 
 import java.util.List;
@@ -24,19 +24,25 @@ import java.util.stream.Collectors;
 @Consumes(MediaType.APPLICATION_JSON)
 public class SellerOrderController {
 
-    private final OrderService orderService;
-    private final Validator    validator;
+    private final OrderService      orderService;
     private final RestaurantService restaurantService;
-    public SellerOrderController(RestaurantService restaurantService) {
-        this(new OrderService(),
-                Validation.buildDefaultValidatorFactory().getValidator(), restaurantService);
-    }
-    public SellerOrderController(OrderService service, Validator validator, RestaurantService restaurantService) {
-        this.orderService = service;
-        this.validator    = validator;
-        this.restaurantService = restaurantService;
+    private final SellerService     sellerService;
+    private final Validator         validator;
+
+    public SellerOrderController() {
+        this(new OrderService(), new RestaurantService(), new SellerService(),
+                Validation.buildDefaultValidatorFactory().getValidator());
     }
 
+    public SellerOrderController(OrderService orderService,
+                                 RestaurantService restaurantService,
+                                 SellerService sellerService,
+                                 Validator validator) {
+        this.orderService      = orderService;
+        this.restaurantService = restaurantService;
+        this.sellerService     = sellerService;
+        this.validator         = validator;
+    }
 
     @GET
     @Operation(summary = "List all orders for a seller's restaurant, optionally filtered by status")
@@ -46,13 +52,14 @@ public class SellerOrderController {
             @ApiResponse(responseCode = "404", description = "Restaurant not found")
     })
     public List<OrderResponse> listOrders(
-            Seller seller,
+            @QueryParam("sellerId") long sellerId,
             @QueryParam("restaurantId") long restaurantId,
-            @QueryParam("status") String statusOpt) throws Exception
-    {
-        FoodOrder.Status s = statusOpt == null ? null
-                : FoodOrder.Status.valueOf(statusOpt);
+            @QueryParam("status") String statusOpt) throws Exception {
+
+        Seller seller = (Seller) sellerService.findById(sellerId);
         Restaurant restaurant = restaurantService.findById(restaurantId);
+        FoodOrder.Status s = statusOpt == null ? null : FoodOrder.Status.valueOf(statusOpt);
+
         return orderService.listByRestaurant(seller, restaurant, s).stream()
                 .map(OrderMapper::toDto)
                 .collect(Collectors.toList());
@@ -68,13 +75,16 @@ public class SellerOrderController {
             @ApiResponse(responseCode = "404", description = "Order not found")
     })
     public OrderResponse updateStatus(
-            Seller seller,
+            @QueryParam("sellerId") long sellerId,
             @PathParam("orderId") long orderId,
-            OrderStatusPatchRequest dto) throws Exception
-    {
+            @Valid OrderStatusPatchRequest dto) throws Exception {
+
         validate(dto);
+
+        Seller seller = (Seller) sellerService.findById(sellerId);
         FoodOrder order = orderService.getOrderById(orderId);
         FoodOrder.Status ns = FoodOrder.Status.valueOf(dto.status());
+
         FoodOrder updated = orderService.updateStatusBySeller(seller, order, ns);
         return OrderMapper.toDto(updated);
     }
