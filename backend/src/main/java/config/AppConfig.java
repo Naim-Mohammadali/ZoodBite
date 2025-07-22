@@ -1,0 +1,30 @@
+package config;
+
+import controller.*;
+import jakarta.ws.rs.ApplicationPath;
+import org.glassfish.jersey.server.ResourceConfig;
+import service.CouponService;
+
+@ApplicationPath("/")
+public class AppConfig extends ResourceConfig {
+    public AppConfig() {
+        register(AdminController.class);
+        register(CourierController.class);
+        register(CouponController.class);
+        register(CustomerController.class); // if exists
+        register(DeliveryController.class);
+        register(FavoriteController.class);
+        register(MenuItemController.class);
+        register(OrderController.class);
+        register(RestaurantController.class);
+        register(SellerOrderController.class);
+        register(SwaggerController.class);
+        register(UserController.class);
+        register(RootController.class);
+
+        // Optional: Exception handling
+        // register(GenericExceptionMapper.class);
+
+        packages("io.swagger.v3.jaxrs2.integration.resources"); // Swagger
+    }
+}

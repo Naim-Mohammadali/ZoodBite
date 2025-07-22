@@ -76,6 +76,7 @@ service\FavoriteService.class
 util\JwtUtil.class
 dto\restaurant\RestaurantCreateDto.class
 dto\delivery\DeliveryStatusPatchRequest.class
+config\AppConfig.class
 dto\order\CustomerOrderRequest.class
 util\mapper\UserMapper.class
 dao\CouponDAO.class
