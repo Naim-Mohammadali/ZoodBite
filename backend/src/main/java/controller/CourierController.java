@@ -31,9 +31,11 @@ public class CourierController {
     private final Validator validator;
 
     public CourierController() {
-        this(new CourierService(),
-                Validation.buildDefaultValidatorFactory().getValidator());
+        System.out.println("🟢 CourierController initialized");
+        this.service = new CourierService();
+        this.validator = Validation.buildDefaultValidatorFactory().getValidator();
     }
+
 
     public CourierController(CourierService service, Validator validator) {
         this.service = service;

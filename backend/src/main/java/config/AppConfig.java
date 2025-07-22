@@ -21,6 +21,7 @@ public class AppConfig extends ResourceConfig {
         register(SwaggerController.class);
         register(UserController.class);
         register(RootController.class);
+        System.out.println("✅ AppConfig initialized");
 
         // Optional: Exception handling
         // register(GenericExceptionMapper.class);

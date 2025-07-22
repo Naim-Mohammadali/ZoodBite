@@ -13,7 +13,7 @@ import java.io.InputStream;
 public class SwaggerController {
 
     @GET
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response serveOpenApi() {
         InputStream stream = getClass().getClassLoader().getResourceAsStream("openapi.yaml");
         if (stream == null) {

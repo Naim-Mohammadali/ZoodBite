@@ -58,7 +58,7 @@ class DeliveryControllerTest {
         when(orderService.listByCourier(courier, null))
                 .thenReturn(List.of(order));
 
-        List<OrderResponse> list = controller.myDeliveries(courier, null);
+        List<OrderResponse> list = controller.myDeliveries(courier.getId(), null);
 
         assertEquals(1, list.size());
         verify(orderService).listByCourier(courier, null);
@@ -72,7 +72,7 @@ class DeliveryControllerTest {
                 .thenReturn(order);
 
         OrderResponse resp = controller.patchStatus(
-                courier, order.getId(), new DeliveryStatusPatchRequest("IN_TRANSIT"));
+                courier.getId(), order.getId(), new DeliveryStatusPatchRequest("IN_TRANSIT"));
 
         assertEquals("IN_TRANSIT", resp.status());
     }

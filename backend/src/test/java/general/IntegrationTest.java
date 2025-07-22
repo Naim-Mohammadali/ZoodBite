@@ -63,7 +63,7 @@ public class IntegrationTest {
 
             // 5️⃣ Place an order
             List<MenuItem> items = List.of(item1, item2);
-            orderService.placeOrder(customer, r, items);
+            orderService.placeOrder(customer, r, items, null);
             System.out.println("🛒 Order placed");
 
             // 6️⃣ Fetch order and assign courier

@@ -9,6 +9,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import service.MenuItemService;
+import service.RestaurantService;
+import service.SellerService;
 
 import java.util.List;
 
@@ -35,7 +37,7 @@ class MenuItemControllerTest {
     @BeforeEach
     void setUp() {
         validator  = Validation.buildDefaultValidatorFactory().getValidator();
-        controller = new MenuItemController(menuItemService, validator);
+        controller = new MenuItemController(menuItemService,new RestaurantService(),new SellerService(),validator);
 
         seller      = new Seller("Bob","+9617000000","pwasdfgh","Beirut");
         seller.setId(11L);
@@ -63,7 +65,7 @@ class MenuItemControllerTest {
         doNothing().when(menuItemService)
                 .addMenuItem(eq(seller), eq(restaurant), any(MenuItem.class));
 
-        MenuItemResponse resp = controller.add(seller, restaurant, req);
+        MenuItemResponse resp = controller.add(seller.getId(), restaurant.getId(), req);
 
         assertEquals("Burger", resp.name());
         assertEquals(10, resp.quantity());
@@ -81,7 +83,7 @@ class MenuItemControllerTest {
         when(menuItemService.getById(31L)).thenReturn(item);
         doNothing().when(menuItemService).updateMenuItem(seller, item);
 
-        MenuItemResponse resp = controller.update(seller, 31L, patch);
+        MenuItemResponse resp = controller.update(seller.getId(), 31L, patch);
 
         assertEquals("Cheese Burger", resp.name());
         assertEquals(12, resp.quantity());
@@ -95,7 +97,7 @@ class MenuItemControllerTest {
         when(menuItemService.getById(31L)).thenReturn(item);
         doNothing().when(menuItemService).deleteMenuItem(seller, item);
 
-        controller.delete(seller, 31L);
+        controller.delete(seller.getId(), 31L);
 
         verify(menuItemService).deleteMenuItem(seller, item);
     }
