@@ -1,6 +1,9 @@
 package controller;
 
 import dto.coupon.CouponCreateDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.*;
 import jakarta.ws.rs.*;
@@ -31,6 +34,12 @@ public class CouponController {
 
     @POST
     @RolesAllowed("admin")
+    @Operation(summary = "Create a new coupon")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Coupon created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
     public void create(CouponCreateDto dto) {
         validate(dto);
         Coupon c = new Coupon();
@@ -42,8 +51,12 @@ public class CouponController {
         service.create(c);
     }
 
-    @GET
-    @Path("/{code}")
+    @GET @Path("/{code}")
+    @Operation(summary = "Get coupon details by code")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Coupon details retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Coupon not found or expired")
+    })
     public Coupon getCouponInfo(@PathParam("code") String code) throws Exception {
         return service.findValidCoupon(code);
     }

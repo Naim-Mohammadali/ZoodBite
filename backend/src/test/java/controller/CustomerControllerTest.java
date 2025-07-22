@@ -1,5 +1,7 @@
 package controller;
 
+import dto.admin.ChangePasswordRequest;
+import dto.customer.ChangePhoneRequest;
 import dto.order.CustomerOrderRequest;
 import dto.order.OrderResponse;
 import dto.user.request.UserRegisterRequest;
@@ -73,7 +75,7 @@ class CustomerControllerTest {
 
         when(service.changePhone(1L, "+96176667777")).thenReturn(updated);
 
-        UserProfileResponse resp = controller.changePhone(1L, "+96176667777");
+        UserProfileResponse resp = controller.changePhone(1L, new ChangePhoneRequest("+96176667777"));
 
         assertEquals("+96176667777", resp.phone());
         verify(service).changePhone(1L, "+96176667777");
@@ -99,7 +101,7 @@ class CustomerControllerTest {
 
         when(service.changePassword(1L, "newSecurePwd")).thenReturn(updated);
 
-        UserProfileResponse resp = controller.changePassword(1L, "newSecurePwd");
+        UserProfileResponse resp = controller.changePassword(1L, new ChangePasswordRequest("newSecurePwd"));
 
         assertEquals("Sara", resp.name());
         verify(service).changePassword(1L, "newSecurePwd");

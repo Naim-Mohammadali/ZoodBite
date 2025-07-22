@@ -1,5 +1,7 @@
 package controller;
 
+import dto.admin.ChangePasswordRequest;
+import dto.customer.ChangePhoneRequest;
 import dto.order.CustomerOrderRequest;
 import dto.order.OrderResponse;
 import dto.rating.RatingRequestDto;
@@ -7,10 +9,14 @@ import dto.restaurant.RestaurantResponseDto;
 import dto.user.request.UserRegisterRequest;
 import dto.user.request.UserUpdateRequest;
 import dto.user.response.UserProfileResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.*;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.core.MediaType;
 import model.*;
 import service.*;
 import util.mapper.OrderMapper;
@@ -19,7 +25,10 @@ import util.mapper.UserMapper;
 
 import java.util.List;
 import java.util.Set;
+@Path("/customers")
 
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public class CustomerController {
 
     private final CustomerService service;
@@ -50,6 +59,12 @@ public class CustomerController {
         this.couponService = couponService;
     }
 
+    @POST @Path("/register")
+    @Operation(summary = "Register a new customer account")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Customer account created"),
+            @ApiResponse(responseCode = "400", description = "Invalid input")
+    })
 
     public UserProfileResponse register(UserRegisterRequest dto) {
         validate(dto);
@@ -61,30 +76,61 @@ public class CustomerController {
         Customer saved = service.registerCustomer(fixed);
         return UserMapper.toDto(saved);
     }
-
-    public UserProfileResponse view(long id) {
+    @GET @Path("/{id}")
+    @Operation(summary = "View customer profile")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Profile retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Customer not found")
+    })
+    public UserProfileResponse view(@PathParam("id") long id){
         return UserMapper.toDto(service.viewProfile(id));
     }
-
+    @PATCH @Path("/{id}")
+    @Operation(summary = "Update customer profile")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Profile updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "404", description = "Customer not found")
+    })
     public UserProfileResponse update(long id, UserUpdateRequest patch) {
         validate(patch);
         Customer updated = service.updateAddress(id, patch.address() == null ? "" : patch.address());
         return UserMapper.toDto(updated);
     }
 
-    public UserProfileResponse changePhone(long id, String phone) {
-        Customer c = service.changePhone(id, phone);
+    @PATCH @Path("/{id}/phone")
+    @Operation(summary = "Change customer phone number")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Phone updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "404", description = "Customer not found")
+    })
+    public UserProfileResponse changePhone(@PathParam("id") long id, ChangePhoneRequest request) {
+        Customer c = service.changePhone(id, request.phone());
         return UserMapper.toDto(c);
     }
 
-    public UserProfileResponse changePassword(long id, String newPwd) {
-        Customer c = service.changePassword(id, newPwd);
+    @PATCH @Path("/{id}/password")
+    @Operation(summary = "Change customer password")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Password updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "404", description = "Customer not found")
+    })
+    public UserProfileResponse changePassword(@PathParam("id") long id, ChangePasswordRequest request)
+    {
+        Customer c = service.changePassword(id, request.newPassword());
         return UserMapper.toDto(c);
     }
 
-    @POST
-    @Path("/orders")
+    @POST @Path("/orders")
     @RolesAllowed("customer")
+    @Operation(summary = "Place a new order")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Order placed successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
     public OrderResponse placeOrder(CustomerOrderRequest dto,
                                     @QueryParam("userId") long userId) throws Exception {
         Customer customer = (Customer) userService.findById(userId);
@@ -106,9 +152,13 @@ public class CustomerController {
         return OrderMapper.toDto(saved);
     }
 
-    @GET
-    @Path("/orders")
+    @GET @Path("/orders")
     @RolesAllowed("customer")
+    @Operation(summary = "Get order history for a customer")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Order history retrieved successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
     public List<OrderResponse> getOrderHistory(@QueryParam("userId") long userId) {
         Customer customer = (Customer) userService.findById(userId);
         return orderService.getOrderHistory(customer)
@@ -117,9 +167,13 @@ public class CustomerController {
                 .toList();
     }
 
-    @GET
-    @Path("/favorites")
+    @GET @Path("/favorites")
     @RolesAllowed("customer")
+    @Operation(summary = "List favorite restaurants for a customer")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Favorites listed successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
     public List<RestaurantResponseDto> listFavorites(@QueryParam("userId") long userId) {
         Customer customer = (Customer) userService.findById(userId);
         return favorite.list(customer)
@@ -128,16 +182,25 @@ public class CustomerController {
                 .toList();
     }
 
-    @POST
-    @Path("/ratings")
+    @POST @Path("/ratings")
     @RolesAllowed("customer")
+    @Operation(summary = "Rate a restaurant")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Rating submitted successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
     public void rate(RatingRequestDto dto, @QueryParam("userId") long userId) {
         Customer customer = (Customer) userService.findById(userId);
         rating.addOrUpdate(customer, dto.restaurantId(), dto.score());
     }
 
-    @GET
-    @Path("/ratings/{restaurantId}")
+    @GET @Path("/ratings/{restaurantId}")
+    @Operation(summary = "Get average rating for a restaurant")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Average rating retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Restaurant not found")
+    })
     public double getAverageRating(@PathParam("restaurantId") long id) {
         return rating.getAverageRating(id);
     }

@@ -1,5 +1,7 @@
 package controller;
 
+import dto.courier.CourierAvailabilityRequest;
+import dto.customer.ChangePhoneRequest;
 import dto.user.request.UserRegisterRequest;
 import dto.user.response.UserProfileResponse;
 import jakarta.validation.Validation;
@@ -49,7 +51,7 @@ class CourierControllerTest {
 
         when(service.setAvailability(3L, true)).thenReturn(courier);
 
-        UserProfileResponse resp = controller.setAvailability(3L, true);
+        UserProfileResponse resp = controller.setAvailability(3L, new CourierAvailabilityRequest(true));
 
         assertTrue(resp.status() == null || courier.isAvailable()); // adjust if DTO includes availability
         verify(service).setAvailability(3L, true);
@@ -61,7 +63,7 @@ class CourierControllerTest {
 
         when(service.changePhone(3L, "+9617999999")).thenReturn(updated);
 
-        UserProfileResponse resp = controller.changePhone(3L, "+9617999999");
+        UserProfileResponse resp = controller.changePhone(3L, new ChangePhoneRequest("+9617999999"));
 
         assertEquals("+9617999999", resp.phone());
         verify(service).changePhone(3L, "+9617999999");

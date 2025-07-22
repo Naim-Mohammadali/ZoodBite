@@ -64,9 +64,7 @@ class OrderControllerTest {
 
         when(menuItemService.getById(item.getId())).thenReturn(item);
         doNothing().when(orderService)
-                .placeOrder(eq(customer),
-                        any(Restaurant.class),
-                        eq(List.of(item)));
+                .placeOrder(eq(customer), any(Restaurant.class), eq(List.of(item)), null);
         when(orderService.getOrdersByCustomer(customer))
                 .thenReturn(List.of(persisted));
 
@@ -76,7 +74,7 @@ class OrderControllerTest {
         assertEquals(restaurant.getId(), resp.id());
         verify(orderService).placeOrder(eq(customer),
                 any(Restaurant.class),
-                eq(List.of(item)));    }
+                eq(List.of(item)), null);    }
 
     /* ------------ myOrders ------------ */
 

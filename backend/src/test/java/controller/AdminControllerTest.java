@@ -2,6 +2,7 @@ package controller;
 
 import dto.admin.AdminRestaurantStatusPatch;
 import dto.admin.AdminUserRolePatch;
+import dto.admin.ChangePasswordRequest;
 import dto.user.request.UserRegisterRequest;
 import dto.user.request.UserUpdateRequest;
 import dto.user.response.UserProfileResponse;
@@ -120,7 +121,7 @@ class AdminControllerTest {
         var admin = new Admin("A", "+961", "pwd");
         when(adminService.changePassword(5L, "newpass")).thenReturn(admin);
 
-        var resp = controller.changePassword(5L, "newpass");
+        var resp = controller.changePassword(5L, new ChangePasswordRequest("newpass"));
 
         assertEquals("+961", resp.phone());
         verify(adminService).changePassword(5L, "newpass");

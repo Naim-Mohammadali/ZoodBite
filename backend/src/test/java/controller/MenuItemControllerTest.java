@@ -107,7 +107,7 @@ class MenuItemControllerTest {
         when(menuItemService.getRestaurantMenu(restaurant))
                 .thenReturn(List.of(item));
 
-        List<MenuItemResponse> list = controller.list(restaurant);
+        List<MenuItemResponse> list = controller.list(restaurant.getId());
 
         assertEquals(1, list.size());
         assertEquals("Burger", list.getFirst().name());

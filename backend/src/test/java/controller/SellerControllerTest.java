@@ -1,5 +1,7 @@
 package controller;
 
+import dto.admin.ChangePasswordRequest;
+import dto.customer.ChangePhoneRequest;
 import dto.user.request.UserRegisterRequest;
 import dto.user.response.UserProfileResponse;
 import jakarta.validation.Validation;
@@ -48,7 +50,7 @@ class SellerControllerTest {
 
         when(service.updatePhone(2L, "+96178345688")).thenReturn(updated);
 
-        UserProfileResponse resp = controller.updatePhone(2L, "+96178345688");
+        UserProfileResponse resp = controller.updatePhone(2L, new ChangePhoneRequest("+96178345688"));
 
         assertEquals("+96178345688", resp.phone());
         verify(service).updatePhone(2L, "+96178345688");
@@ -60,7 +62,7 @@ class SellerControllerTest {
 
         when(service.changePassword(2L,"newPdfghW")).thenReturn(updated);
 
-        UserProfileResponse resp = controller.changePassword(2L,"newPdfghW");
+        UserProfileResponse resp = controller.changePassword(2L, new ChangePasswordRequest("newPdfghW"));
 
         assertEquals("newPdfghW", updated.getPassword()); // entity holds new pw
         verify(service).changePassword(2L,"newPdfghW");

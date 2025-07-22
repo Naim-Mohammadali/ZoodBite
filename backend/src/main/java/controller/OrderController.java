@@ -43,7 +43,7 @@ public class OrderController {
                 })
                 .collect(Collectors.toList());
 
-        orderService.placeOrder(customer, restaurant, items);
+        orderService.placeOrder(customer, restaurant, items, null);
 
         FoodOrder persisted = orderService.getOrdersByCustomer(customer).getLast();
         return OrderMapper.toDto(persisted);

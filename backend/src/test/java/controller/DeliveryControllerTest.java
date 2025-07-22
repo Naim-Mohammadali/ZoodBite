@@ -72,7 +72,7 @@ class DeliveryControllerTest {
                 .thenReturn(order);
 
         OrderResponse resp = controller.patchStatus(
-                courier, order, new DeliveryStatusPatchRequest("IN_TRANSIT"));
+                courier, order.getId(), new DeliveryStatusPatchRequest("IN_TRANSIT"));
 
         assertEquals("IN_TRANSIT", resp.status());
     }

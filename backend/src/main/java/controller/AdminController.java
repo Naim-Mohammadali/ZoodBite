@@ -2,10 +2,14 @@ package controller;
 
 import dto.admin.AdminRestaurantStatusPatch;
 import dto.admin.AdminUserRolePatch;
+import dto.admin.ChangePasswordRequest;
 import dto.order.OrderResponse;
 import dto.user.request.*;
 import dto.user.response.UserProfileResponse;
 import dto.restaurant.RestaurantResponseDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.*;
 import jakarta.ws.rs.*;
@@ -47,6 +51,11 @@ public class AdminController {
     }
 
     @POST @Path("/accounts")
+    @Operation(summary = "Register a new admin account")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Admin account successfully created"),
+            @ApiResponse(responseCode = "400", description = "Invalid input")
+    })
     public UserProfileResponse registerAdmin(UserRegisterRequest dto) {
         validate(dto);
 
@@ -57,8 +66,12 @@ public class AdminController {
         Admin saved = adminService.registerAdmin(fixed);
         return UserMapper.toDto(saved);
     }
-
     @GET @Path("/accounts")
+    @Operation(summary = "List users by role (or all users if role is omitted)")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "List retrieved successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid role specified")
+    })
     public List<UserProfileResponse> listUsers(@QueryParam("role") String roleOpt) {
         List<User> list = roleOpt == null
                 ? adminService.listAllUsers()
@@ -68,6 +81,12 @@ public class AdminController {
     }
 
     @PATCH @Path("/accounts/{id}")
+    @Operation(summary = "Update admin user profile")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Profile updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "404", description = "Admin user not found")
+    })
     public UserProfileResponse updateProfile(@PathParam("id") long id,
                                              UserUpdateRequest patch) {
         validate(patch);
@@ -81,16 +100,32 @@ public class AdminController {
     }
 
     @PATCH @Path("/accounts/{id}/block")
+    @Operation(summary = "Block a user account")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "User account blocked"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
     public UserProfileResponse blockUser(@PathParam("id") long userId) {
         return UserMapper.toDto(adminService.blockUser(userId));
     }
 
     @PATCH @Path("/accounts/{id}/unblock")
+    @Operation(summary = "Unblock a user account")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "User account unblocked"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
     public UserProfileResponse unblockUser(@PathParam("id") long userId) {
         return UserMapper.toDto(adminService.unblockUser(userId));
     }
 
     @PATCH @Path("/accounts/{id}/role")
+    @Operation(summary = "Change the role of a user")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "User role updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid role"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
     public UserProfileResponse changeRole(@PathParam("id") long userId,
                                           AdminUserRolePatch dto) {
         validate(dto);
@@ -100,12 +135,25 @@ public class AdminController {
 
 
     @PATCH @Path("/accounts/{id}/password")
+    @Operation(summary = "Change user password")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Password changed successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
     public UserProfileResponse changePassword(@PathParam("id") long id,
-                                              String newPwd) {
-        return UserMapper.toDto(adminService.changePassword(id, newPwd));
+                                              ChangePasswordRequest request) {
+        validate(request);
+        return UserMapper.toDto(adminService.changePassword(id, request.newPassword()));
     }
 
+
     @GET @Path("/restaurants")
+    @Operation(summary = "List restaurants by status")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Restaurants listed successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid status")
+    })
     public List<RestaurantResponseDto> listRestaurants(
             @QueryParam("status") String statusOpt) {
 
@@ -120,6 +168,12 @@ public class AdminController {
     }
 
     @PATCH @Path("/restaurants/{id}")
+    @Operation(summary = "Update restaurant status")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Restaurant status updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid status or input"),
+            @ApiResponse(responseCode = "404", description = "Restaurant not found")
+    })
     public RestaurantResponseDto patchRestaurant(@PathParam("id") long restId,
                                               AdminRestaurantStatusPatch dto)
             throws Exception {
@@ -137,6 +191,11 @@ public class AdminController {
     }
 
     @GET @Path("/orders")
+    @Operation(summary = "List orders by status")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Orders listed successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid status")
+    })
     public List<OrderResponse> listOrders(@QueryParam("status") String statusOpt) {
         FoodOrder.Status s = statusOpt == null ? null
                 : FoodOrder.Status.valueOf(statusOpt);
