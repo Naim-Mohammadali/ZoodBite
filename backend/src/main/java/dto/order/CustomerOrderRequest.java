@@ -5,7 +5,7 @@ import java.util.List;
 
 public record CustomerOrderRequest(
         @NotNull Long restaurantId,
-        @NotNull List<Long> itemIds,
+        @NotNull List<@NotNull Long> itemIds,
         String comment,
         String couponCode
 ) {}

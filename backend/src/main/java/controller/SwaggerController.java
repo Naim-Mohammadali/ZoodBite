@@ -6,10 +6,9 @@ import java.io.InputStream;
 
 @Path("/openapi.yaml")
 public class SwaggerController {
-
     @GET
     @Produces(MediaType.TEXT_PLAIN)
-    public InputStream serve() {
+    public InputStream serveOpenApi() {
         return getClass().getClassLoader().getResourceAsStream("openapi.yaml");
     }
 }

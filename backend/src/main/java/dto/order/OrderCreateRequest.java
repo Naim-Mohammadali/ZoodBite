@@ -5,4 +5,5 @@ import java.util.List;
 
 public record OrderCreateRequest(
         @NotNull Long restaurantId,
-        @NotEmpty List<@NotNull Long> itemIds) { }
+        @NotEmpty(message = "Order must contain at least one item")
+        List<@NotNull Long> itemIds) { }
