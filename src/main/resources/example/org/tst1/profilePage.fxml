@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.effect.ColorAdjust?>
+<?import javafx.scene.effect.Light.Distant?>
+<?import javafx.scene.effect.Lighting?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="example.org.tst1.HelloController">
+   <children>
+      <GridPane prefHeight="99.0" prefWidth="900.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#391daa" height="98.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="257.0" GridPane.columnIndex="3" GridPane.halignment="RIGHT" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#391daa" height="52.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="901.0">
+               <GridPane.margin>
+                  <Insets bottom="50.0" />
+               </GridPane.margin>
+            </Rectangle>
+            <Rectangle arcHeight="150.0" arcWidth="500.0" fill="#391daa" height="97.0" stroke="#391daa" strokeDashOffset="200.0" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeMiterLimit="200.0" strokeType="INSIDE" strokeWidth="200.0" width="900.0" />
+            <GridPane prefHeight="75.0" prefWidth="300.0" GridPane.columnIndex="1">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints maxHeight="77.99999618530273" minHeight="10.0" prefHeight="77.99999618530273" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="43.333343505859375" minHeight="10.0" prefHeight="18.000003814697266" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <ImageView fx:id="homePageImageView" fitHeight="89.0" fitWidth="51.0" onMouseClicked="#handleHomeImageClicked" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER">
+                     <image>
+                        <Image url="@png/home-2502.png" />                     </image>
+                     <effect>
+                        <ColorAdjust brightness="1.0" />
+                     </effect>
+                  </ImageView>
+               </children>
+            </GridPane>
+            <GridPane prefHeight="75.0" prefWidth="300.0" GridPane.columnIndex="2">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints maxHeight="77.99999618530273" minHeight="10.0" prefHeight="77.99999618530273" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="43.333343505859375" minHeight="10.0" prefHeight="18.000003814697266" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
+                  <ImageView fx:id="historyPageImageView" fitHeight="52.0" fitWidth="49.0" onMouseClicked="#handleHistoryImageClicked" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER">
+                     <image>
+                        <Image url="@png/history-7614.png" />
+                     </image>
+                     <effect>
+                        <ColorAdjust brightness="1.0" />
+                     </effect>
+                  </ImageView>
+               </children>
+            </GridPane>
+            <GridPane prefHeight="75.0" prefWidth="300.0" GridPane.columnIndex="3">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints maxHeight="77.99999618530273" minHeight="10.0" prefHeight="77.99999618530273" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="43.333343505859375" minHeight="10.0" prefHeight="18.000003814697266" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
+                  <ImageView fitHeight="50.0" fitWidth="46.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER">
+                     <image>
+                        <Image url="@png/user-6774.png" />
+                     </image>
+                     <effect>
+                        <Lighting bumpInput="$null" diffuseConstant="2.0" specularConstant="2.0" specularExponent="8.85" surfaceScale="0.0">
+                           <light>
+                              <Light.Distant>
+                                 <color>
+                                    <Color red="0.9098039269447327" green="0.6196078658103943" blue="0.10980392247438431" />
+                                 </color>
+                              </Light.Distant>
+                           </light>
+                        </Lighting>
+                     </effect>
+                  </ImageView>
+                  <Rectangle arcHeight="30.0" arcWidth="10.0" fill="#e89e1c" height="8.0" stroke="WHITE" strokeLineCap="ROUND" strokeType="INSIDE" strokeWidth="0.0" width="110.0" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM" />
+               </children>
+            </GridPane>
+            <GridPane prefHeight="75.0" prefWidth="300.0">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints maxHeight="77.99999618530273" minHeight="10.0" prefHeight="77.99999618530273" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="43.333343505859375" minHeight="10.0" prefHeight="18.000003814697266" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
+                  <ImageView fitHeight="61.0" fitWidth="68.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER">
+                     <image>
+                        <Image url="@png/yellowLogo.png" />
+                     </image>
+                     <GridPane.margin>
+                        <Insets top="10.0" />
+                     </GridPane.margin>
+                  </ImageView>
+               </children>
+            </GridPane>
+         </children>
+      </GridPane>
+      <GridPane prefHeight="209.0" prefWidth="900.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="442.66668701171875" minWidth="10.0" prefWidth="341.3333740234375" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="565.3333129882812" minWidth="10.0" prefWidth="558.6666259765625" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints maxHeight="213.33332316080728" minHeight="10.0" prefHeight="212.66666666666666" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <ImageView fitHeight="143.0" fitWidth="145.0" pickOnBounds="true" preserveRatio="true" GridPane.valignment="CENTER">
+               <image>
+                  <Image url="@png/no-profile-picture-15256.png" />
+               </image>
+               <GridPane.margin>
+                  <Insets left="60.0" top="10.0" />
+               </GridPane.margin>
+            </ImageView>
+            <VBox prefHeight="388.0" prefWidth="559.0" GridPane.columnIndex="1">
+               <children>
+                  <Label fx:id="namelabel" prefHeight="93.0" prefWidth="469.0" text="Name">
+                     <padding>
+                        <Insets top="40.0" />
+                     </padding>
+                     <font>
+                        <Font name="Almarai" size="24.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="lastNameLabel" prefHeight="52.0" prefWidth="289.0" text="Last Name">
+                     <font>
+                        <Font name="Almarai Extrabold" size="44.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+            <VBox prefHeight="200.0" prefWidth="100.0" />
+         </children>
+      </GridPane>
+      <GridPane prefHeight="189.0" prefWidth="900.0">
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="441.3333333333333" minWidth="10.0" prefWidth="279.99995930989587" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="441.3333333333333" minWidth="10.0" prefWidth="279.99995930989587" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="441.3333333333333" minWidth="10.0" prefWidth="316.6667175292969" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="636.0000406901041" minWidth="10.0" prefWidth="303.99994913736975" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label text="Username :">
+               <font>
+                  <Font name="Almarai Bold" size="14.0" />
+               </font>
+               <padding>
+                  <Insets left="80.0" />
+               </padding>
+            </Label>
+            <Label text="Phone number :" GridPane.columnIndex="2">
+               <font>
+                  <Font name="Almarai Bold" size="14.0" />
+               </font>
+               <padding>
+                  <Insets left="80.0" />
+               </padding>
+            </Label>
+            <Label text="Email :" GridPane.columnIndex="2" GridPane.rowIndex="1">
+               <font>
+                  <Font name="Almarai Bold" size="14.0" />
+               </font>
+               <padding>
+                  <Insets left="80.0" />
+               </padding>
+            </Label>
+            <Label text="Bank id :" GridPane.rowIndex="1">
+               <font>
+                  <Font name="Almarai Bold" size="14.0" />
+               </font>
+               <padding>
+                  <Insets left="80.0" />
+               </padding>
+            </Label>
+            <Label text="Password :" GridPane.rowIndex="2">
+               <font>
+                  <Font name="Almarai Bold" size="14.0" />
+               </font>
+               <padding>
+                  <Insets left="80.0" />
+               </padding>
+            </Label>
+            <Label fx:id="usernameLabel" text="Username" GridPane.columnIndex="1">
+               <font>
+                  <Font name="Almarai" size="12.0" />
+               </font>
+            </Label>
+            <Label fx:id="phoneNumberLabel" prefHeight="15.0" prefWidth="78.0" text="12345678910" GridPane.columnIndex="3">
+               <font>
+                  <Font name="Almarai" size="12.0" />
+               </font>
+            </Label>
+            <Label fx:id="emailLabel" text="No Email" GridPane.columnIndex="3" GridPane.rowIndex="1">
+               <font>
+                  <Font name="Almarai" size="12.0" />
+               </font>
+            </Label>
+            <Label fx:id="bankIdLabel" text="Null" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <font>
+                  <Font name="Almarai" size="12.0" />
+               </font>
+            </Label>
+            <Label fx:id="passwordLabel" prefHeight="34.0" prefWidth="81.0" text="..........." GridPane.columnIndex="1" GridPane.rowIndex="2">
+               <font>
+                  <Font name="Almarai" size="37.0" />
+               </font>
+               <GridPane.margin>
+                  <Insets bottom="20.0" />
+               </GridPane.margin>
+            </Label>
+            <Hyperlink onAction="#goTOConfigurationPage" text="✎ Configure my information" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="2">
+               <padding>
+                  <Insets left="80.0" />
+               </padding>
+            </Hyperlink>
+            <Hyperlink onAction="#logout" text="Logout" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+         </children>
+         <padding>
+            <Insets top="10.0" />
+         </padding>
+      </GridPane>
+   </children>
+   <effect>
+      <ColorAdjust />
+   </effect>
+</VBox>
