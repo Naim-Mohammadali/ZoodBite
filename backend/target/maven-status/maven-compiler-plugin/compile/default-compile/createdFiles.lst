@@ -1,7 +1,6 @@
 dao\OrderDAO.class
 dto\restaurant\MenuCreateDto.class
 service\AuthService.class
-controller\TestController$Dummy.class
 dto\coupon\CouponCreateDto.class
 service\AdminService.class
 controller\OrderController.class
@@ -34,8 +33,8 @@ service\SellerService.class
 dto\order\OrderResponse.class
 service\OrderService.class
 rest\AuthResource.class
+config\ObjectMapperResolver.class
 dto\restaurant\RestaurantCreateDto.class
-controller\TestController.class
 dto\delivery\DeliveryStatusPatchRequest.class
 config\AppConfig.class
 dao\CouponDAO.class
@@ -72,7 +71,6 @@ model\MenuItem.class
 dao\OrderDAOImpl.class
 dao\RestaurantDAO.class
 controller\CouponController.class
-config\GlobalExceptionMapper.class
 model\Rating.class
 model\Restaurant.class
 util\mapper\OrderMapper.class
