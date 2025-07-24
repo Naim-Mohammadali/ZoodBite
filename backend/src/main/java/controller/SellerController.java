@@ -37,23 +37,6 @@ public class SellerController {
         this.validator = validator;
     }
 
-    @POST
-    @Path("/register")
-    @Operation(summary = "Register a new seller account")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Seller account created successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid input")
-    })
-    public UserProfileResponse registerSeller(@Valid UserRegisterRequest dto) {
-        validate(dto);
-        UserRegisterRequest fixed = new UserRegisterRequest(
-                dto.name(), dto.phone(), dto.email(),
-                dto.password(), dto.address(), Role.SELLER);
-
-        Seller saved = service.registerSeller(fixed);
-        return UserMapper.toDto(saved);
-    }
-
     @GET
     @Path("/{id}")
     @Operation(summary = "View seller profile")

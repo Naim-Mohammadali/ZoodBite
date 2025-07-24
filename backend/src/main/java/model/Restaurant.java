@@ -23,9 +23,6 @@ public class Restaurant implements Serializable {
     @Column(unique = true, nullable = false)
     private String phone;
 
-    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
-    private Set<Rating> ratings = new HashSet<>();
-
 
     /* NEW → optional logo stored as base64 */
     @Lob
@@ -39,6 +36,9 @@ public class Restaurant implements Serializable {
     @Column(name = "additional_fee", nullable = false)
     private Integer additionalFee = 0;
 
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Menu> menus = new ArrayList<>();
+
     /* ---------- status & relations ---------- */
     @Enumerated(EnumType.STRING)
     private Status status = Status.PENDING;
@@ -46,6 +46,10 @@ public class Restaurant implements Serializable {
     @ManyToOne
     @JoinColumn(name = "seller_id", nullable = false)
     private Seller seller;
+
+    public List<Menu> getMenus() {
+        return menus;
+    }
 
     /* ---------- enum ---------- */
     public enum Status { PENDING, ACTIVE, BLOCKED }
@@ -59,7 +63,9 @@ public class Restaurant implements Serializable {
     public void setMenuItems(List<MenuItem> l){ this.menuItems = l; }
 
     /* ---------- constructors ---------- */
-    public Restaurant() {}                       // JPA only
+    public Restaurant() {
+        this.menus = new ArrayList<>();
+    }
 
     public Restaurant(String name, String address, String phone,
                       Seller seller,

@@ -5,6 +5,7 @@ import dto.order.OrderResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.*;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.Path;
@@ -19,7 +20,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Path("/seller/orders")
+import static model.FoodOrder.Status.ACCEPTED;
+import static model.FoodOrder.Status.REJECTED;
+
+@Path("/restaurants/orders")
+@RolesAllowed("seller")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class SellerOrderController {
@@ -52,11 +57,11 @@ public class SellerOrderController {
             @ApiResponse(responseCode = "404", description = "Restaurant not found")
     })
     public List<OrderResponse> listOrders(
-            @QueryParam("sellerId") long sellerId,
+            @HeaderParam("Authorization") String token,
             @QueryParam("restaurantId") long restaurantId,
             @QueryParam("status") String statusOpt) throws Exception {
 
-        Seller seller = (Seller) sellerService.findById(sellerId);
+        Seller seller = extractSeller(token);
         Restaurant restaurant = restaurantService.findById(restaurantId);
         FoodOrder.Status s = statusOpt == null ? null : FoodOrder.Status.valueOf(statusOpt);
 
@@ -66,7 +71,7 @@ public class SellerOrderController {
     }
 
     @PATCH
-    @Path("/orders/{orderId}/status")
+    @Path("/{orderId}")
     @Operation(summary = "Update order status by seller")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Order status updated successfully"),
@@ -75,18 +80,26 @@ public class SellerOrderController {
             @ApiResponse(responseCode = "404", description = "Order not found")
     })
     public OrderResponse updateStatus(
-            @QueryParam("sellerId") long sellerId,
+            @HeaderParam("Authorization") String token,
             @PathParam("orderId") long orderId,
             @Valid OrderStatusPatchRequest dto) throws Exception {
 
         validate(dto);
 
-        Seller seller = (Seller) sellerService.findById(sellerId);
+        Seller seller = extractSeller(token);
         FoodOrder order = orderService.getOrderById(orderId);
-        FoodOrder.Status ns = FoodOrder.Status.valueOf(dto.status());
-
+        FoodOrder.Status ns;
+        if (dto.status().toLowerCase().contains("approve") || dto.status().toLowerCase().contains("accept")
+                || dto.status().toLowerCase().contains("yes") || dto.status().toLowerCase().contains("valid"))
+        {
+            ns = ACCEPTED;
+        } else { ns = REJECTED;}
         FoodOrder updated = orderService.updateStatusBySeller(seller, order, ns);
         return OrderMapper.toDto(updated);
+    }
+    private Seller extractSeller(String token) {
+        long userId = TokenUtil.decodeUserId(token);  // Fake Base64 parser
+        return (Seller) sellerService.findById(userId);
     }
 
     private <T> void validate(T dto) {

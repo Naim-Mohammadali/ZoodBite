@@ -2,10 +2,14 @@ package service;
 
 import dao.RestaurantDAO;
 import dao.RestaurantDAOImpl;
+import jakarta.ws.rs.NotFoundException;
+import model.Menu;
+import model.MenuItem;
 import model.Restaurant;
 import model.Seller;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RestaurantService {
@@ -19,9 +23,6 @@ public class RestaurantService {
     }
 
     public void approveRestaurant(@NotNull Restaurant restaurant) throws Exception {
-        if (restaurant.getStatus() != Restaurant.Status.PENDING) {
-            throw new Exception("Restaurant is not pending approval!");
-        }
         restaurant.setStatus(Restaurant.Status.ACTIVE);
         restaurantDAO.update(restaurant);
     }
@@ -73,7 +74,6 @@ public class RestaurantService {
         }
         return null;
     }
-
     public List<Restaurant> search(String keyword,
                                    String category,
                                    Double minPrice,
@@ -84,4 +84,49 @@ public class RestaurantService {
     public List<Restaurant> getByStatus(Restaurant.Status status) {
         return restaurantDAO.findByStatus(status);
     }
+
+    public void createEmptyMenu(Restaurant restaurant, String title) {
+        for (Menu m : restaurant.getMenus()) {
+            if (title.equals(m.getTitle())) {
+                throw new IllegalArgumentException("Menu already exists");
+            }
+        }
+
+
+        Menu menu = new Menu(title);
+            menu.setRestaurant(restaurant);
+            menu.setTitle(title);
+            menu.setItems(new ArrayList<>());
+            restaurant.getMenus().add(menu);
+            restaurantDAO.update(restaurant);
+    }
+    public void addItemToMenu(Restaurant restaurant, String menuTitle, MenuItem item) {
+            Menu menu = findMenu(restaurant, menuTitle);
+            menu.getItems().add(item);
+            restaurantDAO.update(restaurant);
+    }
+    public void removeItemFromMenu(Restaurant restaurant, String menuTitle, MenuItem item) {
+            Menu menu = findMenu(restaurant, menuTitle);
+            menu.getItems().remove(item);
+            restaurantDAO.update(restaurant);
+    }
+    public List<MenuItem> getMenuItems(Restaurant restaurant, String menuTitle) {
+        Menu menu = findMenu(restaurant, menuTitle);
+        return menu.getItems();
+    }
+
+    private Menu findMenu(Restaurant restaurant, String title) {
+        return restaurant.getMenus().stream()
+                .filter(m -> m.getTitle().equals(title))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Menu not found: " + title));
+    }
+
+    public List<Restaurant> searchByName(String search) {
+        if (search == null || search.isBlank())
+            return List.of();
+
+        return restaurantDAO.findByNameContaining(search);
+    }
+
 }

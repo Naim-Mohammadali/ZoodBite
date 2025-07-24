@@ -21,7 +21,7 @@ public final class MenuItemMapper {
         m.setPrice(req.price());
         m.setQuantity(req.quantity());
         m.setImgURL(req.imgURL());
-        m.setCategory(req.category());
+        m.setCategory(req.categories());
         m.setRestaurant(r);
         return m;
     }

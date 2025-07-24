@@ -1,5 +1,6 @@
 package dto.order;
 
+import jakarta.validation.constraints.NotBlank;
 import model.FoodOrder;
 
 import java.time.LocalDateTime;
@@ -12,5 +13,6 @@ public record OrderResponse(
         FoodOrder.Status status,
         String couponCode,
         double total,
+        @NotBlank String address,
         List<Long> itemIds) {
 }

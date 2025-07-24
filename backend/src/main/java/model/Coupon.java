@@ -14,9 +14,19 @@ public class Coupon {
     private String code;
     @Column(nullable = false)
     private int discountPercent; // e.g. 10 = 10%
+    @Column(nullable = false)
     private boolean active = true;
+    private double min_price;
 
-    @Column(unique = true, nullable = false) public boolean isActive() { return active; }
+    public double getMin_price() {
+        return min_price;
+    }
+
+    public void setMin_price(double min_price) {
+        this.min_price = min_price;
+    }
+
+    public boolean isActive() { return active; }
     public void setActive(boolean active) { this.active = active; }
 
     private LocalDate validFrom;
@@ -45,4 +55,5 @@ public class Coupon {
 
     public int getUsedCount() { return usedCount; }
     public void setUsedCount(int usedCount) { this.usedCount = usedCount; }
+
 }

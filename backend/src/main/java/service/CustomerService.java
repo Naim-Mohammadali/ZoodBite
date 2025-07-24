@@ -29,7 +29,7 @@ public class CustomerService extends UserService {
         if (dto.role() != Role.CUSTOMER) {
             dto = new UserRegisterRequest(
                     dto.name(), dto.phone(), dto.email(),
-                    dto.password(), dto.address(), Role.CUSTOMER);
+                    dto.password(), dto.address(), Role.CUSTOMER, null);
         }
 
         Customer customer = (Customer) UserMapper.toEntity(dto);

@@ -17,5 +17,7 @@ public interface OrderDAO {
     List<FoodOrder> findByRestaurantAndStatus(Restaurant restaurant, FoodOrder.Status status);
     List<FoodOrder> findByCourier(Courier courier);
     List<FoodOrder> findByCourierAndStatus(Courier courier,FoodOrder.Status status);
+    public List<FoodOrder> findUnassignedAcceptedOrders();
 
+    List<FoodOrder> findAll();
 }

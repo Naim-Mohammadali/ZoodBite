@@ -48,11 +48,19 @@ public class OrderDAOImpl implements OrderDAO {
     public FoodOrder findById(long id) {
         EntityManager em = EntityManagerFactorySingleton.getInstance().createEntityManager();
         try {
-            return em.find(FoodOrder.class, id);
+            return em.createQuery(
+                            "SELECT o FROM FoodOrder o " +
+                                    "LEFT JOIN FETCH o.items " +
+                                    "LEFT JOIN FETCH o.restaurant r " +
+                                    "LEFT JOIN FETCH r.seller " +
+                                    "WHERE o.id = :id", FoodOrder.class)
+                    .setParameter("id", id)
+                    .getSingleResult();
         } finally {
             em.close();
         }
     }
+
 
     @Override
     public List<FoodOrder> findByCustomer(User customer) {
@@ -144,5 +152,36 @@ public class OrderDAOImpl implements OrderDAO {
         }
     }
 
+    @Override
+    public List<FoodOrder> findUnassignedAcceptedOrders() {
+        EntityManager em = EntityManagerFactorySingleton.getInstance().createEntityManager();
+        try {
+            return em.createQuery(
+                            "SELECT o FROM FoodOrder o " +
+                                    "JOIN FETCH o.restaurant r " +
+                                    "LEFT JOIN FETCH o.items " +
+                                    "WHERE o.status = :status AND o.courier IS NULL", FoodOrder.class)
+                    .setParameter("status", FoodOrder.Status.ACCEPTED)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
+    @Override
+    public List<FoodOrder> findAll() {
+        EntityManager em = EntityManagerFactorySingleton.getInstance().createEntityManager();
+        try {
+            return em.createQuery(
+                    "SELECT DISTINCT o FROM FoodOrder o " +
+                            "LEFT JOIN FETCH o.items " +
+                            "LEFT JOIN FETCH o.restaurant r " +
+                            "LEFT JOIN FETCH o.customer " +
+                            "LEFT JOIN FETCH o.courier",
+                    FoodOrder.class
+            ).getResultList();
+        } finally {
+            em.close();
+        }
+    }
 
 }

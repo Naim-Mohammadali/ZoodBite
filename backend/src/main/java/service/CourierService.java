@@ -18,7 +18,7 @@ public class CourierService extends UserService {
         if (dto.role() != Role.COURIER) {
             dto = new UserRegisterRequest(
                     dto.name(), dto.phone(), dto.email(),
-                    dto.password(), dto.address(), Role.COURIER);
+                    dto.password(), dto.address(), Role.COURIER, null);
         }
 
         Courier courier = (Courier) UserMapper.toEntity(dto);

@@ -1,6 +1,7 @@
 B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\config\AppConfig.java
 B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\config\ObjectMapperResolver.java
 B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\controller\AdminController.java
+B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\controller\AuthController.java
 B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\controller\CouponController.java
 B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\controller\CourierController.java
 B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\controller\CustomerController.java
@@ -8,6 +9,7 @@ B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\controller\Delive
 B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\controller\FavoriteController.java
 B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\controller\MenuItemController.java
 B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\controller\OrderController.java
+B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\controller\RatingController.java
 B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\controller\RestaurantController.java
 B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\controller\RootController.java
 B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\controller\SellerController.java
@@ -45,10 +47,15 @@ B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\dto\order\OrderSt
 B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\dto\rating\RatingRequestDto.java
 B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\dto\restaurant\ItemIdDto.java
 B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\dto\restaurant\MenuCreateDto.java
+B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\dto\restaurant\MenuCreateRequest.java
+B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\dto\restaurant\MenuItemPatchRequest.java
+B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\dto\restaurant\MenuResponse.java
 B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\dto\restaurant\RestaurantBriefDto.java
 B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\dto\restaurant\RestaurantCreateDto.java
 B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\dto\restaurant\RestaurantResponseDto.java
+B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\dto\restaurant\RestaurantSearchRequest.java
 B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\dto\restaurant\RestaurantUpdateDto.java
+B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\dto\user\request\BankInfoDto.java
 B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\dto\user\request\UserLoginRequest.java
 B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\dto\user\request\UserRegisterRequest.java
 B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\dto\user\request\UserUpdateRequest.java
@@ -61,11 +68,13 @@ B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\model\Courier.jav
 B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\model\Customer.java
 B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\model\Favorite.java
 B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\model\FoodOrder.java
+B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\model\Menu.java
 B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\model\MenuItem.java
 B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\model\Rating.java
 B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\model\Restaurant.java
 B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\model\Role.java
 B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\model\Seller.java
+B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\model\TokenUtil.java
 B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\model\User.java
 B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\rest\AuthResource.java
 B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\rest\security\JwtFilter.java
@@ -84,6 +93,7 @@ B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\service\UserServi
 B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\util\EntityManagerFactorySingleton.java
 B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\util\JwtUtil.java
 B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\util\mapper\MenuItemMapper.java
+B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\util\mapper\MenuMapper.java
 B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\util\mapper\OrderMapper.java
 B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\util\mapper\RestaurantMapper.java
 B:\JAVA\MyProjects\MainProjects\zoodBite\backend\src\main\java\util\mapper\UserMapper.java

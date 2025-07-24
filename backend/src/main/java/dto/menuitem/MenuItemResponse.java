@@ -1,5 +1,7 @@
 package dto.menuitem;
 
+import java.util.List;
+
 public record MenuItemResponse(
         Long id,
         String name,
@@ -7,4 +9,4 @@ public record MenuItemResponse(
         double price,
         int quantity,
         String imgURL,
-        String category) {}
+        List<String> categories) {}

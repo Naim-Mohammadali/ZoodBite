@@ -1,16 +1,16 @@
 package service;
 
-import dao.MenuItemDAO;
-import dao.MenuItemDAOImpl;
-import dao.OrderDAO;
-import dao.OrderDAOImpl;
+import dao.*;
 import dto.order.CustomerOrderRequest;
 import model.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static model.FoodOrder.Status.*;
 
 public class OrderService {
     private final OrderDAO orderDAO = new OrderDAOImpl();
@@ -18,58 +18,40 @@ public class OrderService {
     private final MenuItemDAO menuItemDAO = new MenuItemDAOImpl();
     private final CouponService couponService = new CouponService();
 
-    public FoodOrder placeOrder(Customer customer, @NotNull Restaurant restaurant,
-                                List<MenuItem> items, Coupon coupon) throws Exception {
-
+    public FoodOrder placeOrder(Customer customer, CustomerOrderRequest request) throws Exception {
+        RestaurantDAO restaurantDAO = new RestaurantDAOImpl();
+        Restaurant restaurant = restaurantDAO.findById(request.vendor_id());
         if (restaurant.getStatus() != Restaurant.Status.ACTIVE)
             throw new Exception("Restaurant is not active.");
 
-        if (items == null || items.isEmpty())
-            throw new Exception("No items selected.");
+        List<MenuItem> items = new ArrayList<>();
+        double total = 0;
 
-        boolean mismatch = items.stream()
-                .anyMatch(i -> !i.getRestaurant().getId().equals(restaurant.getId()));
-        if (mismatch)
-            throw new Exception("Items do not match the restaurant.");
-
-        double total = items.stream().mapToDouble(MenuItem::getPrice).sum();
-        total += restaurant.getAdditionalFee();
-        total += restaurant.getTaxFee();
-
-        if (coupon != null) {
-            total = couponService.applyDiscount(coupon, total);
-            couponService.incrementUsage(coupon);
+        for (CustomerOrderRequest.ItemQuantity iq : request.items()) {
+            MenuItem item = menuItemDAO.findById(iq.id());
+            if (item == null || !item.getRestaurant().getId().equals(restaurant.getId())) {
+                throw new IllegalArgumentException("Invalid item in menu");
+            }
+            items.add(item);
+            total += item.getPrice() * iq.quantity();
+            if (request.coupon() != null) {
+                total = couponService.applyDiscount(couponService.findByCode(request.coupon()), total);
+                couponService.incrementUsage(couponService.findByCode(request.coupon()));
+            }
         }
 
         FoodOrder order = new FoodOrder();
         order.setCustomer(customer);
         order.setRestaurant(restaurant);
         order.setItems(items);
-        order.setCreatedAt(LocalDateTime.now());
-        order.setStatus(FoodOrder.Status.PLACED);
         order.setTotal(total);
-        if (coupon != null) order.setCouponCode(coupon.getCode());
-
+        order.setStatus(PLACED);
+        System.out.println("Setting delivery address: " + request.address());
+        order.setDeliveryAddress(request.address());
+        order.setComment(request.comment());
+        order.setCreatedAt(LocalDateTime.now());
         orderDAO.save(order);
         return order;
-    }
-
-    public FoodOrder placeOrder(Customer customer, CustomerOrderRequest dto) throws Exception {
-        Restaurant restaurant = restaurantService.findById(dto.restaurantId());
-        List<MenuItem> items = dto.itemIds().stream()
-                .map(menuItemDAO::findById)
-                .filter(Objects::nonNull)
-                .toList();
-
-        if (items.isEmpty())
-            throw new Exception("No valid items selected.");
-
-        Coupon coupon = null;
-        if (dto.couponCode() != null && !dto.couponCode().isBlank()) {
-            coupon = couponService.findValidCoupon(dto.couponCode());
-        }
-
-        return placeOrder(customer, restaurant, items, coupon);
     }
 
     public void assignCourier(Seller seller, @NotNull FoodOrder order, Courier courier) throws Exception {
@@ -119,18 +101,16 @@ public class OrderService {
                                           FoodOrder.Status newStatus) throws Exception {
         validateOwnership(seller, order.getRestaurant());
 
-        boolean ok = switch (order.getStatus()) {
-            case PLACED     -> newStatus == FoodOrder.Status.ACCEPTED
-                    || newStatus == FoodOrder.Status.REJECTED;
-            case ACCEPTED   -> newStatus == FoodOrder.Status.PREPARING;
-            case PREPARING  -> newStatus == FoodOrder.Status.READY_FOR_PICKUP;
-            default         -> false;
+        boolean ok = switch (order.getStatus().toString().toUpperCase()) {
+            case "PLACED"     -> newStatus == ACCEPTED;
+            case "ACCEPTED"   -> newStatus == PREPARING;
+            case "PREPARING"  -> newStatus == FoodOrder.Status.READY_FOR_PICKUP;
+            default         -> newStatus == FoodOrder.Status.REJECTED;
         };
-        if (!ok) throw new IllegalStateException("Illegal status transition");
 
         order.setStatus(newStatus);
         orderDAO.update(order);
-        return order;
+        return orderDAO.findById(order.getId());
     }
 
     public List<FoodOrder> listByCourier(Courier courier,
@@ -140,24 +120,36 @@ public class OrderService {
                 : orderDAO.findByCourierAndStatus(courier, status);
     }
 
-        public FoodOrder updateStatusByCourier(Courier courier,
-                                           FoodOrder order,
-                                           FoodOrder.Status newStatus) throws Exception {
+    public FoodOrder updateStatusByCourier(Courier courier, FoodOrder order, String statusRaw) throws Exception {
+        String status = statusRaw.trim().toLowerCase();
 
-        if (!courier.equals(order.getCourier()))
-            throw new Exception("Order not assigned to this courier");
+        if (status.contains("accept")) {
+            if (order.getCourier() != null)
+                throw new IllegalStateException("Order already assigned");
 
-        boolean ok = switch (order.getStatus()) {
-            case READY_FOR_PICKUP -> newStatus == FoodOrder.Status.IN_TRANSIT;
-            case IN_TRANSIT       -> newStatus == FoodOrder.Status.DELIVERED;
-            default               -> false;
-        };
-        if (!ok) throw new IllegalStateException("Illegal status transition");
+            if (order.getStatus() != FoodOrder.Status.ACCEPTED)
+                throw new IllegalStateException("Order must be accepted by seller first");
 
-        order.setStatus(newStatus);
+            order.setCourier(courier);
+            order.setStatus(FoodOrder.Status.IN_TRANSIT);
+        }
+        else if (status.contains("deliver")) {
+            if (!courier.getId().equals(order.getCourier().getId()))
+                throw new IllegalAccessException("You are not assigned to this order");
+
+            if (order.getStatus() != FoodOrder.Status.IN_TRANSIT &&
+                    order.getStatus() != FoodOrder.Status.READY_FOR_PICKUP)
+                throw new IllegalStateException("Order is not in a deliverable state");
+            order.setStatus(FoodOrder.Status.DELIVERED);
+        }
+        else {
+            throw new IllegalArgumentException("Invalid status action");
+        }
+
         orderDAO.update(order);
         return order;
     }
+
 
     public List<FoodOrder> getOrderHistory(Customer customer) {
         return orderDAO.findByCustomer(customer);
@@ -172,8 +164,17 @@ public class OrderService {
     public void updateOrder(FoodOrder order) {
         orderDAO.update(order);
     }
+    public List<FoodOrder> getAvailableOrdersForCourier() {
+        return orderDAO.findUnassignedAcceptedOrders();
+    }
+
 
     public Object findCourierById(long courierId) {
         return (new CourierService()).findById(courierId);
     }
+
+    public List<FoodOrder> getAllOrders() {
+        return orderDAO.findAll();
+    }
+
 }

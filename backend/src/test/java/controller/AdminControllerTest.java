@@ -5,7 +5,6 @@ import dto.admin.AdminUserRolePatch;
 import dto.admin.ChangePasswordRequest;
 import dto.user.request.UserRegisterRequest;
 import dto.user.request.UserUpdateRequest;
-import dto.user.response.UserProfileResponse;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import model.*;
@@ -112,7 +111,7 @@ class AdminControllerTest {
 
         var dto = controller.patchRestaurant(20L, patch);
 
-        assertEquals(Restaurant.Status.ACTIVE, dto.status()); // assuming block does not change immediately
+        assertEquals(Restaurant.Status.BLOCKED, dto.status());
         verify(restaurantService).blockRestaurant(rest);
     }
 
@@ -142,4 +141,16 @@ class AdminControllerTest {
         assertEquals("Ali", resp.name());
         verify(adminService).update(admin);
     }
+    @Test
+    void unblock_user_success() {
+        var user = new Customer("Ali", "+96171", "pass", "Loc");
+        user.setStatus(User.Status.ACTIVE);
+        when(adminService.unblockUser(5L)).thenReturn(user);
+
+        var resp = controller.unblockUser(5L);
+
+        assertEquals(User.Status.ACTIVE, resp.status());
+        verify(adminService).unblockUser(5L);
+    }
+
 }

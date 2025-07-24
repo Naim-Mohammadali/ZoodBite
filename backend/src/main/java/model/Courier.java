@@ -3,12 +3,14 @@ package model;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import jakarta.ws.rs.DefaultValue;
 
 @Entity
 @DiscriminatorValue("COURIER")
 public class Courier extends User {
 
-    @Column(name = "available", nullable = false)
+    @Column(nullable = true)
+    @DefaultValue("available")
     private boolean available = false;
 
     public Courier() {

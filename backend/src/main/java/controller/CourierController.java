@@ -9,12 +9,14 @@ import dto.user.response.UserProfileResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.*;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.UriInfo;
+import model.TokenUtil;
 import util.mapper.UserMapper;
 import model.Courier;
 import model.Role;
@@ -23,6 +25,7 @@ import service.CourierService;
 import java.util.Set;
 
 @Path("/couriers")
+@RolesAllowed("courier")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class CourierController {
@@ -42,37 +45,22 @@ public class CourierController {
         this.validator = validator;
     }
 
-    @POST
-    @Path("/register")
-    @Operation(summary = "Register a new courier account")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Courier account created successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid input")
-    })
-    public UserProfileResponse registerCourier(@Valid UserRegisterRequest dto) {
-        validate(dto);
 
-        UserRegisterRequest fixed = new UserRegisterRequest(
-                dto.name(), dto.phone(), dto.email(),
-                dto.password(), dto.address(), Role.COURIER);
-
-        Courier saved = service.registerCourier(fixed);
-        return UserMapper.toDto(saved);
-    }
 
     @GET
-    @Path("/{id}")
+    @Path("/me")
     @Operation(summary = "View courier profile")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Profile retrieved successfully"),
             @ApiResponse(responseCode = "404", description = "Courier not found")
     })
-    public UserProfileResponse viewProfile(@PathParam("id") long id) {
-        return UserMapper.toDto(service.viewProfile(id));
+    public UserProfileResponse viewProfile(@HeaderParam("Authorization") String token) {
+        Courier c = extractCourier(token);
+        return UserMapper.toDto(service.viewProfile(c.getId()));
     }
 
     @PATCH
-    @Path("/{id}/availability")
+    @Path("/me/availability")
     @Operation(summary = "Set courier availability")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Availability updated successfully"),
@@ -80,14 +68,14 @@ public class CourierController {
             @ApiResponse(responseCode = "404", description = "Courier not found")
     })
     public UserProfileResponse setAvailability(
-            @PathParam("id") long id,
+            @HeaderParam("Authorization") String token,
             @Valid CourierAvailabilityRequest request) {
-        Courier c = service.setAvailability(id, request.available());
+        Courier c = extractCourier(token);
         return UserMapper.toDto(c);
     }
 
     @PATCH
-    @Path("/{id}/phone")
+    @Path("/me/phone")
     @Operation(summary = "Change courier phone number")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Phone updated successfully"),
@@ -95,14 +83,14 @@ public class CourierController {
             @ApiResponse(responseCode = "404", description = "Courier not found")
     })
     public UserProfileResponse changePhone(
-            @PathParam("id") long id,
+            @HeaderParam("Authorization") String token,
             @Valid ChangePhoneRequest request) {
-        Courier c = service.changePhone(id, request.phone());
+        Courier c = service.changePhone(extractCourier(token).getId(), request.phone());
         return UserMapper.toDto(c);
     }
 
     @PATCH
-    @Path("/{id}/password")
+    @Path("/me/password")
     @Operation(summary = "Change courier password")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Password updated successfully"),
@@ -110,14 +98,14 @@ public class CourierController {
             @ApiResponse(responseCode = "404", description = "Courier not found")
     })
     public UserProfileResponse changePassword(
-            @PathParam("id") long id,
+            @HeaderParam("Authorization") String token,
             @Valid ChangePasswordRequest request) {
-        Courier c = service.changePassword(id, request.newPassword());
+        Courier c = service.changePassword(extractCourier(token).getId(), request.newPassword());
         return UserMapper.toDto(c);
     }
 
     @PATCH
-    @Path("/{id}")
+    @Path("/me")
     @Operation(summary = "Update courier profile information")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Courier updated successfully"),
@@ -125,11 +113,11 @@ public class CourierController {
             @ApiResponse(responseCode = "404", description = "Courier not found")
     })
     public UserProfileResponse update(
-            @PathParam("id") long id,
+            @HeaderParam("Authorization") String token,
             @Valid UserUpdateRequest patch) {
         validate(patch);
 
-        Courier c = (Courier) service.findById(id);
+        Courier c = extractCourier(token);
         if (patch.name() != null)    c.setName(patch.name());
         if (patch.email() != null)   c.setEmail(patch.email());
         if (patch.address() != null) c.setAddress(patch.address());
@@ -137,6 +125,12 @@ public class CourierController {
         Courier saved = (Courier) service.update(c);
         return UserMapper.toDto(saved);
     }
+
+    private Courier extractCourier(String token) {
+        long id = TokenUtil.decodeUserId(token);
+        return (Courier) service.findById(id);
+    }
+
 
     private <T> void validate(T obj) {
         Set<ConstraintViolation<T>> v = validator.validate(obj);

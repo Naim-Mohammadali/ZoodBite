@@ -1,38 +1,35 @@
 package service;
 
-import dao.RatingDAO;
-import dao.RestaurantDAO;
-import dao.RestaurantDAOImpl;
+import dao.*;
 import model.Customer;
 import model.Rating;
-import model.Restaurant;
-
+import model.FoodOrder;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 public class RatingService {
 
     private final RatingDAO ratingDAO;
-    private final RestaurantDAO restaurantDAO;
+    private final OrderDAO foodOrderDAO;
+
 
     public RatingService() {
         this.ratingDAO = new RatingDAO();
-        this.restaurantDAO = new RestaurantDAOImpl();
+        this.foodOrderDAO = new OrderDAOImpl();
     }
 
-    public Rating rate(Customer customer, Long restaurantId, int score, String comment) throws Exception {
-        Restaurant restaurant = restaurantDAO.findById(restaurantId);
-        if (restaurant == null) {
-            throw new Exception("Restaurant not found");
+    public Rating rate(Customer customer, Long orderId, int score, String comment) throws Exception {
+        FoodOrder order = foodOrderDAO.findById(orderId);
+        if (order == null) {
+            throw new Exception("Order not found");
         }
 
-        Rating rating = ratingDAO.findByCustomerAndRestaurant(customer, restaurant);
+        Rating rating = ratingDAO.findByCustomerAndOrder(customer, order);
         if (rating == null)
             rating = new Rating();
 
         rating.setCustomer(customer);
-        rating.setRestaurant(restaurant);
+        rating.setOrder(order);
         rating.setScore(score);
         rating.setComment(comment);
 
@@ -41,42 +38,52 @@ public class RatingService {
     }
 
 
-    public List<Rating> getRestaurantRatings(Long restId) throws Exception {
-        Restaurant restaurant = restaurantDAO.findById(restId);
-        if (restaurant == null) {
+    public List<Rating> getRestaurantRatings(Long orderId) throws Exception {
+        FoodOrder order = foodOrderDAO.findById(orderId);
+        if (order == null) {
             throw new Exception("Restaurant not found");
         }
 
-        return ratingDAO.findByRestaurant(restaurant);
+        return ratingDAO.findByOrder(order);
     }
 
     public List<Rating> getMyRatings(Customer customer) {
         return ratingDAO.findByCustomer(customer);
     }
-    public double getAverageRating(Long restaurantId) {
-        List<Rating> ratings = ratingDAO.findByRestaurantId(restaurantId);
+    public double getAverageRating(Long orderId) {
+        List<Rating> ratings = ratingDAO.findByOrder(foodOrderDAO.findById(orderId));
         if (ratings.isEmpty()) return 0;
 
         double sum = ratings.stream().mapToInt(Rating::getScore).sum();
         return sum / (double) ratings.size();
     }
 
-    public void addOrUpdate(Customer customer, Long restaurantId, int score) {
+    public void addOrUpdate(Customer customer, Long orderId, int score, String comment) {
         if (score < 1 || score > 5)
             throw new IllegalArgumentException("Rating score must be between 1 and 5");
 
-        Restaurant restaurant = new Restaurant();
-        restaurant.setId(restaurantId);
+        FoodOrder order = foodOrderDAO.findById(orderId);
+        if (!order.getCustomer().getId().equals(customer.getId()))
+            throw new SecurityException("You do not own this order.");
 
-        Rating existing = ratingDAO.findByCustomerAndRestaurant(customer, restaurant);
+        if (order.getStatus() != FoodOrder.Status.DELIVERED)
+            throw new IllegalStateException("You can only rate delivered orders.");
 
+        Rating existing = ratingDAO.findByCustomerAndOrder(customer, order);
         if (existing != null) {
             existing.setScore(score);
+            existing.setComment(comment);
             ratingDAO.update(existing);
         } else {
-            Rating newRating = new Rating(customer, restaurant, score, null);
+            Rating newRating = new Rating();
+            newRating.setCustomer(customer);
+            newRating.setOrder(order);
+            newRating.setScore(score);
+            newRating.setComment(null); // or allow it as optional
+            newRating.setCreatedAt(LocalDateTime.now());
             ratingDAO.save(newRating);
         }
     }
+
 
 }

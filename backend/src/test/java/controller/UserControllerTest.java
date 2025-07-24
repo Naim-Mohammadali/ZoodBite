@@ -15,7 +15,6 @@ import service.UserService;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 /**
@@ -37,37 +36,8 @@ class UserControllerTest {
         controller = new UserController(userService, validator);
     }
 
-    /* ---------- register ---------- */
 
-    @Test
-    void register_success() {
-        var req   = new UserRegisterRequest("Ali","+96171112233","ali@mail.com",
-                "secret123","Beirut", Role.CUSTOMER);
-        var saved = new Customer("Ali","+96171112233","secret123","Beirut");
 
-        when(userService.register(any(User.class))).thenReturn(saved);
-
-        UserProfileResponse resp = controller.register(req);
-
-        assertEquals("Ali", resp.name());
-        assertEquals(Role.CUSTOMER, resp.role());
-        verify(userService).register(any(User.class));
-    }
-
-    /* ---------- login ---------- */
-
-    @Test
-    void login_success() {
-        var req   = new UserLoginRequest("+96171112233", "secret123");
-        var user  = new Customer("Ali","+96171112233","secret123","Beirut");
-
-        when(userService.login(req.phone(), req.password())).thenReturn(user);
-
-        UserProfileResponse resp = controller.login(req);
-
-        assertEquals("Ali", resp.name());
-        verify(userService).login(req.phone(), req.password());
-    }
 
     /* ---------- update ---------- */
 

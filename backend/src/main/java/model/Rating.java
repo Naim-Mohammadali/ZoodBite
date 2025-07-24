@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "ratings", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"customer_id", "restaurant_id"})
+        @UniqueConstraint(columnNames = {"customer_id", "order_id"})
 })
 public class Rating {
 
@@ -17,7 +17,7 @@ public class Rating {
     private Customer customer;
 
     @ManyToOne(optional = false)
-    private Restaurant restaurant;
+    private FoodOrder order;
 
     @Column(nullable = false)
     private int score; // between 1 and 5
@@ -28,9 +28,9 @@ public class Rating {
 
     public Rating() {}
 
-    public Rating(Customer customer, Restaurant restaurant, int score, String comment) {
+    public Rating(Customer customer, FoodOrder order, int score, String comment) {
         this.customer = customer;
-        this.restaurant = restaurant;
+        this.order = order;
         this.score = score;
         this.comment = comment;
         this.createdAt = LocalDateTime.now();
@@ -45,10 +45,9 @@ public class Rating {
     public Customer getCustomer() {
         return customer;
     }
+    public FoodOrder getOrder() { return order; }
+    public void setOrder(FoodOrder order) { this.order = order; }
 
-    public Restaurant getRestaurant() {
-        return restaurant;
-    }
 
     public int getScore() {
         return score;
@@ -70,9 +69,7 @@ public class Rating {
         this.customer = customer;
     }
 
-    public void setRestaurant(Restaurant restaurant) {
-        this.restaurant = restaurant;
-    }
+
 
     public void setScore(int score) {
         if (score < 0.0 || score > 5.0) {

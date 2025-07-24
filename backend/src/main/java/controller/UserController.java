@@ -2,6 +2,7 @@ package controller;
 
 import dto.user.request.*;
 import dto.user.response.UserProfileResponse;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
@@ -24,6 +25,7 @@ import io.swagger.v3.oas.annotations.*;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
+@RolesAllowed({"admin", "customer", "seller", "courier"})
 @Path("/users")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -40,32 +42,6 @@ public class UserController {
     public UserController(UserService userService, Validator validator) {
         this.userService = userService;
         this.validator = validator;
-    }
-
-    @POST
-    @Path("/register")
-    @Operation(summary = "Register a new user")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "User successfully created"),
-            @ApiResponse(responseCode = "400", description = "Invalid input")
-    })
-    public UserProfileResponse register(@Valid UserRegisterRequest dto) {
-        validate(dto);
-        User saved = userService.register(UserMapper.toEntity(dto));
-        return UserMapper.toDto(saved);
-    }
-
-    @POST
-    @Path("/login")
-    @Operation(summary = "Login a user")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Login successful"),
-            @ApiResponse(responseCode = "401", description = "Invalid credentials")
-    })
-    public UserProfileResponse login(@Valid UserLoginRequest dto) {
-        validate(dto);
-        User logged = userService.login(dto.phone(), dto.password());
-        return UserMapper.toDto(logged);
     }
 
     @PATCH
@@ -92,6 +68,7 @@ public class UserController {
 
     @GET
     @Operation(summary = "List all users")
+    @RolesAllowed("admin")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "List of users retrieved successfully")
     })
@@ -104,6 +81,7 @@ public class UserController {
 
     @GET
     @Path("/role/{role}")
+    @RolesAllowed("admin")
     @Operation(summary = "List users by role")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Users retrieved successfully by role"),
@@ -114,17 +92,6 @@ public class UserController {
                 .stream()
                 .map(UserMapper::toDto)
                 .collect(Collectors.toList());
-    }
-
-    @GET
-    @Path("/{id}")
-    @Operation(summary = "View user profile")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "User profile retrieved successfully"),
-            @ApiResponse(responseCode = "404", description = "User not found")
-    })
-    public UserProfileResponse view(@PathParam("id") long id) {
-        return UserMapper.toDto(userService.findById(id));
     }
 
     private <T> void validate(T dto) {

@@ -12,6 +12,6 @@ public class AuthService {
     public AuthResponse login(UserLoginRequest dto) {
         var u   = users.login(dto.phone(), dto.password());
         var jwt = JwtUtil.issueToken(u.getId(), u.getRole());
-        return new AuthResponse(jwt, u.getRole(), u.getStatus());
+        return new AuthResponse(u.getId(), jwt);
     }
 }

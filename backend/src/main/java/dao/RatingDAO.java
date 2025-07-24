@@ -5,6 +5,7 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
 import model.Customer;
+import model.FoodOrder;
 import model.Rating;
 import model.Restaurant;
 import util.EntityManagerFactorySingleton;
@@ -34,28 +35,12 @@ public class RatingDAO {
         return q.getResultList();
     }
 
-    public List<Rating> findByRestaurant(Restaurant restaurant) {
-        String jpql = "SELECT r FROM Rating r WHERE r.restaurant = :restaurant";
+    public List<Rating> findByOrder(FoodOrder order) {
+        String jpql = "SELECT r FROM Rating r WHERE r.order = :order";
         TypedQuery<Rating> q = em.createQuery(jpql, Rating.class);
-        q.setParameter("restaurant", restaurant);
+        q.setParameter("order", order);
         return q.getResultList();
     }
-
-
-    public Rating findByCustomerAndRestaurant(Customer customer, Restaurant restaurant) {
-        EntityManager em = EntityManagerFactorySingleton.getInstance().createEntityManager();
-        try {
-            String jpql = "SELECT r FROM Rating r WHERE r.customer = :customer AND r.restaurant = :restaurant";
-            TypedQuery<Rating> q = em.createQuery(jpql, Rating.class);
-            q.setParameter("customer", customer);
-            q.setParameter("restaurant", restaurant);
-            List<Rating> result = q.getResultList();
-            return result.isEmpty() ? null : result.get(0);
-        } finally {
-            em.close();
-        }
-    }
-
 
     public void delete(Rating rating) {
         em.getTransaction().begin();
@@ -67,20 +52,21 @@ public class RatingDAO {
         return em.createQuery("SELECT r FROM Rating r", Rating.class).getResultList();
     }
 
-    public List<Rating> findByRestaurantId(Long restaurantId) {
-        EntityManager em = emf.createEntityManager();
 
+    public Rating findByCustomerAndOrder(Customer customer, FoodOrder order) {
+        EntityManager em = EntityManagerFactorySingleton.getInstance().createEntityManager();
         try {
-            return em.createQuery("""
-            SELECT r FROM Rating r
-            WHERE r.restaurant.id = :restaurantId
-        """, Rating.class)
-                    .setParameter("restaurantId", restaurantId)
-                    .getResultList();
+            TypedQuery<Rating> q = em.createQuery(
+                    "SELECT r FROM Rating r WHERE r.customer = :customer AND r.order = :order", Rating.class);
+            q.setParameter("customer", customer);
+            q.setParameter("order", order);
+            List<Rating> result = q.getResultList();
+            return result.isEmpty() ? null : result.get(0);
         } finally {
             em.close();
         }
     }
+
     public void update(Rating rating) {
         EntityManager em = EntityManagerFactorySingleton.getInstance().createEntityManager();
         EntityTransaction tx = em.getTransaction();

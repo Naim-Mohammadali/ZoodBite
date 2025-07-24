@@ -23,7 +23,7 @@ public class AdminService extends UserService {
         if (dto.role() != Role.ADMIN) {
             dto = new UserRegisterRequest(
                     dto.name(), dto.phone(), dto.email(),
-                    dto.password(), dto.address(), Role.ADMIN);
+                    dto.password(), dto.address(), Role.ADMIN, null);
         }
 
         Admin admin = (Admin) UserMapper.toEntity(dto);

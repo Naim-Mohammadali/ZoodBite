@@ -8,6 +8,9 @@ import java.io.Serializable;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "user_type")
 public abstract class User implements Serializable {
+    @Column(insertable = false, updatable = false)
+    private Boolean available;
+
 
     public void setId(long id) {
         this.id = id;

@@ -1,24 +1,26 @@
 package controller;
 
+import dto.menuitem.MenuItemCreateRequest;
 import dto.menuitem.MenuItemResponse;
-import dto.restaurant.RestaurantBriefDto;
-import dto.restaurant.RestaurantCreateDto;
-import dto.restaurant.RestaurantUpdateDto;
-import dto.restaurant.RestaurantResponseDto;
+import dto.restaurant.*;
 import io.swagger.v3.oas.annotations.*;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.*;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import model.*;
+import service.MenuItemService;
 import service.RestaurantService;
 import service.SellerService;
 import util.mapper.MenuItemMapper;
 import util.mapper.RestaurantMapper;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -46,17 +48,18 @@ public class RestaurantController {
     }
 
     @POST
+    @RolesAllowed("seller")
     @Operation(summary = "Register a new restaurant")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Restaurant registered successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid input")
     })
     public RestaurantResponseDto register(
-            @QueryParam("sellerId") long sellerId,
-            @Valid RestaurantCreateDto dto) {
+            @HeaderParam("Authorization") String token,
+            @Valid RestaurantCreateDto dto) throws Exception {
 
         validate(dto);
-        Seller currentSeller = (Seller) sellerService.findById(sellerId);
+        Seller currentSeller = extractSeller(token);
 
         Restaurant saved = new Restaurant(
                 dto.name(), dto.address(), dto.phone(),
@@ -68,6 +71,7 @@ public class RestaurantController {
     }
 
     @PATCH
+    @RolesAllowed("seller")
     @Path("/{restaurantId}")
     @Operation(summary = "Update restaurant details")
     @ApiResponses({
@@ -78,13 +82,12 @@ public class RestaurantController {
     })
     public RestaurantResponseDto update(
             @PathParam("restaurantId") long restaurantId,
-            @QueryParam("sellerId") long sellerId,
+            @HeaderParam("Authorization") String token,
             @Valid RestaurantUpdateDto dto)
             throws Exception {
 
         validate(dto);
-        Seller currentSeller = (Seller) sellerService.findById(sellerId);
-
+        Seller currentSeller = extractSeller(token);
         Restaurant r = restaurantService.findByIdAndSeller(restaurantId, currentSeller.getId());
         if (r == null)
             throw new IllegalArgumentException("Seller does not own restaurant #" + restaurantId);
@@ -106,8 +109,8 @@ public class RestaurantController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Restaurants retrieved successfully")
     })
-    public List<RestaurantResponseDto> listMine(@QueryParam("sellerId") long sellerId) {
-        Seller currentSeller = (Seller) sellerService.findById(sellerId);
+    public List<RestaurantResponseDto> listMine(@HeaderParam("Authorization") String token) {
+        Seller currentSeller = extractSeller(token);
         return restaurantService.getRestaurantsBySeller(currentSeller)
                 .stream()
                 .map(RestaurantMapper::toDto)
@@ -137,63 +140,9 @@ public class RestaurantController {
         return RestaurantMapper.toDto(restaurantService.findById(id));
     }
 
-    @PATCH
-    @Path("/{id}/approve")
-    @Operation(summary = "Approve a restaurant (Pending → Active)")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Restaurant approved successfully"),
-            @ApiResponse(responseCode = "404", description = "Restaurant not found")
-    })
-    public RestaurantResponseDto approve(@PathParam("id") long id) throws Exception {
-        Restaurant r = restaurantService.findById(id);
-        restaurantService.approveRestaurant(r);
-        return RestaurantMapper.toDto(r);
-    }
 
-    @PATCH
-    @Path("/{id}/block")
-    @Operation(summary = "Block a restaurant (Active → Blocked)")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Restaurant blocked successfully"),
-            @ApiResponse(responseCode = "404", description = "Restaurant not found")
-    })
-    public RestaurantResponseDto block(@PathParam("id") long id) throws Exception {
-        Restaurant r = restaurantService.findById(id);
-        restaurantService.blockRestaurant(r);
-        return RestaurantMapper.toDto(r);
-    }
 
-    @PATCH
-    @Path("/{id}/unblock")
-    @Operation(summary = "Unblock a restaurant (Blocked → Active)")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Restaurant unblocked successfully"),
-            @ApiResponse(responseCode = "404", description = "Restaurant not found")
-    })
-    public RestaurantResponseDto unblock(@PathParam("id") long id) throws Exception {
-        Restaurant r = restaurantService.findById(id);
-        restaurantService.unblockRestaurant(r);
-        return RestaurantMapper.toDto(r);
-    }
 
-    @GET
-    @Path("/search")
-    @Operation(summary = "Search restaurants by criteria")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Restaurants search results retrieved successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid search criteria")
-    })
-    public List<RestaurantBriefDto> search(
-            @QueryParam("kw") String kw,
-            @QueryParam("cat") String cat,
-            @QueryParam("min") Double min,
-            @QueryParam("max") Double max) {
-
-        return restaurantService.search(kw, cat, min, max)
-                .stream()
-                .map(RestaurantMapper::toBriefDto)
-                .collect(Collectors.toList());
-    }
 
     @GET
     @Path("/{restaurantId}/menu")
@@ -209,6 +158,89 @@ public class RestaurantController {
                 .map(MenuItemMapper::toDto)
                 .collect(Collectors.toList());
     }
+    @POST
+    @Path("/{restaurantId}/menu")
+    @RolesAllowed("seller")
+    public Response createMenu(@PathParam("restaurantId") long restaurantId,
+                               MenuCreateRequest request) {
+        Restaurant r = restaurantService.findById(restaurantId);
+        restaurantService.createEmptyMenu(r, request.title());
+        return Response.ok(Map.of("created_menu", request.title())).build();
+    }
+
+
+    @PUT
+    @Path("/{restaurantId}/menu/{menuTitle}")
+    @RolesAllowed("seller")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response addItemsToMenu(@PathParam("restaurantId") long restaurantId,
+                                   @PathParam("menuTitle") String title,
+                                   @Valid MenuItemPatchRequest request) throws Exception {
+
+        Restaurant r = restaurantService.findById(restaurantId);
+        MenuItemService menuItemService = new MenuItemService();
+
+        for (Long itemId : request.item_ids()) {
+            MenuItem item = menuItemService.getById(itemId);
+            restaurantService.addItemToMenu(r, title, item);
+        }
+
+        return Response.ok(
+                Map.of("menu", title, "added_items", request.item_ids())
+        ).build();
+    }
+
+
+    @DELETE
+    @Path("/{restaurantId}/menu/{menuTitle}")
+    @RolesAllowed("seller")
+    public Response removeItemFromMenu(@PathParam("restaurantId") long restaurantId,
+                                       @PathParam("menuTitle") String title,
+                                       @Valid ItemIdDto dto) throws Exception {
+        MenuItemService menuItemService = new MenuItemService();
+        Restaurant r = restaurantService.findById(restaurantId);
+        MenuItem item = menuItemService.getById(Long.valueOf((dto.itemId())));
+        restaurantService.removeItemFromMenu(r, title, item);
+        return Response.ok(Map.of("menu", title, "removed_item", item.getId())).build();
+    }
+
+    @GET
+    @Path("/{restaurantId}/menu/{menuTitle}")
+    public List<MenuItemResponse> getMenuItems(@PathParam("restaurantId") long restaurantId,
+                                                  @PathParam("menuTitle") String title) {
+        Restaurant r = restaurantService.findById(restaurantId);
+        return restaurantService.getMenuItems(r, title)
+                .stream().map(MenuItemMapper::toDto)
+                .toList();
+    }
+
+
+
+
+    private Seller extractSeller(String token) {
+        long userId = TokenUtil.decodeUserId(token);
+        return (Seller) sellerService.findById(userId);
+    }
+    @POST
+    @Path("/{restaurantId}/item")
+    @RolesAllowed("seller")
+    @Operation(summary = "Add item to restaurant via nested path")
+    public MenuItemResponse addItem(@PathParam("restaurantId") long restaurantId,
+                                    @HeaderParam("Authorization") String token,
+                                    @Valid MenuItemCreateRequest dto) throws Exception {
+        Seller seller = (Seller) sellerService.findById(TokenUtil.decodeUserId(token));
+        Restaurant restaurant = restaurantService.findById(restaurantId);
+
+        if (!restaurant.getSeller().getId().equals(seller.getId())) {
+            throw new ForbiddenException("You do not own this restaurant.");
+        }
+
+        return new MenuItemController().add(token, restaurantId, dto);
+
+    }
+
+
 
     private <T> void validate(T dto) {
         Set<ConstraintViolation<T>> violations = validator.validate(dto);

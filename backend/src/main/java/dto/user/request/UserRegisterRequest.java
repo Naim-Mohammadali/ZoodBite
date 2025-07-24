@@ -8,4 +8,5 @@ public record UserRegisterRequest(
         @Email String email,
         @Size(min = 8) String password,
         String address,
-        model.Role role) { }
+        model.Role role,
+        BankInfoDto bank_info) { }

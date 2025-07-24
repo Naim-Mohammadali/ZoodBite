@@ -1,14 +1,17 @@
 package controller;
 
+import dto.courier.CourierStatusPatchRequest;
 import dto.delivery.DeliveryStatusPatchRequest;
 import dto.order.OrderResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.*;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import model.*;
 import service.OrderService;
 import util.mapper.OrderMapper;
@@ -18,6 +21,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Path("/deliveries")
+@RolesAllowed("courier")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class DeliveryController {
@@ -42,10 +46,10 @@ public class DeliveryController {
             @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
     public List<OrderResponse> myDeliveries(
-            @QueryParam("courierId") long courierId,
+            @HeaderParam("Authorization") String token,
             @QueryParam("status") String statusOpt) {
 
-        Courier courier = (Courier) orderService.findCourierById(courierId);  // You must have this method
+        Courier courier = extractCourier(token);
         FoodOrder.Status s = statusOpt == null ? null : FoodOrder.Status.valueOf(statusOpt);
 
         return orderService.listByCourier(courier, s)
@@ -53,30 +57,40 @@ public class DeliveryController {
                 .map(OrderMapper::toDto)
                 .collect(Collectors.toList());
     }
+    @GET
+    @Path("/available")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("courier")
+    public List<OrderResponse> getAvailableOrders() {
+        List<FoodOrder> orders = orderService.getAvailableOrdersForCourier();
+        return orders.stream()
+                .map(OrderMapper::toDto)
+                .toList();
+    }
+
 
     @PATCH
-    @Path("/orders/{orderId}/status")
-    @Operation(summary = "Update delivery status by courier")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Delivery status updated successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid status"),
-            @ApiResponse(responseCode = "403", description = "Not allowed to update this order"),
-            @ApiResponse(responseCode = "404", description = "Order not found")
-    })
-    public OrderResponse patchStatus(
-            @QueryParam("courierId") long courierId,
-            @PathParam("orderId") long orderId,
-            @Valid DeliveryStatusPatchRequest dto) throws Exception {
-
-        Courier courier = (Courier) orderService.findCourierById(courierId);  // Same assumption
-        validate(dto);
-
+    @Path("/{orderId}")
+    @RolesAllowed("courier")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateDeliveryStatus(@HeaderParam("Authorization") String token,
+                                         @PathParam("orderId") long orderId,
+                                         @Valid CourierStatusPatchRequest dto) throws Exception {
+        Courier courier = extractCourier(token);
         FoodOrder order = orderService.getOrderById(orderId);
-        FoodOrder.Status ns = FoodOrder.Status.valueOf(dto.status());
 
-        FoodOrder updated = orderService.updateStatusByCourier(courier, order, ns);
-        return OrderMapper.toDto(updated);
+        FoodOrder updated = orderService.updateStatusByCourier(courier, order, dto.status());
+
+        return Response.ok(OrderMapper.toDto(updated)).build();
     }
+
+
+    private Courier extractCourier(String token) {
+        long id = TokenUtil.decodeUserId(token);
+        return (Courier) orderService.findCourierById(id);
+    }
+
 
     private <T> void validate(T dto) {
         Set<ConstraintViolation<T>> v = validator.validate(dto);

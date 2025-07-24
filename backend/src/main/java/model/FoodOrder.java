@@ -1,8 +1,12 @@
 package model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.ws.rs.DefaultValue;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -41,11 +45,42 @@ public class FoodOrder implements Serializable {
     private List<MenuItem> items;
 
     private String couponCode;
+    private String comment = null;
 
     public String getCouponCode() { return couponCode; }
 
     public void setCouponCode(String couponCode) { this.couponCode = couponCode; }
 
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+
+    public String getComment() {
+        return comment;
+    }
+
+
+    @Column(name = "delivery_address", nullable = false)
+    private String deliveryAddress;
+
+
+    public String getDeliveryAddress() {
+        return deliveryAddress;
+    }
+
+    public void setDeliveryAddress(String deliveryAddress) {
+        this.deliveryAddress = deliveryAddress;
+    }
+
+
+    public List<Long> getItemIds() {
+        List<Long> items = new ArrayList<>();
+        for (MenuItem item : getItems()){
+            items.add(item.getId());
+        }
+        return items;
+    }
 
 
     public enum Status {

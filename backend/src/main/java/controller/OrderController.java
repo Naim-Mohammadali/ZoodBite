@@ -2,11 +2,14 @@ package controller;
 
 import dto.order.*;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.*;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import model.*;
+import service.CouponService;
 import service.CustomerService;
 import service.MenuItemService;
 import service.OrderService;
@@ -22,59 +25,41 @@ import java.util.stream.Collectors;
 public class OrderController {
 
     private final OrderService     orderService;
-    private final MenuItemService  itemService;
     private final CustomerService  customerService;
     private final Validator        validator;
 
     public OrderController() {
-        this(new OrderService(), new MenuItemService(), new CustomerService(),
+        this(new OrderService(), new CustomerService(), new CouponService(),
                 Validation.buildDefaultValidatorFactory().getValidator());
     }
 
     public OrderController(OrderService orderService,
-                           MenuItemService itemService,
                            CustomerService customerService,
+                           CouponService couponService,
                            Validator validator) {
-        this.orderService     = orderService;
-        this.itemService      = itemService;
-        this.customerService  = customerService;
-        this.validator        = validator;
+        this.orderService    = orderService;
+        this.customerService = customerService;
+        this.validator       = validator;
     }
+
+
+
+
+
 
     @POST
-    @Operation(summary = "Place a new order")
-    public OrderResponse place(
-            @QueryParam("customerId") long customerId,
-            @Valid OrderCreateRequest dto) throws Exception {
-
-        validate(dto);
-
-        Customer customer = (Customer) customerService.findById(customerId);
-
-        Restaurant restaurant = new Restaurant();
-        restaurant.setId(dto.restaurantId());
-
-        List<MenuItem> items = dto.itemIds().stream()
-                .map(id -> {
-                    try { return itemService.getById(id); }
-                    catch (Exception e) { throw new RuntimeException(e); }
-                })
-                .collect(Collectors.toList());
-
-        orderService.placeOrder(customer, restaurant, items, null);
-
-        FoodOrder persisted = orderService.getOrdersByCustomer(customer).getLast();
-        return OrderMapper.toDto(persisted);
+    @RolesAllowed("customer")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response placeOrder(@Valid CustomerOrderRequest request,
+                               @HeaderParam("Authorization") String token) throws Exception {
+        Customer customer = (Customer) customerService.findById(TokenUtil.decodeUserId(token));
+        FoodOrder order = orderService.placeOrder(customer, request);
+        return Response.ok(new OrderResponse(order.getId(),order.getRestaurant().getName(),
+                        order.getCreatedAt(), order.getStatus(),order.getCouponCode(),order.getTotal(),order.getDeliveryAddress(), order.getItemIds ()))
+                .build();
     }
 
-    @GET
-    @Operation(summary = "Get customer's order history")
-    public List<OrderResponse> myOrders(@QueryParam("customerId") long customerId) {
-        Customer customer = (Customer) customerService.findById(customerId);
-        return orderService.getOrdersByCustomer(customer).stream()
-                .map(OrderMapper::toDto)
-                .collect(Collectors.toList());
-    }
 
     private <T> void validate(T dto) {
         Set<ConstraintViolation<T>> violations = validator.validate(dto);

@@ -2,11 +2,9 @@ package controller;
 
 import dto.admin.ChangePasswordRequest;
 import dto.customer.ChangePhoneRequest;
-import dto.order.CustomerOrderRequest;
-import dto.order.OrderResponse;
-import dto.rating.RatingRequestDto;
+import dto.restaurant.RestaurantBriefDto;
 import dto.restaurant.RestaurantResponseDto;
-import dto.user.request.UserRegisterRequest;
+import dto.restaurant.RestaurantSearchRequest;
 import dto.user.request.UserUpdateRequest;
 import dto.user.response.UserProfileResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,21 +12,21 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.*;
-import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.MediaType;
 
 import model.*;
 import service.*;
-import util.mapper.OrderMapper;
 import util.mapper.RestaurantMapper;
 import util.mapper.UserMapper;
 
 import java.util.List;
 import java.util.Set;
-
-@Path("/customers")
+import java.util.Stack;
+import java.util.stream.Collectors;
+@Path("/")
+@RolesAllowed("customer")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class CustomerController {
@@ -40,12 +38,13 @@ public class CustomerController {
     private final RatingService rating;
     private final FavoriteService favorite;
     private final CouponService couponService;
+    private final RestaurantService restaurantService;
 
-    public CustomerController(RatingService rating, FavoriteService favorite, CouponService couponService) {
+    public CustomerController(RatingService rating, FavoriteService favorite, CouponService couponService, RestaurantService restaurantService) {
         this(new CustomerService(),
                 new UserService(),
                 new OrderService(),
-                Validation.buildDefaultValidatorFactory().getValidator(), rating, favorite, couponService);
+                Validation.buildDefaultValidatorFactory().getValidator(), rating, favorite, couponService, restaurantService);
     }
 
     public CustomerController(CustomerService service,
@@ -54,7 +53,7 @@ public class CustomerController {
                               Validator validator,
                               RatingService rating,
                               FavoriteService favorite,
-                              CouponService couponService) {
+                              CouponService couponService, RestaurantService restaurantService) {
         this.service = service;
         this.userService = userService;
         this.orderService = orderService;
@@ -62,127 +61,92 @@ public class CustomerController {
         this.rating = rating;
         this.favorite = favorite;
         this.couponService = couponService;
+        this.restaurantService = restaurantService;
+    }
+    public CustomerController() {
+        this.service =  new CustomerService();
+        this.userService = new UserService();
+        this.orderService = new OrderService();
+        this.validator = Validation.buildDefaultValidatorFactory().getValidator();
+        this.rating = new RatingService();
+        this.favorite =new FavoriteService();
+        this.couponService = new CouponService();
+        this.restaurantService = new RestaurantService();
     }
 
-    @POST
-    @Path("/register")
-    @Operation(summary = "Register a new customer account")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Customer account created"),
-            @ApiResponse(responseCode = "400", description = "Invalid input")
-    })
-    public UserProfileResponse register(@Valid UserRegisterRequest dto) {
-        validate(dto);
-
-        UserRegisterRequest fixed = new UserRegisterRequest(
-                dto.name(), dto.phone(), dto.email(),
-                dto.password(), dto.address(), Role.CUSTOMER);
-
-        Customer saved = service.registerCustomer(fixed);
-        return UserMapper.toDto(saved);
-    }
 
     @GET
-    @Path("/{id}")
+    @Path("/me")
     @Operation(summary = "View customer profile")
-    public UserProfileResponse view(@PathParam("id") long id) {
-        return UserMapper.toDto(service.viewProfile(id));
+    public UserProfileResponse view(@HeaderParam("Authorization") String token) {
+        return UserMapper.toDto(service.viewProfile(TokenUtil.decodeUserId(token)));
     }
 
     @PATCH
-    @Path("/{id}")
+    @Path("/me")
     @Operation(summary = "Update customer profile")
-    public UserProfileResponse update(@PathParam("id") long id,
+    public UserProfileResponse update(@HeaderParam("Authorization") String token,
                                       @Valid UserUpdateRequest patch) {
         validate(patch);
-        Customer updated = service.updateAddress(id, patch.address() == null ? "" : patch.address());
+        Customer updated = service.updateAddress(TokenUtil.decodeUserId(token), patch.address() == null ? "" : patch.address());
         return UserMapper.toDto(updated);
     }
 
     @PATCH
-    @Path("/{id}/phone")
+    @Path("/me/phone")
     @Operation(summary = "Change customer phone number")
-    public UserProfileResponse changePhone(@PathParam("id") long id,
+    public UserProfileResponse changePhone(@HeaderParam("Authorization") String token,
                                            @Valid ChangePhoneRequest request) {
-        Customer c = service.changePhone(id, request.phone());
+        Customer c = service.changePhone(TokenUtil.decodeUserId(token), request.phone());
         return UserMapper.toDto(c);
     }
 
     @PATCH
-    @Path("/{id}/password")
+    @Path("/me/password")
     @Operation(summary = "Change customer password")
-    public UserProfileResponse changePassword(@PathParam("id") long id,
+    public UserProfileResponse changePassword(@HeaderParam("Authorization") String token,
                                               @Valid ChangePasswordRequest request) {
-        Customer c = service.changePassword(id, request.newPassword());
+        Customer c = service.changePassword(TokenUtil.decodeUserId(token), request.newPassword());
         return UserMapper.toDto(c);
     }
-
-    @POST
-    @Path("/orders")
-    @RolesAllowed("customer")
-    @Operation(summary = "Place a new order")
-    public OrderResponse placeOrder(@Valid CustomerOrderRequest dto,
-                                    @QueryParam("userId") long userId) throws Exception {
-        Customer customer = (Customer) userService.findById(userId);
-
-        if (dto.couponCode() == null || dto.couponCode().isBlank()) {
-            FoodOrder saved = orderService.placeOrder(customer, dto);
-            return OrderMapper.toDto(saved);
-        }
-
-        Coupon coupon = couponService.findValidCoupon(dto.couponCode());
-        FoodOrder saved = orderService.placeOrder(customer, dto);
-
-        double discounted = saved.getTotal() * (100 - coupon.getDiscountPercent()) / 100.0;
-        saved.setTotal(discounted);
-        saved.setCouponCode(coupon.getCode());
-
-        couponService.incrementUsage(coupon);
-        orderService.updateOrder(saved);
-
-        return OrderMapper.toDto(saved);
+    private Customer extractCustomer(String token) {
+        long userId = TokenUtil.decodeUserId(token);
+        return (Customer) userService.findById(userId);
     }
 
     @GET
-    @Path("/orders")
-    @RolesAllowed("customer")
-    @Operation(summary = "Get order history for a customer")
-    public List<OrderResponse> getOrderHistory(@QueryParam("userId") long userId) {
-        Customer customer = (Customer) userService.findById(userId);
-        return orderService.getOrderHistory(customer)
-                .stream()
-                .map(OrderMapper::toDto)
-                .toList();
-    }
+    @Path("/search")
+    @Operation(summary = "Search restaurants by criteria")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Restaurants search results retrieved successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid search criteria")
+    })
+    public List<RestaurantBriefDto> search(
+            @QueryParam("kw") String kw,
+            @QueryParam("cat") String cat,
+            @QueryParam("min") Double min,
+            @QueryParam("max") Double max)
+    {
 
-    @GET
-    @Path("/favorites")
-    @RolesAllowed("customer")
-    @Operation(summary = "List favorite restaurants")
-    public List<RestaurantResponseDto> listFavorites(@QueryParam("userId") long userId) {
-        Customer customer = (Customer) userService.findById(userId);
-        return favorite.list(customer)
+        RestaurantService restaurantService = new RestaurantService();
+        return restaurantService.search(kw, cat, min, max)
                 .stream()
-                .map(RestaurantMapper::toDto)
-                .toList();
+                .map(RestaurantMapper::toBriefDto)
+                .collect(Collectors.toList());
     }
 
     @POST
-    @Path("/ratings")
+    @Path("/vendors")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed("customer")
-    @Operation(summary = "Rate a restaurant")
-    public void rate(@Valid RatingRequestDto dto,
-                     @QueryParam("userId") long userId) {
-        Customer customer = (Customer) userService.findById(userId);
-        rating.addOrUpdate(customer, dto.restaurantId(), dto.score());
+    public List<RestaurantResponseDto> searchRestaurants(RestaurantSearchRequest request) {
+        String search = request.search();
+        List<Restaurant> matches = restaurantService.searchByName(search);
+        return matches.stream().map(RestaurantMapper::toDto).toList();
     }
 
-    @GET
-    @Path("/ratings/{restaurantId}")
-    @Operation(summary = "Get average rating for a restaurant")
-    public double getAverageRating(@PathParam("restaurantId") long id) {
-        return rating.getAverageRating(id);
-    }
+
 
     private <T> void validate(T obj) {
         Set<ConstraintViolation<T>> v = validator.validate(obj);

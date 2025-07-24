@@ -9,12 +9,15 @@ import jakarta.validation.*;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import model.Coupon;
 import service.CouponService;
 
+import java.util.List;
 import java.util.Set;
 
-@Path("/coupons")
+@Path("/admin/coupons")
+@RolesAllowed("admin")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class CouponController {
@@ -40,19 +43,23 @@ public class CouponController {
             @ApiResponse(responseCode = "400", description = "Invalid input"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
-    public void create(@Valid CouponCreateDto dto)
+    public Response create(@Valid CouponCreateDto dto)
     {
         validate(dto);
         Coupon c = new Coupon();
         c.setCode(dto.code());
-        c.setDiscountPercent(dto.discountPercent());
+        c.setDiscountPercent(dto.value());
         c.setValidFrom(dto.validFrom());
         c.setValidUntil(dto.validUntil());
-        c.setUsageLimit(dto.usageLimit());
+        c.setUsageLimit((int) dto.user_count());
+        c.setMin_price(dto.min_price());
         service.create(c);
+        return Response.status(Response.Status.CREATED).build();
     }
 
-    @GET @Path("/{code}")
+    @GET
+    @Path("/{code}")
+    @RolesAllowed("admin")
     @Operation(summary = "Get coupon details by code")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Coupon details retrieved successfully"),
@@ -61,6 +68,14 @@ public class CouponController {
     public Coupon getCouponInfo(@PathParam("code") String code) throws Exception {
         return service.findValidCoupon(code);
     }
+    @GET
+    @Path("/all")
+    @RolesAllowed("admin")
+    @Operation(summary = "List all coupons")
+    public List<Coupon> listAll() {
+        return service.findAll();
+    }
+
 
     private <T> void validate(T obj) {
         Set<ConstraintViolation<T>> v = validator.validate(obj);

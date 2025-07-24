@@ -2,6 +2,7 @@ package model;
 
 import jakarta.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Table(name = "menu_items")
@@ -24,7 +25,9 @@ public class MenuItem implements Serializable {
 
     private String imgURL;
 
-    private String category;
+    @ElementCollection
+    private List<String> categories;
+
 
     @ManyToOne
     @JoinColumn(name = "restaurant_id", nullable = false)
@@ -54,8 +57,8 @@ public class MenuItem implements Serializable {
     public String getImgURL() { return imgURL; }
     public void setImgURL(String imgURL) { this.imgURL = imgURL; }
 
-    public String getCategory() { return category; }
-    public void setCategory(String category) { this.category = category; }
+    public List<String> getCategory() { return categories; }
+    public void setCategory(List<String> categories) { this.categories = categories; }
 
     public Restaurant getRestaurant() { return restaurant; }
     public void setRestaurant(Restaurant restaurant) { this.restaurant = restaurant; }

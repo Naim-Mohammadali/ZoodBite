@@ -1,5 +1,8 @@
 package dto.restaurant;
 import model.Restaurant;
+
+import java.util.List;
+
 public record RestaurantResponseDto(
         Long id,
         String name,
@@ -8,4 +11,6 @@ public record RestaurantResponseDto(
         String logoBase64,
         Integer taxFee,
         Integer additionalFee,
-        Restaurant.Status status) { }
+        Restaurant.Status status,
+        List<MenuResponse> menus
+) { }

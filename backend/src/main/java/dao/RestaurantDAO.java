@@ -18,4 +18,6 @@ public interface RestaurantDAO {
     Restaurant findByIdAndSeller(Long restaurantId, Long sellerId);
     List<Restaurant> search(String keyword, String category,
                             Double minPrice, Double maxPrice);
+
+    List<Restaurant> findByNameContaining(String search);
 }

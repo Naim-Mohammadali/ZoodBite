@@ -2,6 +2,7 @@ package util.mapper;
 
 import dto.order.OrderResponse;
 import model.FoodOrder;
+import model.MenuItem;
 
 import java.util.stream.Collectors;
 
@@ -12,6 +13,7 @@ public final class OrderMapper {
         return new OrderResponse(
                 o.getId(), o.getRestaurant().getName(),o.getCreatedAt(), o.getStatus(),o.getCouponCode(),
                 o.getTotal(),
-                o.getItems().stream().map(i -> i.getId()).collect(Collectors.toList()));
+                o.getDeliveryAddress(),
+                o.getItems().stream().map(MenuItem::getId).collect(Collectors.toList()));
     }
 }

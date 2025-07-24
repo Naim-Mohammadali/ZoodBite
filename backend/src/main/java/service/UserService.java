@@ -1,10 +1,18 @@
 package service;
+import dto.user.request.UserUpdateRequest;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
+import jakarta.validation.Valid;
+import jakarta.ws.rs.NotFoundException;
 import org.mindrot.jbcrypt.BCrypt;
 import dao.UserDAO;
 import dao.UserDAOImpl;
 import model.*;
 import org.jetbrains.annotations.NotNull;
+import util.EntityManagerFactorySingleton;
 
+import java.time.Instant;
+import java.util.Base64;
 import java.util.List;
 
 
@@ -61,11 +69,6 @@ public class UserService {
         return userDAO.findByType(type);
     }
 
-
-    public User update(User user) {
-        return userDAO.update(user);
-    }
-
     public User login(String phone, String rawPassword) {
         User u = userDAO.findByPhone(phone);
         if (u == null)  {
@@ -84,5 +87,43 @@ public class UserService {
         user.setRole(newRole);
         return userDAO.update(user);
     }
+
+
+    public String issueToken(User user) {
+        String raw = user.getId() + ":" + user.getRole() + ":" + Instant.now().toEpochMilli();
+        return Base64.getEncoder().encodeToString(raw.getBytes());
+    }
+    public User update(User user) {
+        EntityManager em = EntityManagerFactorySingleton.getInstance().createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            User merged = em.merge(user);
+            tx.commit();
+            return merged;
+        } catch (Exception e) {
+            if (tx.isActive()) tx.rollback();
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+    public User updatePartial(long id, UserUpdateRequest dto) {
+        User user = userDAO.findById(id);
+        if (user == null) throw new NotFoundException("User not found");
+
+        if (dto.name() != null && !dto.name().isBlank()) {
+            user.setName(dto.name());
+        }
+        if (dto.address() != null && !dto.address().isBlank()) {
+            user.setAddress(dto.address());
+        }
+        if (dto.email() != null && !dto.email().isBlank()) {
+            user.setEmail(dto.email());
+        }
+
+        return userDAO.update(user);
+    }
+
 
 }

@@ -20,7 +20,7 @@ public class SellerService extends UserService {
         if (dto.role() != Role.SELLER) {
             dto = new UserRegisterRequest(
                     dto.name(), dto.phone(), dto.email(),
-                    dto.password(), dto.address(), Role.SELLER);
+                    dto.password(), dto.address(), Role.SELLER,dto.bank_info());
         }
 
         Seller seller = (Seller) UserMapper.toEntity(dto);

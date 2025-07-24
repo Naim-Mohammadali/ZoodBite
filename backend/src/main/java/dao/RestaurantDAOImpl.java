@@ -3,6 +3,7 @@ package dao;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
+import model.Menu;
 import model.Restaurant;
 import model.Seller;
 import util.EntityManagerFactorySingleton;
@@ -22,12 +23,18 @@ public class RestaurantDAOImpl implements RestaurantDAO {
         doInTx((Consumer<EntityManager>) em -> em.persist(restaurant));
     }
 
-    @Override
+      @Override
     public Restaurant findById(Long id) {
-        try (EntityManager em = emf.createEntityManager()) {
-            return em.find(Restaurant.class, id);
-        }
+        EntityManager em = emf.createEntityManager();
+        return em.createQuery("""
+        SELECT r FROM Restaurant r
+        LEFT JOIN FETCH r.menus
+        WHERE r.id = :id
+        """, Restaurant.class)
+                .setParameter("id", id)
+                .getSingleResult();
     }
+
 
     @Override
     public void update(Restaurant restaurant) {
@@ -134,6 +141,41 @@ public class RestaurantDAOImpl implements RestaurantDAO {
                     .setParameter("max", max)
                     .getResultList();
         }
+    }@Override
+    public List<Restaurant> findByNameContaining(String keyword) {
+        EntityManager em = EntityManagerFactorySingleton.getInstance().createEntityManager();
+        List<Restaurant> result;
+
+        try {
+            em.getTransaction().begin();
+
+            result = em.createQuery(
+                            "SELECT r FROM Restaurant r WHERE LOWER(r.name) LIKE :kw", Restaurant.class)
+                    .setParameter("kw", "%" + keyword.toLowerCase() + "%")
+                    .getResultList();
+
+            // Manually initialize menus and items to avoid LazyInitializationException
+            for (Restaurant r : result) {
+                r.getMenus().size(); // trigger menu list
+                for (Menu menu : r.getMenus()) {
+                    menu.getItems().size(); // trigger items
+                }
+            }
+
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            em.getTransaction().rollback();
+            throw new RuntimeException("Search failed: " + e.getMessage(), e);
+        } finally {
+            em.close();
+        }
+
+        return result;
     }
+
+
+
+
+
 
 }
