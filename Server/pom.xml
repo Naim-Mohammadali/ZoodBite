@@ -8,10 +8,7 @@
         <version>2.0.0</version>
     </parent>
 
-
-    <groupId>com.foodapp</groupId>
     <artifactId>Server</artifactId>
-    <version>1.0-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>23</maven.compiler.source>
