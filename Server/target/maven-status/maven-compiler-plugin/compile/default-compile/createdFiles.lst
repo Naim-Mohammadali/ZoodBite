@@ -38,7 +38,6 @@ service\SellerService.class
 util\mapper\MenuMapper.class
 dto\order\OrderResponse.class
 service\OrderService.class
-rest\AuthResource.class
 dto\restaurant\MenuResponse.class
 model\TokenUtil.class
 config\ObjectMapperResolver.class
@@ -54,7 +53,6 @@ dto\restaurant\RestaurantUpdateDto.class
 controller\SwaggerController.class
 service\UserService$1.class
 dao\FavoriteDAOImpl.class
-rest\security\JwtFilter.class
 dto\order\OrderStatusPatchRequest.class
 controller\UserController.class
 dto\user\request\UserRegisterRequest.class

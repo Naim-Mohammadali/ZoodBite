@@ -79,8 +79,6 @@ B:\JAVA\MyProjects\MainProjects\zoodBite\Server\src\main\java\model\Role.java
 B:\JAVA\MyProjects\MainProjects\zoodBite\Server\src\main\java\model\Seller.java
 B:\JAVA\MyProjects\MainProjects\zoodBite\Server\src\main\java\model\TokenUtil.java
 B:\JAVA\MyProjects\MainProjects\zoodBite\Server\src\main\java\model\User.java
-B:\JAVA\MyProjects\MainProjects\zoodBite\Server\src\main\java\rest\AuthResource.java
-B:\JAVA\MyProjects\MainProjects\zoodBite\Server\src\main\java\rest\security\JwtFilter.java
 B:\JAVA\MyProjects\MainProjects\zoodBite\Server\src\main\java\service\AdminService.java
 B:\JAVA\MyProjects\MainProjects\zoodBite\Server\src\main\java\service\AuthService.java
 B:\JAVA\MyProjects\MainProjects\zoodBite\Server\src\main\java\service\CouponService.java
