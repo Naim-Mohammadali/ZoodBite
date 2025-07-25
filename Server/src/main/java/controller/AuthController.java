@@ -51,7 +51,7 @@ public class AuthController {
             user.setStatus(User.Status.ACTIVE);
         }
         String token = userService.issueToken(user);
-        return new AuthResponse(user.getId(), token);
+        return new AuthResponse(token, user);
     }
 
     @POST
@@ -69,7 +69,7 @@ public class AuthController {
         }
 
         String token = TokenUtil.issueToken(user);
-        return new AuthResponse(user.getId(), token);
+        return new AuthResponse(token, user);
     }
     @GET
     @Path("/profile")
