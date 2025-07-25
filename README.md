@@ -49,7 +49,8 @@ cd Server
 
 ## 📦 Server Documentation
 
-See [Server/README.md](./Server/README.md) for full API details, setup instructions, and tech specs.
+- See [Server/README.md](./Server/README.md) for full API details, setup instructions, and tech specs.
+- See [Client/README.md](./Client/README.md) for full Client app details, setup instructions, and tech specs.
 
 ---
 
