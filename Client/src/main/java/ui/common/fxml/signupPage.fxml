@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="example.org.tst1.HelloController">
+   <children>
+      <Label alignment="CENTER" prefHeight="114.0" prefWidth="900.0" text="WELCOME TO ZOODBITE !!" textAlignment="CENTER">
+         <font>
+            <Font name="Myanmar Text Bold" size="43.0" />
+         </font>
+         <padding>
+            <Insets left="30.0" />
+         </padding>
+      </Label>
+      <Label text="Please enter your information :">
+         <font>
+            <Font name="System Bold" size="20.0" />
+         </font>
+         <padding>
+            <Insets left="35.0" right="30.0" top="30.0" />
+         </padding>
+      </Label>
+      <Label fx:id="statusLabel" text="Label" visible="false">
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+         <VBox.margin>
+            <Insets left="40.0" />
+         </VBox.margin>
+      </Label>
+      <GridPane alignment="CENTER" prefHeight="258.0" prefWidth="900.0">
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.3333231608073" minWidth="10.0" prefWidth="140.99997965494794" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="335.33331298828125" minWidth="10.0" prefWidth="286.33329264322913" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="239.66670735677087" minWidth="10.0" prefWidth="161.66670735677087" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="335.3333536783854" minWidth="10.0" prefWidth="308.66666666666663" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints />
+          <RowConstraints maxHeight="41.333333333333336" minHeight="23.999989827473954" prefHeight="37.333333333333336" />
+          <RowConstraints maxHeight="45.0" minHeight="10.0" prefHeight="41.333333333333336" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="45.66665649414064" minHeight="10.0" prefHeight="42.333312988281264" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="49.00001017252603" minHeight="10.0" prefHeight="39.66666666666666" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="53.33331298828125" minHeight="10.0" prefHeight="37.66666666666666" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="37.66666666666666" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label text="Last Name :" GridPane.columnIndex="2" GridPane.rowIndex="2">
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
+            </Label>
+            <Label text="Name :" GridPane.rowIndex="2">
+               <padding>
+                  <Insets left="40.0" />
+               </padding>
+            </Label>
+            <Label text="Phone number :" GridPane.rowIndex="3">
+               <padding>
+                  <Insets left="40.0" />
+               </padding>
+            </Label>
+            <Label text="Email (optional) :" GridPane.rowIndex="4">
+               <padding>
+                  <Insets left="40.0" />
+               </padding>
+            </Label>
+            <Label text="Verification code :" GridPane.columnIndex="2" GridPane.rowIndex="3">
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
+            </Label>
+            <Label text="Verification code :" GridPane.columnIndex="2" GridPane.rowIndex="4">
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
+            </Label>
+            <TextField fx:id="usernameSIgnupTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="20.0" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextField fx:id="nameTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="20.0" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <TextField fx:id="lastNameTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="20.0" prefWidth="250.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+            <TextField fx:id="phoneNumberTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="20.0" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <TextField fx:id="phoneNumberVerifictionCodeTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="20.0" prefWidth="250.0" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+            <TextField fx:id="emailTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="20.0" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <TextField fx:id="emailVerifictionCodeTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="20.0" prefWidth="250.0" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+            <PasswordField fx:id="passwordSignupTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="20.0" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <PasswordField fx:id="passwordVerificationTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="20.0" prefWidth="250.0" GridPane.columnIndex="3" GridPane.rowIndex="5" />
+            <Label text="password :" GridPane.rowIndex="5">
+               <padding>
+                  <Insets left="40.0" />
+               </padding>
+            </Label>
+            <Label text="password verification :" GridPane.columnIndex="2" GridPane.rowIndex="5">
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
+            </Label>
+            <Label text="Userame :" GridPane.rowIndex="1">
+               <padding>
+                  <Insets left="40.0" />
+               </padding>
+            </Label>
+            <Button fx:id="submitButton" mnemonicParsing="false" onAction="#signupUser" prefHeight="25.0" prefWidth="249.0" text="Submit" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            <Hyperlink onAction="#goTOChoosingWorkPage" text="I want to work in ZoodBite" GridPane.columnIndex="3" GridPane.rowIndex="6" />
+         </children>
+         <padding>
+            <Insets top="20.0" />
+         </padding>
+      </GridPane>
+      <Button mnemonicParsing="false" onAction="#goTOHomePage" prefHeight="21.0" prefWidth="59.0" text="GoBack">
+         <VBox.margin>
+            <Insets bottom="30.0" left="725.0" />
+         </VBox.margin>
+      </Button>
+   </children>
+</VBox>
