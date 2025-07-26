@@ -22,12 +22,16 @@ public class CouponService {
     }
 
     public double applyDiscount(Coupon coupon, double total) {
+        if (coupon == null) return total;
         double discount = total * coupon.getDiscountPercent() / 100.0;
         return total - discount;
     }
 
     public void incrementUsage(Coupon c) {
-        dao.incrementUsage(c);
+        if (c != null)
+            dao.incrementUsage(c);
+        else
+            System.out.println("⚠️ No coupon provided – skipping usage increment.");
     }
 
     public void create(Coupon coupon) {

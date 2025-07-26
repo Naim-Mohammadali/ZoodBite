@@ -79,7 +79,7 @@ public class CustomerController {
     @Path("/me")
     @Operation(summary = "View customer profile")
     public UserProfileResponse view(@HeaderParam("Authorization") String token) {
-        return UserMapper.toDto(service.viewProfile(TokenUtil.decodeUserId(token)));
+        return UserMapper.toProfileDto(service.viewProfile(TokenUtil.decodeUserId(token)));
     }
 
     @PATCH
@@ -89,7 +89,7 @@ public class CustomerController {
                                       @Valid UserUpdateRequest patch) {
         validate(patch);
         Customer updated = service.updateAddress(TokenUtil.decodeUserId(token), patch.address() == null ? "" : patch.address());
-        return UserMapper.toDto(updated);
+        return UserMapper.toProfileDto(updated);
     }
 
     @PATCH
@@ -98,7 +98,7 @@ public class CustomerController {
     public UserProfileResponse changePhone(@HeaderParam("Authorization") String token,
                                            @Valid ChangePhoneRequest request) {
         Customer c = service.changePhone(TokenUtil.decodeUserId(token), request.phone());
-        return UserMapper.toDto(c);
+        return UserMapper.toProfileDto(c);
     }
 
     @PATCH
@@ -107,7 +107,7 @@ public class CustomerController {
     public UserProfileResponse changePassword(@HeaderParam("Authorization") String token,
                                               @Valid ChangePasswordRequest request) {
         Customer c = service.changePassword(TokenUtil.decodeUserId(token), request.newPassword());
-        return UserMapper.toDto(c);
+        return UserMapper.toProfileDto(c);
     }
     private Customer extractCustomer(String token) {
         long userId = TokenUtil.decodeUserId(token);

@@ -45,7 +45,7 @@ public class SellerController {
             @ApiResponse(responseCode = "404", description = "Seller not found")
     })
     public UserProfileResponse viewProfile(@PathParam("id") long id) {
-        return UserMapper.toDto(service.viewProfile(id));
+        return UserMapper.toProfileDto(service.viewProfile(id));
     }
 
     @PATCH
@@ -59,7 +59,7 @@ public class SellerController {
     public UserProfileResponse updatePhone(@PathParam("id") long id,
                                            @Valid ChangePhoneRequest request) {
         Seller s = service.updatePhone(id, request.phone());
-        return UserMapper.toDto(s);
+        return UserMapper.toProfileDto(s);
     }
 
     @PATCH
@@ -73,7 +73,7 @@ public class SellerController {
     public UserProfileResponse changePassword(@PathParam("id") long id,
                                               @Valid ChangePasswordRequest request) {
         Seller s = service.changePassword(id, request.newPassword());
-        return UserMapper.toDto(s);
+        return UserMapper.toProfileDto(s);
     }
 
     @PATCH
@@ -94,7 +94,7 @@ public class SellerController {
         if (patch.address() != null) s.setAddress(patch.address());
 
         Seller saved = (Seller) service.update(s);
-        return UserMapper.toDto(saved);
+        return UserMapper.toProfileDto(saved);
     }
 
     private <T> void validate(T obj) {

@@ -56,7 +56,7 @@ public class CourierController {
     })
     public UserProfileResponse viewProfile(@HeaderParam("Authorization") String token) {
         Courier c = extractCourier(token);
-        return UserMapper.toDto(service.viewProfile(c.getId()));
+        return UserMapper.toProfileDto(service.viewProfile(c.getId()));
     }
 
     @PATCH
@@ -71,7 +71,7 @@ public class CourierController {
             @HeaderParam("Authorization") String token,
             @Valid CourierAvailabilityRequest request) {
         Courier c = extractCourier(token);
-        return UserMapper.toDto(c);
+        return UserMapper.toProfileDto(c);
     }
 
     @PATCH
@@ -86,7 +86,7 @@ public class CourierController {
             @HeaderParam("Authorization") String token,
             @Valid ChangePhoneRequest request) {
         Courier c = service.changePhone(extractCourier(token).getId(), request.phone());
-        return UserMapper.toDto(c);
+        return UserMapper.toProfileDto(c);
     }
 
     @PATCH
@@ -101,7 +101,7 @@ public class CourierController {
             @HeaderParam("Authorization") String token,
             @Valid ChangePasswordRequest request) {
         Courier c = service.changePassword(extractCourier(token).getId(), request.newPassword());
-        return UserMapper.toDto(c);
+        return UserMapper.toProfileDto(c);
     }
 
     @PATCH
@@ -123,7 +123,7 @@ public class CourierController {
         if (patch.address() != null) c.setAddress(patch.address());
 
         Courier saved = (Courier) service.update(c);
-        return UserMapper.toDto(saved);
+        return UserMapper.toProfileDto(saved);
     }
 
     private Courier extractCourier(String token) {

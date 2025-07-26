@@ -4,6 +4,7 @@ import dto.user.request.UserLoginRequest;
 import dto.user.request.UserRegisterRequest;
 import dto.user.request.UserUpdateRequest;
 import dto.user.response.AuthResponse;
+import dto.user.response.LoginResponseDto;
 import dto.user.response.UserProfileResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -12,14 +13,14 @@ import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-import model.Customer;
-import model.Role;
-import model.TokenUtil;
-import model.User;
-import service.CustomerService;
-import service.UserService;
+import model.*;
+import service.*;
 import util.mapper.UserMapper;
 
+import java.util.Objects;
+
+
+import java.util.Objects;
 @Path("/auth")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -51,7 +52,8 @@ public class AuthController {
             user.setStatus(User.Status.ACTIVE);
         }
         String token = userService.issueToken(user);
-        return new AuthResponse(token, user);
+        var userDto = UserMapper.toDto(user);
+        return new AuthResponse(token, userDto);
     }
 
     @POST
@@ -67,9 +69,12 @@ public class AuthController {
         } else {
             user = userService.login(req.phone(), req.password());
         }
-
+        if (user instanceof Customer c) {
+            c.getFavorites();
+        }
         String token = TokenUtil.issueToken(user);
-        return new AuthResponse(token, user);
+        var userDto = UserMapper.toDto(user);
+        return new AuthResponse(token, userDto);
     }
     @GET
     @Path("/profile")
@@ -79,8 +84,9 @@ public class AuthController {
             @ApiResponse(responseCode = "404", description = "User not found")
     })
     public UserProfileResponse view(@HeaderParam("Authorization") String token) {
-
-        return UserMapper.toDto(userService.findById(extractCustomer(token).getId()));
+        long userId = TokenUtil.decodeUserId(token);
+        var user = userService.findById(userId);
+        return UserMapper.toProfileDto(user);
     }
 
     @PUT
@@ -97,14 +103,31 @@ public class AuthController {
                                       @Valid UserUpdateRequest dto) {
         long id = TokenUtil.decodeUserId(token);
         User updated = userService.updatePartial(id, dto);
-        return UserMapper.toDto(updated);
+        return UserMapper.toProfileDto(updated);
     }
 
 
-    private Customer extractCustomer(String token) {
+    private User extractUser(String token) {
         long userId = TokenUtil.decodeUserId(token);
-        CustomerService customerService = new CustomerService();
-        return (Customer) customerService.findById(userId);
+        switch (userService.findById(userId).getRole()) {
+            case Role.CUSTOMER -> {
+                CustomerService customerService = new CustomerService();
+                return (Customer) customerService.findById(userId);
+            }
+            case Role.ADMIN -> {
+                AdminService adminService = new AdminService();
+                return (Admin) adminService.findById(userId);
+            }
+            case Role.COURIER -> {
+                CourierService courierService = new CourierService();
+                return (Courier) courierService.findById(userId);
+            }
+            case Role.SELLER -> {
+                SellerService sellerService = new SellerService();
+                return (Seller) sellerService.findById(userId);
+            }
+        }
+        return null;
     }
 
 }

@@ -63,7 +63,7 @@ public class UserController {
         if (dto.email() != null) user.setEmail(dto.email());
 
         User saved = userService.update(user);
-        return UserMapper.toDto(saved);
+        return UserMapper.toProfileDto(saved);
     }
 
     @GET
@@ -75,7 +75,7 @@ public class UserController {
     public List<UserProfileResponse> listAll() {
         return userService.findAll()
                 .stream()
-                .map(UserMapper::toDto)
+                .map(UserMapper::toProfileDto)
                 .collect(Collectors.toList());
     }
 
@@ -90,7 +90,7 @@ public class UserController {
     public List<UserProfileResponse> listByRole(@PathParam("role") Role role) {
         return userService.findByRole(role)
                 .stream()
-                .map(UserMapper::toDto)
+                .map(UserMapper::toProfileDto)
                 .collect(Collectors.toList());
     }
 

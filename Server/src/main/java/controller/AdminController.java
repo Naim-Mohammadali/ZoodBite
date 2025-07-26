@@ -65,7 +65,7 @@ public class AdminController {
                 dto.password(), dto.address(), Role.ADMIN, null);
 
         Admin saved = adminService.registerAdmin(fixed);
-        return UserMapper.toDto(saved);
+        return UserMapper.toProfileDto(saved);
     }
     @GET @Path("/accounts")
     @Operation(summary = "List users by role (or all users if role is omitted)")
@@ -78,7 +78,7 @@ public class AdminController {
                 ? adminService.listAllUsers()
                 : adminService.findByRole(Role.valueOf(roleOpt));
 
-        return list.stream().map(UserMapper::toDto).collect(Collectors.toList());
+        return list.stream().map(UserMapper::toProfileDto).collect(Collectors.toList());
     }
 
     @PATCH @Path("/accounts/{id}")
@@ -97,7 +97,7 @@ public class AdminController {
         if (patch.email() != null) admin.setEmail(patch.email());
 
         Admin saved = (Admin) adminService.update(admin);
-        return UserMapper.toDto(saved);
+        return UserMapper.toProfileDto(saved);
     }
 
     @PATCH @Path("/accounts/{id}/block")
@@ -107,7 +107,7 @@ public class AdminController {
             @ApiResponse(responseCode = "404", description = "User not found")
     })
     public UserProfileResponse blockUser(@PathParam("id") long userId) {
-        return UserMapper.toDto(adminService.blockUser(userId));
+        return UserMapper.toProfileDto(adminService.blockUser(userId));
     }
 
     @PATCH @Path("/accounts/{id}/unblock")
@@ -117,7 +117,7 @@ public class AdminController {
             @ApiResponse(responseCode = "404", description = "User not found")
     })
     public UserProfileResponse unblockUser(@PathParam("id") long userId) {
-        return UserMapper.toDto(adminService.unblockUser(userId));
+        return UserMapper.toProfileDto(adminService.unblockUser(userId));
     }
 
     @PATCH @Path("/accounts/{id}/role")
@@ -131,7 +131,7 @@ public class AdminController {
                                           AdminUserRolePatch dto) {
         validate(dto);
         User updated = adminService.changeRole(userId, Role.valueOf(dto.role()));
-        return UserMapper.toDto(updated);
+        return UserMapper.toProfileDto(updated);
     }
 
 
@@ -145,7 +145,7 @@ public class AdminController {
     public UserProfileResponse changePassword(@PathParam("id") long id,
                                               ChangePasswordRequest request) {
         validate(request);
-        return UserMapper.toDto(adminService.changePassword(id, request.newPassword()));
+        return UserMapper.toProfileDto(adminService.changePassword(id, request.newPassword()));
     }
 
 

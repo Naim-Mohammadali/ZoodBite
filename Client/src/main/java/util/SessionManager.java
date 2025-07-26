@@ -1,6 +1,6 @@
 package util;
 
-import network.dto.UserDto;
+import network.dto.user.UserDto;
 
 public class SessionManager {
     private static final SessionManager instance = new SessionManager();

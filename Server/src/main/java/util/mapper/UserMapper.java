@@ -1,6 +1,7 @@
 package util.mapper;
 
 import dto.user.request.*;
+import dto.user.response.LoginResponseDto;
 import dto.user.response.UserProfileResponse;
 import model.*;
 
@@ -23,11 +24,37 @@ public final class UserMapper {
         };
     }
 
-    public static UserProfileResponse toDto(User u) {
+    public static LoginResponseDto toDto(User u) {
+        String bankName = null;
+        String accountNumber = null;
+        Boolean available = null;
+
+        if (u instanceof Seller s) {
+            bankName = s.getBankName();
+            accountNumber = s.getAccountNumber();
+        } else if (u instanceof Courier c) {
+            available = c.isAvailable();
+        }
+
+        return new LoginResponseDto(
+                u.getId(),
+                u.getName(),
+                u.getPhone(),
+                u.getEmail(),
+                u.getAddress(),
+                u.getStatus(),
+                u.getRole(),
+                bankName,
+                accountNumber,
+                available
+        );
+    }
+    public static UserProfileResponse toProfileDto(User u) {
         return new UserProfileResponse(
                 u.getId(), u.getName(), u.getPhone(), u.getEmail(),
                 u.getAddress(), u.getStatus(), u.getRole());
     }
+
 
     public static UserRegisterRequest toRequest(User u) {
         BankInfoDto bankInfo = null;
