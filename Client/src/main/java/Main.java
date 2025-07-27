@@ -1,19 +1,47 @@
-import network.dto.admin.CreateCouponRequestDto;
-import network.dto.order.PlaceOrderItemDto;
-import network.dto.order.PlaceOrderRequestDto;
-import network.dto.order.PlaceOrderResponseDto;
-import network.dto.user.LoginRequestDto;
-import network.dto.user.RestaurantResponseDto;
-import network.dto.user.UserDto;
-import network.dto.user.UserUpdateRequestDto;
-import network.endpoint.*;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 import util.SessionManager;
 
-import java.util.List;
+public class Main extends Application {
 
-public class Main {
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        Parent root = FXMLLoader.load(getClass().getResource("/view/Splash.fxml"));
+        Scene scene = new Scene(root, 800, 600);
+        primaryStage.setTitle("ZoodBite");
+        primaryStage.setScene(scene);
+        primaryStage.setResizable(false);
+        primaryStage.show();
+        primaryStage.getIcons().add(
+                new javafx.scene.image.Image(getClass().getResourceAsStream("/assets/logo/blueLogo.png"))
+        );
+
+    }
+    @Override
+    public void stop() {
+        SessionManager.getInstance().deleteTempFile();
+    }
+
+
     public static void main(String[] args) {
-        try {
+        launch(args);
+    }
+}
+
+//import network.dto.admin.CreateCouponRequestDto;
+//import network.dto.order.PlaceOrderItemDto;
+//import network.dto.order.PlaceOrderRequestDto;
+//import network.dto.order.PlaceOrderResponseDto;
+//import network.dto.user.LoginRequestDto;
+//import network.dto.user.RestaurantResponseDto;
+//import network.dto.user.UserDto;
+//import network.dto.user.UserUpdateRequestDto;
+//import network.endpoint.*;
+//import util.SessionManager;
+//import java.util.List;
 //            ----- Login User -----
 //            var dto0 = new LoginRequestDto("9890274654", "SecurePass123!");
 //            var endpoint = new UserEndpoint();
@@ -246,25 +274,19 @@ public class Main {
 //
 //
 //            View all orders by admin
-            var loginResponse = new UserEndpoint().login(new LoginRequestDto("admin", "admin"));
-            SessionManager.getInstance().setToken(loginResponse.token);
-            SessionManager.getInstance().setLoggedInUser(loginResponse.user);
-            System.out.println("✅ Logged in as: " + SessionManager.getInstance().getLoggedInUser().name);
-            AdminEndpoint admin = new AdminEndpoint();
-            List<PlaceOrderResponseDto> allOrders = admin.getAllOrders();
-            System.out.println("📦 Orders:");
-            for (PlaceOrderResponseDto order : allOrders) {
-                System.out.println("🆔 Order ID: " + order.id);
-                System.out.println("🍔 Restaurant: " + order.restaurantName);
-                System.out.println("💵 Total: " + order.total);
-                System.out.println("🚚 Status: " + order.status);
-                System.out.println("📍 Address: " + order.address);
-                System.out.println("🧾 Items: " + order.itemIds);
-                System.out.println("------");
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-}
+//            var loginResponse = new UserEndpoint().login(new LoginRequestDto("admin", "admin"));
+//            SessionManager.getInstance().setToken(loginResponse.token);
+//            SessionManager.getInstance().setLoggedInUser(loginResponse.user);
+//            System.out.println("✅ Logged in as: " + SessionManager.getInstance().getLoggedInUser().name);
+//            AdminEndpoint admin = new AdminEndpoint();
+//            List<PlaceOrderResponseDto> allOrders = admin.getAllOrders();
+//            System.out.println("📦 Orders:");
+//            for (PlaceOrderResponseDto order : allOrders) {
+//                System.out.println("🆔 Order ID: " + order.id);
+//                System.out.println("🍔 Restaurant: " + order.restaurantName);
+//                System.out.println("💵 Total: " + order.total);
+//                System.out.println("🚚 Status: " + order.status);
+//                System.out.println("📍 Address: " + order.address);
+//                System.out.println("🧾 Items: " + order.itemIds);
+//                System.out.println("------");
+//            }

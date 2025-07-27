@@ -1,0 +1,47 @@
+@font-face {
+    font-family: 'IBMPlex';
+    src: url('/assets/fonts/IBMPlexSansArabic-Thin.ttf');
+}
+
+.root {
+    -fx-font-family: 'IBMPlex';
+}
+
+.text-field,
+.password-field,
+.select-role,
+.button {
+    -fx-background-insets: 0;
+    -fx-background-radius: 4;
+    -fx-effect: none;
+    -fx-border-color: #C1C1C1;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+}
+
+/* Style login button */
+.login-button {
+    -fx-border-color: #C97111;
+    -fx-background-color: #E89E1C; /* Replace with your HEX */
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+/* Hover effect for login button */
+.login-button:hover {
+    -fx-background-color: #C97111; /* Replace with your hover HEX */
+}
+
+/* Style register button */
+.register-button {
+    -fx-background-color: #E89E1C; /* Replace with your HEX */
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+/* Hover effect for register button */
+.register-button:hover {
+    -fx-background-color: #C97111; /* Replace with your hover HEX */
+}
