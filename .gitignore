@@ -1,28 +1,56 @@
-# === Maven ===
-/target/
+# === Java & Maven ===
+**/target/
 !.mvn/wrapper/maven-wrapper.jar
+.mvn/
+.settings/
+.classpath
+.project
+
+# === Maven Output ===
+*.log
+*.class
+*.jar
+*.war
+*.ear
 
 # === IntelliJ IDEA ===
 .idea/
 *.iml
 *.iws
+out/
 
-# === OS files ===
+# === VSCode ===
+.vscode/
+
+# === OS / File Explorer Metadata ===
 .DS_Store
 Thumbs.db
+ehthumbs.db
+Icon?
+
+# === Test Coverage / Reports ===
+jacoco.exec
+*.coverage
+*.lcov
+
+# === SQL Dumps & Temp DBs ===
+*.sql
+/database/tmp/
+/database/dumps/
+
+# === JavaFX / Java Client (Future UI) ===
+*.fxbuild/
+*.fxcache/
+*.fxproject/
 
 # === Logs ===
 *.log
 
-# === Build outputs ===
-/out/
+# === Build Tools & Scripts ===
+/build/
+/dist/
+/bin/
 
-# === Test coverage ===
-jacoco.exec
-
-# === SQL dumps ===
-*.sql
-
-# === Others ===
-/database/tmp/
-/database/dumps/
+# === Env Files (Optional, if you ever add them) ===
+.env
+.env.*

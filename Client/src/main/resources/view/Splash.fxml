@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+<?import javafx.geometry.Pos?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml" fx:controller="controller.SplashController"
+           prefWidth="600" prefHeight="800" style="-fx-background-color: #391DAA;"> <!-- 👈 set your HEX here -->
+
+    <VBox alignment="CENTER" spacing="20">
+        <ImageView fx:id="logoImage" fitWidth="200" preserveRatio="true" />
+        <Text style="-fx-fill: #F4F4F4; -fx-font-size: 24px;">Loading...</Text>
+    </VBox>
+
+</StackPane>

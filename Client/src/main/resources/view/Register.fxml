@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controller.RegisterController"
+            prefWidth="800" prefHeight="600"
+            stylesheets="@../style/theme.css"
+>
+
+    <!-- LEFT IMAGE SECTION -->
+    <left>
+        <StackPane prefWidth="560"> <!-- 70% of 800 -->
+            <ImageView fitWidth="560" fitHeight="600" preserveRatio="false">
+                <image>
+                    <Image url="@../assets/images/login_side.jpg"/>
+                </image>
+            </ImageView>
+        </StackPane>
+    </left>
+
+    <!-- RIGHT LOGIN FORM -->
+    <right>
+        <VBox alignment="CENTER_LEFT" spacing="5" prefWidth="240">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <Label fx:id="errorLabel"
+                   text="Please fill all fields correctly"
+                   visible="false"
+                   style="-fx-text-fill: red; -fx-font-weight: bold;"
+                   prefWidth="200"
+                   wrapText="true"/>
+
+            <Label text="Welcome!" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #391DAA;" />
+            <Label text="Full Name:" alignment="CENTER_RIGHT" />
+            <TextField fx:id="nameField" promptText="Enter your name" prefWidth="200" />
+            <Label text="Phone Number:" alignment="CENTER_RIGHT" />
+            <TextField fx:id="phoneField" promptText="Enter phone number" prefWidth="200" />
+            <Label text="Email:" alignment="CENTER_RIGHT" />
+            <TextField fx:id="emailField" promptText="Enter  email" prefWidth="200" />
+            <Label text="Address:" alignment="CENTER_RIGHT" />
+            <TextField fx:id="addressField" promptText="Enter address" prefWidth="200" />
+            <Label text="Password:" alignment="CENTER_RIGHT" />
+            <PasswordField fx:id="passwordField" promptText="Enter password" prefWidth="200" />
+            <Label text="Role:"/>
+            <ComboBox fx:id="roleComboBox" promptText="Select role" prefWidth="200" styleClass="select-role">
+            <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="Customer"/>
+                        <String fx:value="Seller"/>
+                        <String fx:value="Courier"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
+            <!-- Seller-only fields -->
+            <Label text="Bank Name:" fx:id="bankNameLabel" visible="false"/>
+            <TextField fx:id="bankNameField" promptText="Enter bank name" prefWidth="200" visible="false"/>
+
+            <Label text="Card Number:" fx:id="cardNumberLabel" visible="false"/>
+            <TextField fx:id="cardNumberField" promptText="Enter card number" prefWidth="200" visible="false"/>
+
+
+            <Label/>
+            <Button text="Sign Up" fx:id="SignUpButton" prefWidth="200" styleClass="login-button"/>
+            <HBox alignment="BASELINE_LEFT" spacing="4">
+                <Label text="Already have an account?" />
+                <Hyperlink text="Login" fx:id="loginLink"/>
+            </HBox>
+        </VBox>
+    </right>
+
+</BorderPane>

@@ -1,34 +1,57 @@
-# Food Delivery App — AP Project (Spring 2025)
+# ZoodBite — Food Delivery System (Java Full Stack)
 
-This project is a Java-based backend system for a food delivery app, built as a final course project using Object-Oriented Programming principles.
+ZoodBite is a complete food delivery application built in Java, supporting role-based functionality across multiple user types (customers, sellers, couriers, admins). Developed as part of the Spring 2025 Advanced Programming curriculum — now extended to a full-stack production-ready system.
 
-## 🗂️ Structure
+## 🧩 Modules
 
-- `backend/`: Core server logic — layered design (model, DAO, service, controller)
-- `database/sql/`: SQL schema and sample data (maintained by DB developer)
-- `frontend/`: JavaFX client interface (WIP)
+- [`/Server`](./Server): Backend API with full database & order management
+- [`/Client`](./Client): WIP JavaFX desktop client interface
+- [`/Database`](./Database): SQL schema, Docker Compose, sample data
 
-## 🔧 Tech Stack
+## 🎯 Features
 
-- Java 23 (Amazon Corretto)
-- Maven
-- Hibernate / JPA
-- MySQL
-- Docker (optional)
-- IntelliJ IDEA
+- Role-based registration (customer, seller, courier, admin)
+- Restaurant and food item management
+- Real-time order lifecycle (placement → approval → delivery)
+- Coupon engine with usage rules and time windows
+- Ratings with averages and comments
+- Admin panels for approvals and analytics (server-side)
+- OpenAPI 3 docs for all endpoints
 
-## 📌 Features (Phase 1 - MVP)
+## ⚙️ Stack
 
-- User registration & role-based logic
-- Restaurant & menu management
-- Order placement & delivery assignment
-- Admin approval workflows
+| Layer     | Technology            |
+|-----------|------------------------|
+| Language  | Java 23 (Corretto)     |
+| Build     | Maven + Maven Wrapper  |
+| Backend   | Hibernate, JPA, Jetty  |
+| DB        | MySQL (via Docker)     |
+| UI (WIP)  | JavaFX                 |
+| Auth      | JWT                    |
+| Docs      | Swagger / OpenAPI 3.1  |
 
-## 🧪 Running the Project
+## 🚀 Quick Start
 
-1. Clone the repo
-2. Set up the MySQL database using `/database/sql/foodapp-schema.sql`
-3. Update DB credentials in `persistence.xml`
-4. Run tests or main service classes inside `backend/`
+```bash
+git clone https://github.com/your-org/zoodbite.git
+cd zoodbite
+./mvnw clean install
+```
 
-> Built with OOP design patterns, clean structure, and REST-ready services.
+### Run Server
+```bash
+cd Server
+../mvnw compile exec:java
+```
+
+### View Swagger Docs
+[http://localhost:8080/swagger](http://localhost:8080/swagger)
+
+## 📦 Server Documentation
+
+- See [Server/README.md](./Server/README.md) for full API details, setup instructions, and tech specs.
+- See [Client/README.md](./Client/README.md) for full Client app details, setup instructions, and tech specs.
+
+---
+
+> Built with ❤️ by the ZoodBite team, with full adherence to modern Java architecture and robust OOP principles.
