@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controller.seller.SellerRestaurantItemsController"
+            prefWidth="650" prefHeight="600"
+            stylesheets="@/./style/theme.css">
+
+    <VBox spacing="20" AnchorPane.topAnchor="20" AnchorPane.leftAnchor="20"
+          AnchorPane.rightAnchor="20" AnchorPane.bottomAnchor="20">
+
+        <!-- Header -->
+        <Label fx:id="restaurantNameLabel"
+               style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #391DAA;" />
+
+        <!-- Item Creation Form -->
+        <VBox spacing="20" styleClass="profile-card" prefWidth="500">
+            <GridPane hgap="20" vgap="20" alignment="CENTER">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="15"/>
+                    <ColumnConstraints percentWidth="35"/>
+                    <ColumnConstraints percentWidth="15"/>
+                    <ColumnConstraints percentWidth="35"/>
+                </columnConstraints>
+
+                <!-- Row 1: Name & Price -->
+                <Label text="Name:" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="profile-label"/>
+                <TextField fx:id="nameField" GridPane.columnIndex="1" GridPane.rowIndex="0" promptText="Item Name"/>
+
+                <Label text="Price:" GridPane.columnIndex="2" GridPane.rowIndex="0" styleClass="profile-label"/>
+                <TextField fx:id="priceField" GridPane.columnIndex="3" GridPane.rowIndex="0" promptText="Item Price"/>
+
+                <!-- Row 2: Description & Quantity -->
+                <Label text="Description:" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="profile-label"/>
+                <TextField fx:id="descriptionField" GridPane.columnIndex="1" GridPane.rowIndex="1" promptText="Short Description"/>
+
+                <Label text="Quantity:" GridPane.columnIndex="2" GridPane.rowIndex="1" styleClass="profile-label"/>
+                <TextField fx:id="quantityField" GridPane.columnIndex="3" GridPane.rowIndex="1" promptText="Quantity"/>
+
+                <!-- Row 3: Categories -->
+                <Label text="Categories:" GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="profile-label"/>
+                <TextField fx:id="categoriesField" GridPane.columnIndex="1" GridPane.rowIndex="2" promptText="e.g. pizza veg" GridPane.columnSpan="3"/>
+            </GridPane>
+
+            <!-- Create Button -->
+            <HBox alignment="CENTER">
+                <Button fx:id="addItemButton" text="Add Item" styleClass="update-button"/>
+            </HBox>
+        </VBox>
+
+        <!-- Scrollable Item List -->
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" VBox.vgrow="ALWAYS"
+                    style="-fx-background-color: transparent; -fx-border-color: transparent;">
+            <VBox fx:id="itemsContainer" spacing="15" style="-fx-padding: 10;"/>
+        </ScrollPane>
+    </VBox>
+</AnchorPane>
