@@ -2,6 +2,9 @@ package dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import model.Courier;
+import model.Role;
+import model.Seller;
 import util.EntityManagerFactorySingleton;
 import model.User;
 
@@ -71,14 +74,25 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public User findByPhone(String phone) {
         EntityManager em = emf.createEntityManager();
-        User u = em.createQuery("SELECT u FROM User u WHERE u.phone = :phone", User.class)
+        User u = em.createQuery(
+                        "SELECT u FROM User u WHERE u.phone = :phone", User.class)
                 .setParameter("phone", phone)
                 .getResultStream()
                 .findFirst()
                 .orElse(null);
+
+        // Force subclass load
+        if (u != null) {
+            if (u.getRole() == Role.SELLER) {
+                u = em.find(Seller.class, u.getId());
+            } else if (u.getRole() == Role.COURIER) {
+                u = em.find(Courier.class, u.getId());
+            }
+        }
         em.close();
         return u;
     }
+
 
     @Override
     public List<User> findByType(Class<? extends User> type) {

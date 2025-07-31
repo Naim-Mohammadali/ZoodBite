@@ -109,12 +109,20 @@ public class OrderDAOImpl implements OrderDAO {
         EntityManager em = EntityManagerFactorySingleton.getInstance().createEntityManager();
         try {
             return em.createQuery(
-                            "SELECT o FROM FoodOrder o WHERE o.restaurant = :r",
-                            FoodOrder.class)
-                    .setParameter("r", r)
+                            "SELECT DISTINCT o FROM FoodOrder o " +
+                                    "LEFT JOIN FETCH o.items " +
+                                    "LEFT JOIN FETCH o.restaurant " +
+                                    "LEFT JOIN FETCH o.customer " +
+                                    "LEFT JOIN FETCH o.courier " +
+                                    "WHERE o.restaurant = :r",
+                            FoodOrder.class
+                    ).setParameter("r", r)
                     .getResultList();
-        } finally { em.close(); }
+        } finally {
+            em.close();
+        }
     }
+
 
     @Override
     public List<FoodOrder> findByRestaurantAndStatus(Restaurant r,

@@ -18,7 +18,7 @@ public class RestaurantService {
 
     public void registerRestaurant(@NotNull Restaurant restaurant, Seller seller) {
         restaurant.setSeller(seller);
-        restaurant.setStatus(Restaurant.Status.PENDING);
+        restaurant.setStatus(Restaurant.Status.ACTIVE);
         restaurantDAO.save(restaurant);
     }
 
@@ -78,6 +78,8 @@ public class RestaurantService {
                                    String category,
                                    Double minPrice,
                                    Double maxPrice) {
+        if (keyword == null)
+            return restaurantDAO.findActive();
         return restaurantDAO.search(keyword, category, minPrice, maxPrice);
     }
 
@@ -87,7 +89,7 @@ public class RestaurantService {
 
     public void createEmptyMenu(Restaurant restaurant, String title) {
         for (Menu m : restaurant.getMenus()) {
-            if (title.equals(m.getTitle())) {
+            if (title.equals(m.getTitle()) && m.getRestaurant() == restaurant) {
                 throw new IllegalArgumentException("Menu already exists");
             }
         }

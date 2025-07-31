@@ -55,12 +55,15 @@ public class AdminService extends UserService {
     }
 
 
-    public User findUserById(long id) {
-        return findById(id);                         // thin wrapper
-    }
+    public User findUserById(long id) {return findById(id);}
 
     public User changeRole(long userId, Role newRole) {
         User u = findById(userId);
         return changeRole(u, newRole);
     }
+
+    public List<User> getAllUsers() {
+        return new UserService().findAll();
+    }
+
 }

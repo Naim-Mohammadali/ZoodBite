@@ -32,13 +32,18 @@ public class OrderService {
             if (item == null || !item.getRestaurant().getId().equals(restaurant.getId())) {
                 throw new IllegalArgumentException("Invalid item in menu");
             }
-            items.add(item);
+
+            for (int i = 0; i < iq.quantity(); i++) {
+                items.add(item); // Add item multiple times for quantity
+            }
+
             total += item.getPrice() * iq.quantity();
             if (request.coupon() != null) {
                 total = couponService.applyDiscount(couponService.findByCode(request.coupon()), total);
                 couponService.incrementUsage(couponService.findByCode(request.coupon()));
             }
         }
+
 
         FoodOrder order = new FoodOrder();
         order.setCustomer(customer);
@@ -105,13 +110,46 @@ public class OrderService {
             case "PLACED"     -> newStatus == ACCEPTED;
             case "ACCEPTED"   -> newStatus == PREPARING;
             case "PREPARING"  -> newStatus == FoodOrder.Status.READY_FOR_PICKUP;
-            default         -> newStatus == FoodOrder.Status.REJECTED;
+            default           -> newStatus == FoodOrder.Status.REJECTED;
         };
+
+        if (!ok) {
+            throw new IllegalStateException(
+                    "Invalid status transition: " + order.getStatus() + " → " + newStatus);
+        }
+
+        // 🔹 Handle inventory reduction when order is ACCEPTED
+        if (newStatus == ACCEPTED) {
+            MenuItemService menuItemService = new MenuItemService();
+
+            for (MenuItem item : order.getItems()) {
+                MenuItem managedItem = menuItemService.getById(item.getId());
+
+                // decrease quantity (here assuming quantity means "stock")
+                int newQty = managedItem.getQuantity() - 1; // assuming each item ordered once
+                // if you need per-item quantity: modify FoodOrder to store qty for each item
+                managedItem.setQuantity(newQty);
+
+                if (newQty <= 0) {
+                    // remove from all menus
+                    Restaurant restaurant = order.getRestaurant();
+                    for (Menu menu : restaurant.getMenus()) {
+                        menu.getItems().removeIf(i -> i.getId() == (managedItem.getId()));
+                    }
+
+                    // delete item
+                    menuItemService.deleteMenuItem(seller, managedItem);
+                } else {
+                    menuItemService.updateMenuItem(seller, managedItem);
+                }
+            }
+        }
 
         order.setStatus(newStatus);
         orderDAO.update(order);
         return orderDAO.findById(order.getId());
     }
+
 
     public List<FoodOrder> listByCourier(Courier courier,
                                          FoodOrder.Status status) {

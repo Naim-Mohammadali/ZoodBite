@@ -2,6 +2,8 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import util.SessionManager;
 
@@ -143,14 +145,14 @@ public class Main extends Application {
 //            System.out.println("✅ Logged in as: " + SessionManager.getInstance().getLoggedInUser().name);
 //
 //            RestaurantEndpoint restaurantEndpoint = new RestaurantEndpoint();
-
+//
 //            ----- Replace with your real values
 //            Long restaurantId = 2L;
 //            String menuTitle = "Special Courses";
 //            List<Long> itemIds = List.of(1L);
 //
 //            MenuItemToMenuResponseDto response = restaurantEndpoint.addItemsToMenu(restaurantId, menuTitle, itemIds);
-//
+
 //            System.out.println("✅ Items added to menu: " + response.getAdded_items());
 //            System.out.println("📋 Menu title: " + response.getMenu());
 //            ----- Customer Search

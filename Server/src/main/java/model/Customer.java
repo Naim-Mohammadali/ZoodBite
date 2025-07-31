@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
+import static model.User.Status.ACTIVE;
+
 @Entity
 @DiscriminatorValue("CUSTOMER")
 public class Customer extends User {
@@ -15,6 +17,7 @@ public class Customer extends User {
 
     public Customer(String name, String phone, String password, String address) {
         super(model.Role.CUSTOMER, name, phone, password, address);
+        setStatus(ACTIVE);
     }
     @ManyToMany
     @JoinTable(

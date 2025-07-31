@@ -82,9 +82,13 @@ public class MenuItemDAOImpl implements MenuItemDAO {
     public List<MenuItem> findByRestaurant(Restaurant restaurant) {
         EntityManager em = EntityManagerFactorySingleton.getInstance().createEntityManager();
         try {
-            return em.createQuery("SELECT m FROM MenuItem m WHERE m.restaurant = :restaurant", MenuItem.class)
+            return em.createQuery(
+                            "SELECT DISTINCT i FROM MenuItem i " +
+                                    "LEFT JOIN FETCH i.categories " +
+                                    "WHERE i.restaurant = :restaurant", MenuItem.class)
                     .setParameter("restaurant", restaurant)
                     .getResultList();
+
         } finally {
             em.close();
         }

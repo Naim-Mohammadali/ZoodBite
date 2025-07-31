@@ -6,6 +6,8 @@ import dto.admin.AdminUserRolePatch;
 import dto.admin.ChangePasswordRequest;
 import dto.order.OrderResponse;
 import dto.user.request.*;
+import dto.user.response.GetUsersDto;
+import dto.user.response.LoginResponseDto;
 import dto.user.response.UserProfileResponse;
 import dto.restaurant.RestaurantResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -252,14 +254,14 @@ public class AdminController {
                 .toList();
     }
     @PATCH
-    @Path("/users/{seller_id}/status")
+    @Path("/users/{id}/status")
     @Operation(summary = "Approve or block user")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "User status updated"),
             @ApiResponse(responseCode = "400", description = "Invalid status"),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
-    public Response patchUserStatus(@PathParam("seller_id") long userId,
+    public Response patchUserStatus(@PathParam("id") long userId,
                                     AdminRestaurantStatusPatch dto) throws Exception {
         validate(dto);
 
@@ -284,6 +286,25 @@ public class AdminController {
         CustomerService customerService = new CustomerService();
         return (Customer) customerService.findById(userId);
     }
+    @GET
+    @Path("/users")
+    @Operation(summary = "Get list of all non-admin users")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Users retrieved successfully")
+    })
+    public GetUsersDto getAllUsers(@HeaderParam("Authorization") String token) {
+        List<User> users = adminService.getAllUsers().stream()
+                .filter(u -> u.getRole() != Role.ADMIN)
+                .toList();
+
+        List<LoginResponseDto> userDtos = users.stream()
+                .map(UserMapper::toDto)
+                .toList();
+
+        return new GetUsersDto(token, new ArrayList<>(userDtos));
+    }
+
+
 
     private <T> void validate(T obj) {
         Set<ConstraintViolation<T>> v = validator.validate(obj);

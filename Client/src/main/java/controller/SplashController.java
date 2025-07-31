@@ -9,6 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import util.SessionManager;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -20,6 +21,8 @@ public class SplashController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        SessionManager.getInstance().loadSessionFromTempFile();
+
         // Set the logo image
         logoImage.setImage(new Image(getClass().getResourceAsStream("/assets/logo/mainLogo.png")));
 

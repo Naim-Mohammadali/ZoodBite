@@ -117,6 +117,8 @@ public class RestaurantController {
                 .collect(Collectors.toList());
     }
 
+
+
     @GET
     @Operation(summary = "List all active restaurants for customers")
     @ApiResponses({

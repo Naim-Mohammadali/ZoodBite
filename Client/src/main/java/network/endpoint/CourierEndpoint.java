@@ -27,5 +27,15 @@ public class CourierEndpoint {
         HttpRequest request = ApiClient.getInstance().buildPatch(path, dto);
         return ApiClient.getInstance().send(request, PlaceOrderResponseDto.class);
     }
+    public List<PlaceOrderResponseDto> getMyDeliveries(String statusOpt) throws Exception {
+        String path = "deliveries/";
+        if (statusOpt != null && !statusOpt.isBlank()) {
+            path += "?status=" + statusOpt.toUpperCase(); // server expects enum names
+        }
+
+        HttpRequest request = ApiClient.getInstance().buildGet(path);
+        return ApiClient.getInstance().sendList(request, PlaceOrderResponseDto.class);
+    }
+
 
 }

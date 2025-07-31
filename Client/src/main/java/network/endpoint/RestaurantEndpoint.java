@@ -60,5 +60,71 @@ public class RestaurantEndpoint {
 
         return ApiClient.getInstance().send(request, MenuItemToMenuResponseDto.class);
     }
+    public List<RestaurantResponseDto> getMyRestaurants() throws Exception {
+        HttpRequest request = ApiClient.getInstance().buildGet("restaurants/mine");
+        return ApiClient.getInstance().sendList(request, RestaurantResponseDto.class);
+    }
+    public List<RestaurantResponseDto> getMyRestaurantsAndStore() throws Exception {
+        List<RestaurantResponseDto> restaurants = getMyRestaurants();
 
+        if (restaurants != null && !restaurants.isEmpty()) {
+            // Store the first restaurant in session
+            SessionManager.getInstance().setCurrentRestaurant(restaurants.get(0));
+        } else {
+            SessionManager.getInstance().setCurrentRestaurant(null);
+        }
+
+        return restaurants;
+    }
+    public RestaurantResponseDto updateRestaurant(Long restaurantId, RestaurantUpdateRequestDto dto) throws Exception {
+        HttpRequest request = ApiClient.getInstance().buildPatch(
+                "restaurants/" + restaurantId, dto
+        );
+
+        RestaurantResponseDto updatedRestaurant = ApiClient.getInstance().send(request, RestaurantResponseDto.class);
+        SessionManager.getInstance().setCurrentRestaurant(updatedRestaurant);
+        SessionManager.getInstance().writeSessionToTemp();
+
+        return updatedRestaurant;
+    }
+    public List<MenuItemResponseDto> getMenuItems(Long restaurantId, String menuTitle) throws Exception {
+        String encodedMenuTitle = URLEncoder.encode(menuTitle, StandardCharsets.UTF_8).replace("+", "%20");
+        String path = "restaurants/" + restaurantId + "/menu/" + encodedMenuTitle;
+
+        HttpRequest request = ApiClient.getInstance().buildGet(path);
+
+        return ApiClient.getInstance().sendList(request, MenuItemResponseDto.class);
+    }
+    public List<MenuItemResponseDto> getUnassignedItems(Long restaurantId) throws Exception {
+        // First, refresh restaurant menus from backend
+        List<RestaurantResponseDto> refreshed = new RestaurantEndpoint().getMyRestaurantsAndStore();
+        RestaurantResponseDto restaurant = SessionManager.getInstance().getCurrentRestaurant();
+
+        // Now get all items
+        String path = "menu-items/restaurant/" + restaurantId;
+        HttpRequest request = ApiClient.getInstance().buildGet(path);
+        List<MenuItemResponseDto> allItems = ApiClient.getInstance().sendList(request, MenuItemResponseDto.class);
+
+        // Filter using refreshed data
+        List<Long> assignedIds = restaurant.getMenus().stream()
+                .flatMap(menu -> menu.getItems().stream())
+                .map(RestaurantResponseDto.MenuDto.ItemDto::getItemId)
+                .toList();
+
+        return allItems.stream()
+                .filter(item -> !assignedIds.contains(item.id))
+                .toList();
+    }
+    /** Browse all active restaurants */
+    public List<RestaurantResponseDto> browseRestaurants() throws Exception {
+        HttpRequest request = ApiClient.getInstance().buildGet("restaurants");
+        return ApiClient.getInstance().sendList(request, RestaurantResponseDto.class);
+    }
+
+    /** Get details of a specific restaurant by ID */
+    public RestaurantResponseDto getRestaurantById(Long restaurantId) throws Exception {
+        String path = "restaurants/" + restaurantId;
+        HttpRequest request = ApiClient.getInstance().buildGet(path);
+        return ApiClient.getInstance().send(request, RestaurantResponseDto.class);
+    }
 }

@@ -93,6 +93,7 @@ public class SellerOrderController {
                 || dto.status().toLowerCase().contains("yes") || dto.status().toLowerCase().contains("valid"))
         {
             ns = ACCEPTED;
+
         } else { ns = REJECTED;}
         FoodOrder updated = orderService.updateStatusBySeller(seller, order, ns);
         return OrderMapper.toDto(updated);

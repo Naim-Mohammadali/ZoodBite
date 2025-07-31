@@ -14,9 +14,21 @@ public final class RestaurantMapper {
     private RestaurantMapper() {}
 
     public static RestaurantResponseDto toDto(Restaurant r) {
-        List<MenuResponse> menuDtos = r.getMenus() == null ? List.of()
-                : r.getMenus().stream().map(MenuMapper::toDto).toList();
+        List<MenuResponse> menuDtos;
 
+        try {
+            // Try accessing menus
+            if (r.getMenus() == null || r.getMenus().isEmpty()) {
+                menuDtos = List.of();
+            } else {
+                menuDtos = r.getMenus().stream()
+                        .map(MenuMapper::toDto)
+                        .toList();
+            }
+        } catch (org.hibernate.LazyInitializationException e) {
+            // If menus were not initialized due to lazy loading
+            menuDtos = List.of();
+        }
 
         return new RestaurantResponseDto(
                 r.getId(),
@@ -30,6 +42,7 @@ public final class RestaurantMapper {
                 menuDtos
         );
     }
+
     public static RestaurantBriefDto toBriefDto(Restaurant r) {
         return new RestaurantBriefDto(r.getId(), r.getName(), r.getLogoBase64());
     }

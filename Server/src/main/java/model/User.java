@@ -6,7 +6,7 @@ import java.io.Serializable;
 @Entity
 @Table(name = "users")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "user_type")
+@DiscriminatorColumn(name = "user_type", discriminatorType = DiscriminatorType.STRING)
 public abstract class User implements Serializable {
     @Column(insertable = false, updatable = false)
     private Boolean available;

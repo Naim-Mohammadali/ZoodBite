@@ -4,8 +4,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -49,10 +47,10 @@ public class LoginController implements Initializable {
                 // Redirect based on role
                 String role = response.user.role.toLowerCase();
                 String fxml = switch (role) {
-                    case "customer" -> "/view/CustomerDashboard.fxml";
-                    case "seller"   -> "/view/SellerDashboard.fxml";
-                    case "delivery" -> "/view/DeliveryDashboard.fxml";
-                    case "admin"    -> "/view/AdminDashboard.fxml";
+                    case "customer" -> "/view/customer/CustomerDashboard.fxml";
+                    case "seller"   -> "/view/seller/SellerDashboard.fxml";
+                    case "courier" -> "/view/delivery/DeliveryDashboard.fxml";
+                    case "admin"    -> "/view/admin/AdminDashboard.fxml";
                     default -> throw new IllegalArgumentException("Unknown role: " + role);
                 };
 

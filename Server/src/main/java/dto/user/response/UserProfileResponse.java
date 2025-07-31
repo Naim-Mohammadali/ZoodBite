@@ -10,4 +10,6 @@ public record UserProfileResponse(
         String email,
         String address,
         Status status,
+        String bankName,
+        String accountNumber,
         Role role) { }

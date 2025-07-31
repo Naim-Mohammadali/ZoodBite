@@ -43,14 +43,6 @@ public class AuthController {
         System.out.println("📦 Registering: " + dto);
         System.out.println("➡️  Mapped User: " + UserMapper.toEntity(dto));
         User user = userService.register(UserMapper.toEntity(dto));
-        if (user.getRole() == Role.SELLER)
-        {
-            user.setStatus(User.Status.PENDING);
-        }
-        else
-        {
-            user.setStatus(User.Status.ACTIVE);
-        }
         String token = userService.issueToken(user);
         var userDto = UserMapper.toDto(user);
         return new AuthResponse(token, userDto);

@@ -7,5 +7,8 @@ public record UserUpdateRequest(
          String name,
          String address,
          @Email(message = "Invalid email format")
-         String email
+         String email,
+         String password,
+         String bankName,
+         String accountNumber
 ) { }

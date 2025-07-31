@@ -1,5 +1,0 @@
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.control.Label?>
-<StackPane xmlns:fx="http://javafx.com/fxml" prefWidth="800" prefHeight="600">
-    <Label text="Welcome to Seller Dashboard" style="-fx-font-size: 20px; -fx-text-fill: #1E0E7C;"/>
-</StackPane>

@@ -84,4 +84,7 @@ Run integration tests (in-memory + TestContainers):
 
 ## 👨‍💻 Contributors
 
-See main project root for full credits and acknowledgments.
+Mohammad Ali Naim | Hiba Assaf | Mohammad Al Misri
+
+---
+See [README.md](./README.md) for full documentation

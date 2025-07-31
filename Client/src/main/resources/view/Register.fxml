@@ -27,9 +27,9 @@
 
     <!-- RIGHT LOGIN FORM -->
     <right>
-        <VBox alignment="CENTER_LEFT" spacing="5" prefWidth="240">
+        <VBox alignment="TOP_LEFT" spacing="5" prefWidth="240">
             <padding>
-                <Insets top="20" right="20" bottom="20" left="20"/>
+                <Insets top="0" right="20" bottom="0" left="20"/>
             </padding>
             <Label fx:id="errorLabel"
                    text="Please fill all fields correctly"
@@ -65,9 +65,6 @@
 
             <Label text="Card Number:" fx:id="cardNumberLabel" visible="false"/>
             <TextField fx:id="cardNumberField" promptText="Enter card number" prefWidth="200" visible="false"/>
-
-
-            <Label/>
             <Button text="Sign Up" fx:id="SignUpButton" prefWidth="200" styleClass="login-button"/>
             <HBox alignment="BASELINE_LEFT" spacing="4">
                 <Label text="Already have an account?" />

@@ -47,6 +47,10 @@ public class UserService {
 
     public User findById(Long id) {
         User u = userDAO.findById(id);
+        if (u instanceof Courier c) {
+            System.out.println("Direct find -> bank=" + c.getBankName() + ", account=" + c.getAccountNumber());
+        }
+
         if (u == null) throw new IllegalArgumentException("No user found with ID " + id);
         return u;
     }
@@ -76,6 +80,14 @@ public class UserService {
         }
         if (!BCrypt.checkpw(rawPassword, u.getPassword()))
             throw new IllegalArgumentException("Bad credentials");
+        if (u.getRole() == Role.SELLER) {
+            u = userDAO.findById(u.getId()); // will return Seller
+        } else if (u.getRole() == Role.COURIER) {
+            u = userDAO.findById(u.getId()); // will return Courier
+        }
+        if (u instanceof Courier c) {
+            System.out.println("Courier bank=" + c.getBankName() + ", account=" + c.getAccountNumber());
+        }
 
         return u;
     }
@@ -120,6 +132,25 @@ public class UserService {
         }
         if (dto.email() != null && !dto.email().isBlank()) {
             user.setEmail(dto.email());
+        }
+        if (dto.password() != null && !dto.password().isBlank()) {
+            user.setPassword(BCrypt.hashpw(dto.password(), BCrypt.gensalt()));
+        }
+        if (dto.accountNumber() != null && !dto.accountNumber().isBlank()) {
+            if (user.getRole() == Role.SELLER) {
+                ((Seller) user).setAccountNumber(dto.accountNumber());
+            }
+            else {
+                ((Courier) user).setAccountNumber(dto.accountNumber());
+            }
+        }
+        if (dto.bankName() != null && !dto.bankName().isBlank()) {
+            if (user.getRole() == Role.SELLER) {
+                ((Seller) user).setBankName(dto.bankName());
+            }
+            else {
+                ((Courier) user).setBankName(dto.bankName());
+            }
         }
 
         return userDAO.update(user);

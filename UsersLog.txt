@@ -1,0 +1,18 @@
+admin :
+admin , admin
+-----------------------
+customers:
+90102030, Pass123! -- Ali Houseini
+90203040, Pass123! -- Pourya Khosravi
+90304050, Pass123! -- Sina Panahi
+-----------------------
+sellers:
+90112233, Pass123! -- Amirhossein Karimi -approved
+90223344, Pass123! -- Narges Rahmani -approved
+90334455, Pass123! -- Mohammadreza Javadi
+-----------------------
+ couriers:
+90101010, NewPass123! -- Amirhossein Taheri -approved
+90101011, Pass123! -- Maryam Kazemi -approved
+90101012, Pass123! -- Arman Bahrami
+restaurants:

@@ -53,23 +53,28 @@ public class RestaurantDAOImpl implements RestaurantDAO {
     public List<Restaurant> findBySeller(Seller seller) {
         try (EntityManager em = emf.createEntityManager()) {
             return em.createQuery(
-                            "SELECT r FROM Restaurant r WHERE r.seller = :seller",
+                            "SELECT DISTINCT r FROM Restaurant r " +
+                                    "LEFT JOIN FETCH r.menus " +
+                                    "WHERE r.seller = :seller",
                             Restaurant.class)
                     .setParameter("seller", seller)
                     .getResultList();
         }
     }
 
+
     @Override
     public List<Restaurant> findByStatus(Restaurant.Status status) {
         try (EntityManager em = emf.createEntityManager()) {
             return em.createQuery(
-                            "SELECT r FROM Restaurant r WHERE r.status = :status",
-                            Restaurant.class)
+                            "SELECT DISTINCT r FROM Restaurant r " +
+                                    "WHERE r.status = :status", Restaurant.class)
                     .setParameter("status", status)
                     .getResultList();
         }
     }
+
+
 
     /* --- NEW helpers you’ll need for controllers --- */
 

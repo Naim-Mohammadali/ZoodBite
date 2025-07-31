@@ -4,7 +4,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -49,10 +48,21 @@ public class RegisterController implements Initializable {
         });
 
         roleComboBox.setOnAction(e -> {
-            boolean isSeller = "SELLER".equalsIgnoreCase((String) roleComboBox.getValue());
-            bankNameField.setVisible(isSeller);
-            cardNumberField.setVisible(isSeller);
+            String selectedRole = ((String) roleComboBox.getValue()).toUpperCase();
+            boolean showBankInfo = "SELLER".equals(selectedRole) || "COURIER".equals(selectedRole);
+
+            bankNameLabel.setVisible(showBankInfo);
+            bankNameField.setVisible(showBankInfo);
+            cardNumberLabel.setVisible(showBankInfo);
+            cardNumberField.setVisible(showBankInfo);
+
+            // Ensure they take up space only when visible
+            bankNameLabel.setManaged(showBankInfo);
+            bankNameField.setManaged(showBankInfo);
+            cardNumberLabel.setManaged(showBankInfo);
+            cardNumberField.setManaged(showBankInfo);
         });
+
 
         SignUpButton.setOnAction(e -> {
             String name = nameField.getText().trim();
@@ -62,6 +72,7 @@ public class RegisterController implements Initializable {
             String address = addressField.getText().trim();
             String role = ((String) roleComboBox.getValue()).toUpperCase();
             boolean isSeller = "SELLER".equalsIgnoreCase(role);
+            boolean isCourier = "COURIER".equalsIgnoreCase(role);
             String bank = bankNameField.getText().trim();
             String card = cardNumberField.getText().trim();
 
@@ -76,7 +87,7 @@ public class RegisterController implements Initializable {
             }
 
             try {
-                var bankInfo = isSeller ? new BankInfoDto(bank, card) : null;
+                var bankInfo = (isSeller || isCourier)? new BankInfoDto(bank, card) : null;
                 var dto = new RegisterRequestDto(name, phone, email, password, address, role, bankInfo);
                 var response = new UserEndpoint().register(dto);
 
@@ -86,9 +97,9 @@ public class RegisterController implements Initializable {
 
                 // Redirect based on role
                 String fxml = switch (role.toLowerCase()) {
-                    case "customer" -> "/view/CustomerDashboard.fxml";
-                    case "seller"   -> "/view/SellerDashboard.fxml";
-                    case "courier" -> "/view/DeliveryDashboard.fxml";
+                    case "customer" -> "/view/customer/CustomerDashboard.fxml";
+                    case "seller"   -> "/view/seller/SellerCreateRestaurant.fxml";
+                    case "courier" -> "/view/delivery/DeliveryDashboard.fxml";
                     default -> throw new IllegalArgumentException("Unknown role: " + role);
                 };
 

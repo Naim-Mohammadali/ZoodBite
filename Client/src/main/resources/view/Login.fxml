@@ -45,7 +45,7 @@
             <PasswordField fx:id="passwordField" promptText="Enter password" prefWidth="200" />
 
             <Label/>
-            <Button text="Login" fx:id="loginButton" prefWidth="200" styleClass="login-button"/>
+            <Button text="Login" fx:id="loginButton" prefWidth="200" styleClass="logout-button"/>
 
             <HBox alignment="CENTER_LEFT" spacing="5">
                 <Label text="Don't have an account?" />
