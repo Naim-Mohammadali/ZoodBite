@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controller.seller.SellerRestaurantController"
+            prefWidth="650" prefHeight="600"
+            stylesheets="@/./style/theme.css">
+
+    <VBox alignment="TOP_CENTER" spacing="15"
+          AnchorPane.topAnchor="20" AnchorPane.leftAnchor="20"
+          AnchorPane.rightAnchor="20" AnchorPane.bottomAnchor="20">
+
+        <!-- Top Navigation -->
+        <HBox spacing="10" alignment="CENTER">
+            <ToggleButton fx:id="mainButton" text="Main" styleClass="sidebar-item"/>
+            <ToggleButton fx:id="menusButton" text="Menus" styleClass="sidebar-item"/>
+            <ToggleButton fx:id="itemsButton" text="Items" styleClass="sidebar-item"/>
+        </HBox>
+
+        <!-- Dynamic Content -->
+        <StackPane fx:id="restaurantContent" VBox.vgrow="ALWAYS">
+            <!-- Default message when no restaurant -->
+            <VBox fx:id="noRestaurantBox" alignment="CENTER" spacing="15" visible="false">
+                <Label text="You don't have a restaurant yet!"
+                       style="-fx-font-size: 18px; -fx-text-fill: #391DAA; -fx-font-weight: bold;"/>
+                <Button fx:id="createRestaurantButton" text="Create Restaurant" styleClass="update-button"/>
+            </VBox>
+        </StackPane>
+
+    </VBox>
+</AnchorPane>

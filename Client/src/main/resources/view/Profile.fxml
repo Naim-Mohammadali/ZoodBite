@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controller.ProfileController"
+            prefWidth="650" prefHeight="600"
+            stylesheets="@../style/theme.css">
+
+    <VBox alignment="TOP_CENTER" spacing="20" AnchorPane.topAnchor="20" AnchorPane.leftAnchor="20" AnchorPane.rightAnchor="20">
+
+        <!-- Profile Image -->
+        <StackPane>
+            <ImageView fx:id="profileImage" fitWidth="120" fitHeight="120" preserveRatio="true"
+                       styleClass="profile-photo">
+                <Image url="@../assets/images/profile.png"/>
+            </ImageView>
+
+        </StackPane>
+
+        <!-- Main Container -->
+        <VBox spacing="20" styleClass="profile-card" prefWidth="400">
+            <GridPane hgap="20" vgap="20" alignment="CENTER">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="15"/>
+                    <ColumnConstraints percentWidth="35"/>
+                    <ColumnConstraints percentWidth="15"/>
+                    <ColumnConstraints percentWidth="35"/>
+                </columnConstraints>
+
+                <!-- Row 1: Name & Phone -->
+                <Label text="Name:" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="profile-label"/>
+                <TextField fx:id="nameField" GridPane.columnIndex="1" GridPane.rowIndex="0" editable="true"/>
+
+                <Label text="Phone:" GridPane.columnIndex="2" GridPane.rowIndex="0" styleClass="profile-label"/>
+                <TextField fx:id="phoneField" GridPane.columnIndex="3" GridPane.rowIndex="0" editable="false"/>
+
+                <!-- Row 2: Address & Password -->
+                <Label text="Address:" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="profile-label"/>
+                <TextField fx:id="addressField" GridPane.columnIndex="1" GridPane.rowIndex="1" editable="true"/>
+
+                <Label text="Password:" GridPane.columnIndex="2" GridPane.rowIndex="1" styleClass="profile-label"/>
+                <PasswordField fx:id="passwordField" GridPane.columnIndex="3" promptText="Enter new password" GridPane.rowIndex="1" editable="true"/>
+            </GridPane>
+
+        </VBox>
+
+        <!-- Bank Info Container -->
+        <VBox spacing="15" styleClass="profile-card" prefWidth="450" fx:id="bankContainer" visible="false" managed="false">
+            <GridPane hgap="20" vgap="15" alignment="CENTER">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="15"/>
+                    <ColumnConstraints percentWidth="35"/>
+                    <ColumnConstraints percentWidth="15"/>
+                    <ColumnConstraints percentWidth="35"/>
+                </columnConstraints>
+
+                <Label text="Bank:" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="profile-label"/>
+                <TextField fx:id="bankNameField" GridPane.columnIndex="1" GridPane.rowIndex="0" editable="true" visible="true"/>
+
+                <Label text="Account:" GridPane.columnIndex="2" GridPane.rowIndex="0" styleClass="profile-label"/>
+                <TextField fx:id="accountNumberField" GridPane.columnIndex="3" GridPane.rowIndex="0" editable="true" visible="true"/>
+            </GridPane>
+        </VBox>
+
+        <!-- Update Info Button -->
+        <HBox alignment="CENTER">
+            <Button fx:id="updateButton" text="Update Info" styleClass="update-button"/>
+        </HBox>
+    </VBox>
+</AnchorPane>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controller.customer.CustomerPlaceOrderController"
+            prefWidth="650" prefHeight="600"
+            stylesheets="@/./style/theme.css">
+
+    <VBox spacing="15" AnchorPane.topAnchor="20" AnchorPane.leftAnchor="20"
+          AnchorPane.rightAnchor="20" AnchorPane.bottomAnchor="20">
+
+        <!-- Search Bar -->
+        <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 10;">
+            <TextField fx:id="searchField"
+                       promptText="Search for restaurants..."
+                       HBox.hgrow="ALWAYS"
+                       style="-fx-font-size: 14px; -fx-padding: 8; -fx-background-radius: 8; -fx-background-color: #F4F4F4;"/>
+            <Button fx:id="searchButton"
+                    text="Search"
+                    style="-fx-background-color: #391DAA; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 8 16;"/>
+        </HBox>
+
+
+        <!-- Scrollable Restaurant List -->
+        <ScrollPane fx:id="scrollPane" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" VBox.vgrow="ALWAYS"
+                    style="-fx-background-color: transparent; -fx-border-color: transparent;">
+            <VBox fx:id="restaurantsContainer" spacing="15" style="-fx-padding: 10;"/>
+        </ScrollPane>
+    </VBox>
+</AnchorPane>

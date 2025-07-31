@@ -1,0 +1,31 @@
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Button?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controller.admin.AdminUsersController"
+            prefWidth="650" prefHeight="600"
+            stylesheets="@/././style/theme.css">
+
+    <VBox spacing="15" AnchorPane.topAnchor="20" AnchorPane.leftAnchor="20" AnchorPane.rightAnchor="20" AnchorPane.bottomAnchor="20">
+
+        <!-- Toggle Buttons Group -->
+        <HBox spacing="10" alignment="CENTER">
+            <ToggleButton fx:id="allUsersButton" text="All Users" styleClass="sidebar-item"/>
+            <ToggleButton fx:id="pendingUsersButton" text="Pending Users" styleClass="sidebar-item"/>
+        </HBox>
+
+        <!-- Scrollable User List -->
+        <ScrollPane fx:id="scrollPane" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" VBox.vgrow="ALWAYS">
+            <VBox fx:id="usersContainer" spacing="15" style="-fx-background-color: transparent; -fx-padding: 10;"/>
+        </ScrollPane>
+
+        <!-- Approve Button -->
+        <HBox alignment="CENTER">
+            <Button fx:id="approveButton" text="Approve Selected" styleClass="update-button" prefWidth="200"/>
+        </HBox>
+    </VBox>
+</AnchorPane>
+

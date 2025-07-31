@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controller.CreateRestaurantController"
+            prefWidth="800" prefHeight="600"
+            stylesheets="@/./style/theme.css">
+
+    <!-- LEFT IMAGE SECTION -->
+    <left>
+        <StackPane prefWidth="560"> <!-- 70% of 800 -->
+            <ImageView fitWidth="560" fitHeight="600" preserveRatio="false">
+                <image>
+                    <Image url="@/./assets/images/create_restaurant.jpg"/>
+                </image>
+            </ImageView>
+        </StackPane>
+    </left>
+
+    <!-- RIGHT FORM -->
+    <right>
+        <VBox alignment="TOP_LEFT" spacing="8" prefWidth="240">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+
+            <!-- Error Label -->
+            <Label fx:id="errorLabel"
+                   text="Please fill all fields correctly"
+                   visible="false"
+                   style="-fx-text-fill: red; -fx-font-weight: bold;"
+                   wrapText="true"/>
+
+            <!-- Header -->
+            <Label text="Your Restaurant!"
+                   style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #391DAA;"/>
+
+            <!-- Fields -->
+            <Label text="Brand:"/>
+            <TextField fx:id="nameField" promptText="Enter Restaurant Name" prefWidth="200"/>
+
+            <Label text="Phone Number:"/>
+            <TextField fx:id="phoneField" promptText="Enter restaurant phone" prefWidth="200"/>
+
+            <Label text="Address:"/>
+            <TextField fx:id="addressField" promptText="Enter restaurant address" prefWidth="200"/>
+
+            <Label text="Tax Fee:"/>
+            <TextField fx:id="taxFeeField" promptText="Enter standard TVA" prefWidth="200"/>
+
+            <Label text="Additional Fees:"/>
+            <TextField fx:id="additionalFeesField" promptText="Enter additional fees" prefWidth="200"/>
+
+            <!-- Button -->
+            <Button text="Create!" fx:id="createButton" prefWidth="200" styleClass="update-button"/>
+        </VBox>
+    </right>
+</BorderPane>

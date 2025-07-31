@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controller.seller.SellerOrdersController"
+            prefWidth="650" prefHeight="600"
+            stylesheets="@/./style/theme.css">
+
+    <VBox spacing="15" AnchorPane.topAnchor="20" AnchorPane.leftAnchor="20"
+          AnchorPane.rightAnchor="20" AnchorPane.bottomAnchor="20">
+
+        <!-- Header with Refresh -->
+        <HBox alignment="CENTER_RIGHT">
+            <Button fx:id="refreshButton" text="⟳" styleClass="refresh-button"/>
+        </HBox>
+
+        <!-- Scrollable Orders List -->
+        <ScrollPane fx:id="scrollPane" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" VBox.vgrow="ALWAYS">
+            <VBox fx:id="ordersContainer" spacing="15" style="-fx-background-color: transparent; -fx-padding: 10;"/>
+        </ScrollPane>
+
+        <!-- Approve Button -->
+        <HBox alignment="CENTER">
+            <Button fx:id="approveButton" text="Approve" styleClass="update-button" prefWidth="150"/>
+        </HBox>
+    </VBox>
+</AnchorPane>
+

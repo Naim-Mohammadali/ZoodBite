@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controller.seller.SellerRestaurantMainController"
+            prefWidth="650" prefHeight="600"
+            stylesheets="@/./style/theme.css">
+
+    <VBox alignment="TOP_CENTER" spacing="20" AnchorPane.topAnchor="20"
+          AnchorPane.leftAnchor="20" AnchorPane.rightAnchor="20">
+
+        <!-- Restaurant Info Card -->
+        <VBox spacing="20" styleClass="profile-card" prefWidth="500">
+            <GridPane hgap="20" vgap="15" alignment="CENTER">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="30"/>
+                    <ColumnConstraints percentWidth="70"/>
+                </columnConstraints>
+
+                <Label text="Name:" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="profile-label"/>
+                <TextField fx:id="nameField" GridPane.columnIndex="1" GridPane.rowIndex="0" editable="true"/>
+
+                <Label text="Address:" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="profile-label"/>
+                <TextField fx:id="addressField" GridPane.columnIndex="1" GridPane.rowIndex="1" editable="true"/>
+
+                <Label text="Phone:" GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="profile-label"/>
+                <TextField fx:id="phoneField" GridPane.columnIndex="1" GridPane.rowIndex="2" editable="true"/>
+
+                <Label text="Tax Fee:" GridPane.columnIndex="0" GridPane.rowIndex="3" styleClass="profile-label"/>
+                <TextField fx:id="taxFeeField" GridPane.columnIndex="1" GridPane.rowIndex="3" editable="true"/>
+
+                <Label text="Additional Fee:" GridPane.columnIndex="0" GridPane.rowIndex="4" styleClass="profile-label"/>
+                <TextField fx:id="additionalFeeField" GridPane.columnIndex="1" GridPane.rowIndex="4" editable="true"/>
+            </GridPane>
+        </VBox>
+
+        <!-- Update Button -->
+        <HBox alignment="CENTER">
+            <Button fx:id="updateButton" text="Update Info" styleClass="update-button"/>
+        </HBox>
+    </VBox>
+</AnchorPane>

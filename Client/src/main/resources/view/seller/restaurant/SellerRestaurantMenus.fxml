@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controller.seller.SellerRestaurantMenusController"
+            prefWidth="650" prefHeight="600"
+            stylesheets="@/./style/theme.css">
+
+    <VBox spacing="15" AnchorPane.topAnchor="20" AnchorPane.leftAnchor="20"
+          AnchorPane.rightAnchor="20" AnchorPane.bottomAnchor="20">
+
+        <!-- Header -->
+        <Label fx:id="restaurantNameLabel"
+               style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #391DAA;"/>
+
+        <HBox spacing="10" alignment="CENTER_LEFT"
+              style="-fx-background-color: #F4F4F4; -fx-background-radius: 8; -fx-padding: 8;">
+            <Label text="Menu Name:" styleClass="profile-label"/>
+            <TextField fx:id="menuNameField" promptText="Enter menu name" prefWidth="250"/>
+            <Pane HBox.hgrow="ALWAYS"/> <!-- pushes button to the far right -->
+            <Button fx:id="addMenuButton" text="+" styleClass="round-add-button"/>
+        </HBox>
+
+
+        <!-- Scrollable Menus List -->
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" VBox.vgrow="ALWAYS"
+                    style="scroll-pane">
+            <VBox fx:id="menusContainer" spacing="10" style="scroll-panel"/>
+        </ScrollPane>
+    </VBox>
+</AnchorPane>

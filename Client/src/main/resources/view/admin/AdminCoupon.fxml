@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controller.admin.CreateCouponController"
+            prefWidth="650" prefHeight="600"
+            stylesheets="@/././style/theme.css">
+
+    <VBox alignment="TOP_CENTER" spacing="20" AnchorPane.topAnchor="40" AnchorPane.leftAnchor="50" AnchorPane.rightAnchor="50">
+        <Label text="Create New Coupon"
+               style="-fx-font-size: 30px; -fx-font-weight: thin; -fx-text-fill: #391DAA;"/>
+
+        <VBox spacing="20" styleClass="profile-card" prefWidth="500">
+            <GridPane hgap="20" vgap="20" alignment="CENTER">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="15"/>
+                    <ColumnConstraints percentWidth="35"/>
+                    <ColumnConstraints percentWidth="15"/>
+                    <ColumnConstraints percentWidth="35"/>
+                </columnConstraints>
+
+                <!-- Row 1: Code & Value -->
+                <Label text="Code:" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="profile-label"/>
+                <TextField fx:id="codeField" GridPane.columnIndex="1" GridPane.rowIndex="0" promptText="Coupon Code"/>
+
+                <Label text="Value" GridPane.columnIndex="2" GridPane.rowIndex="0" styleClass="profile-label"/>
+                <TextField fx:id="valueField" GridPane.columnIndex="3" GridPane.rowIndex="0" promptText="Sale Percentage"/>
+
+                <!-- Row 2: Min Price & User Count -->
+                <Label text="Minimum:" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="profile-label"/>
+                <TextField fx:id="minPriceField" GridPane.columnIndex="1" GridPane.rowIndex="1" promptText="Minimum Price"/>
+
+                <Label text="Count:" GridPane.columnIndex="2" GridPane.rowIndex="1" styleClass="profile-label"/>
+                <TextField fx:id="userCountField" GridPane.columnIndex="3" GridPane.rowIndex="1" promptText="People Count"/>
+
+                <!-- Row 3: Valid From & Valid Until -->
+                <Label text="From:" GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="profile-label"/>
+                <DatePicker fx:id="validFromField" GridPane.columnIndex="1" GridPane.rowIndex="2" styleClass="clean-date-picker" promptText="Valid From"/>
+
+                <Label text="Until:" GridPane.columnIndex="2" GridPane.rowIndex="2" styleClass="profile-label" />
+                <DatePicker fx:id="validUntilField" GridPane.columnIndex="3" GridPane.rowIndex="2" styleClass="clean-date-picker" promptText="Valid Until"/>
+            </GridPane>
+        </VBox>
+
+        <!-- Submit Button -->
+        <HBox alignment="CENTER">
+            <Button fx:id="createButton" text="Create Coupon" styleClass="update-button" prefWidth="250"/>
+        </HBox>
+
+    </VBox>
+</AnchorPane>
