@@ -98,7 +98,8 @@ D:\1.Repos\ZoodBiteApp\Server\src\main\java\util\DatabaseEnsurer.java
 D:\1.Repos\ZoodBiteApp\Server\src\main\java\util\DatabaseSeeder.java
 D:\1.Repos\ZoodBiteApp\Server\src\main\java\util\EntityManagerFactorySingleton.java
 D:\1.Repos\ZoodBiteApp\Server\src\main\java\util\FlywayMigrator.java
-D:\1.Repos\ZoodBiteApp\Server\src\main\java\util\GlobalExceptionMappers.java
+D:\1.Repos\ZoodBiteApp\Server\src\main\java\util\GlobalRuntimeExceptionMapper.java
+D:\1.Repos\ZoodBiteApp\Server\src\main\java\util\GlobalValidationExceptionMapper.java
 D:\1.Repos\ZoodBiteApp\Server\src\main\java\util\JwtUtil.java
 D:\1.Repos\ZoodBiteApp\Server\src\main\java\util\mapper\MenuItemMapper.java
 D:\1.Repos\ZoodBiteApp\Server\src\main\java\util\mapper\MenuMapper.java
