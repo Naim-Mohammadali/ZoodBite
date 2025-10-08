@@ -1,12 +1,15 @@
 package config;
-import com.fasterxml.jackson.core.util.JacksonFeature;
 import controller.*;
 import jakarta.ws.rs.ApplicationPath;
-import model.Menu;
+import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
+import util.AuthFilter;
+
 @ApplicationPath("/")
 public class AppConfig extends ResourceConfig {
     public AppConfig() {
+        // Resources
         register(AdminController.class);
         register(CourierController.class);
         register(CouponController.class);
@@ -20,22 +23,16 @@ public class AppConfig extends ResourceConfig {
         register(SwaggerController.class);
         register(UserController.class);
         register(RootController.class);
-        register(JacksonFeature.class);
-        register(RootController.class);
-        register(AdminController.class);
-        register(AuthController.class);
-        register(DeliveryController.class);
-        register(FavoriteController.class);
-        register(RootController.class);
         register(SellerController.class);
-        register(Menu.class);
         register(RatingController.class);
 
-        System.out.println("✅ AppConfig initialized");
+        // JSON + Security
+        register(JacksonFeature.class);
+        register(RolesAllowedDynamicFeature.class);
+        register(AuthFilter.class);
+        register(util.GlobalValidationExceptionMapper.class);
+        register(util.GlobalRuntimeExceptionMapper.class);
 
-        // Optional: Exception handling
-        // register(GenericExceptionMapper.class);
-        packages("org.glassfish.jersey.media.json.binding");
-        packages("io.swagger.v3.jaxrs2.integration.resources"); // Swagger
+        packages("io.swagger.v3.jaxrs2.integration.resources");
     }
 }

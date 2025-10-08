@@ -4,7 +4,7 @@ info:
   version: 1.0.0
   description: RESTful API for food ordering system (buyers, sellers, couriers, and admin).
 servers:
-  - url: https://api.food-ordering.com/v1
+  - url: http://localhost:8080
 tags:
   - name: auth
     description: Authentication and user profile APIs

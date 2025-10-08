@@ -64,7 +64,7 @@ public class AuthController {
         if (user instanceof Customer c) {
             c.getFavorites();
         }
-        String token = TokenUtil.issueToken(user);
+        String token = util.JwtUtil.issueToken(user.getId(), user.getRole());
         var userDto = UserMapper.toDto(user);
         return new AuthResponse(token, userDto);
     }
@@ -76,7 +76,7 @@ public class AuthController {
             @ApiResponse(responseCode = "404", description = "User not found")
     })
     public UserProfileResponse view(@HeaderParam("Authorization") String token) {
-        long userId = TokenUtil.decodeUserId(token);
+        long userId = Long.parseLong(util.JwtUtil.parse(token.replace("Bearer ", "")).getPayload().getSubject());
         var user = userService.findById(userId);
         return UserMapper.toProfileDto(user);
     }

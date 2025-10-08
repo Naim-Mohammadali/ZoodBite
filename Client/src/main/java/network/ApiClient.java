@@ -11,6 +11,7 @@ import java.util.List;
 
 public class ApiClient {
     private static final ApiClient instance = new ApiClient();
+    private static final String BASE_URL = initBaseUrl();
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
 
@@ -29,10 +30,22 @@ public class ApiClient {
         return instance;
     }
 
+    private static String initBaseUrl() {
+        String prop = System.getProperty("API_BASE_URL");
+        if (prop == null || prop.isBlank()) {
+            prop = System.getenv("API_BASE_URL");
+        }
+        if (prop == null || prop.isBlank()) {
+            prop = "http://localhost:8080";
+        }
+        if (!prop.endsWith("/")) prop = prop + "/";
+        return prop;
+    }
+
     public <T> HttpRequest buildPost(String path, T body) throws Exception {
         String json = objectMapper.writeValueAsString(body);
         HttpRequest.Builder builder = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/" + path))
+                .uri(URI.create(BASE_URL + path))
                 .timeout(Duration.ofSeconds(10))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(json));
@@ -44,9 +57,9 @@ public class ApiClient {
     }
 
     public <T> HttpRequest buildGet(String path) {
-        System.out.println("[GET] " + "http://localhost:8080/" + path);
+        System.out.println("[GET] " + BASE_URL + path);
         HttpRequest.Builder builder = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/" + path))
+                .uri(URI.create(BASE_URL + path))
                 .timeout(Duration.ofSeconds(10))
                 .GET();
 
@@ -81,10 +94,10 @@ public class ApiClient {
         String json = getObjectMapper().writeValueAsString(body);
 
         return HttpRequest.newBuilder()
-                .uri(new URI("http://localhost:8080/" + path))
+                .uri(new URI(BASE_URL + path))
                 .timeout(Duration.ofSeconds(10))
                 .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + SessionManager.getInstance().getToken())
+                .headers(authHeaderKV())
                 .method("PATCH", HttpRequest.BodyPublishers.ofString(json))
                 .build();
     }
@@ -92,11 +105,17 @@ public class ApiClient {
         String token = SessionManager.getInstance().getToken();
         String json = objectMapper.writeValueAsString(body);
         return HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/" + path))
+                .uri(URI.create(BASE_URL + path))
                 .header("Content-Type", "application/json")
-                .header("Authorization", token)
+                .headers(authHeaderKV())
                 .PUT(HttpRequest.BodyPublishers.ofString(json))
                 .build();
+    }
+
+    private static String[] authHeaderKV() {
+        String token = SessionManager.getInstance().getToken();
+        if (token == null || token.isBlank()) return new String[]{};
+        return new String[]{"Authorization", "Bearer " + token};
     }
 
 }

@@ -89,9 +89,14 @@ public class CustomerCartController implements Initializable {
                     .map(e -> new PlaceOrderItemDto(e.getKey(), e.getValue()))
                     .collect(Collectors.toList());
 
+            String deliveryAddress = Optional.ofNullable(SessionManager.getInstance().getLoggedInUser())
+                    .map(u -> u.address)
+                    .filter(a -> a != null && !a.isBlank())
+                    .orElse("(no address provided)");
+
             PlaceOrderRequestDto request = new PlaceOrderRequestDto(
                     currentRestaurant.getId(),
-                    "Tehran, Valiasr Street, No. 10", // TODO: make dynamic later
+                    deliveryAddress,
                     items,
                     couponCode
             );

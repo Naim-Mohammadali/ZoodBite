@@ -7,10 +7,7 @@ import network.dto.order.PlaceOrderResponseDto;
 import network.dto.user.UpdateUserStatusRequestDto;
 import network.dto.user.UpdateUserStatusResponseDto;
 import network.dto.user.UserDto;
-import util.SessionManager;
-
 import java.net.http.HttpRequest;
-import java.net.http.HttpRequest.BodyPublishers;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,15 +18,7 @@ public class AdminEndpoint {
         UpdateUserStatusRequestDto dto = new UpdateUserStatusRequestDto("APPROVED");
 
         String path = "admin/users/" + id + "/status";
-        String json = ApiClient.getInstance().getObjectMapper().writeValueAsString(dto);
-
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(new java.net.URI("http://localhost:8080/" + path))
-                .timeout(java.time.Duration.ofSeconds(10))
-                .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + SessionManager.getInstance().getToken())
-                .method("PATCH", BodyPublishers.ofString(json))
-                .build();
+        HttpRequest request = ApiClient.getInstance().buildPatch(path, dto);
 
         return ApiClient.getInstance().send(request, UpdateUserStatusResponseDto.class);
     }

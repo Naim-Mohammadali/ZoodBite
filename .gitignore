@@ -1,3 +1,17 @@
+# Ignore local MySQL data from Docker
+Database/mysql-data/
+Database/mysql-data/**
+
+# IDE files
+*.iml
+.idea/
+
+# Build artifacts
+**/target/
+
+# OS files
+Thumbs.db
+.DS_Store
 # === Java & Maven ===
 **/target/
 !.mvn/wrapper/maven-wrapper.jar

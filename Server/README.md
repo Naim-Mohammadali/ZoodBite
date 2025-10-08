@@ -42,31 +42,33 @@ Server/src/main/java
 
 ## 🧪 Run & Test
 
-### Step 1: Setup MySQL
+### Step 1: Configure Database (env or system props preferred)
 
-- Use `/database/docker-compose.yml` or your local setup.
-- Import `/database/sql/foodapp-schema.sql` if needed.
+Server reads JDBC params from env or system properties and falls back to `persistence.xml`:
 
-### Step 2: Configure Database
+- `JDBC_URL` (default `jdbc:mysql://localhost:3306/foodapp`)
+- `JDBC_USER` (default `root`)
+- `JDBC_PASSWORD` (default `foodpass`)
 
-Edit `src/main/resources/META-INF/persistence.xml`:
-```xml
-<property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/foodapp"/>
-<property name="jakarta.persistence.jdbc.user" value="root"/>
-<property name="jakarta.persistence.jdbc.password" value="password"/>
-```
+Recommended to set `JWT_SECRET` too.
 
-### Step 3: Run the Server
+### Step 2: Run the Server
 
 ```bash
-./mvnw clean compile exec:java
+./mvnw -q clean compile exec:java
 ```
 
-Visit: [http://localhost:8080/api](http://localhost:8080/api)
+On startup the server:
+- Ensures the database exists
+- Runs Flyway migrations (V1…V6)
+- Seeds default admin (phone: `admin`, password: `admin`) if missing
 
-### Step 4: Swagger UI
+Base URL: `http://localhost:8080`
 
-Docs available at: [http://localhost:8080/swagger](http://localhost:8080/swagger)
+### Swagger / OpenAPI
+
+- OpenAPI spec: `Server/src/main/resources/openapi.yaml`
+- Swagger resources registered via Jersey; visit `/openapi` or integrate UI as needed
 
 ## 🔍 Testing
 

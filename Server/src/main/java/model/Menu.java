@@ -21,6 +21,11 @@ public class Menu {
 
 
     @ManyToMany
+    @JoinTable(
+            name = "menu_items_link",
+            joinColumns = @JoinColumn(name = "menu_id"),
+            inverseJoinColumns = @JoinColumn(name = "menu_item_id")
+    )
     private List<MenuItem> items = new ArrayList<>();
 
     public Menu(String title) {

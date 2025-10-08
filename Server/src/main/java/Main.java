@@ -18,7 +18,10 @@ public class Main {
         ServletHolder jerseyServlet = new ServletHolder(container);
         context.addServlet(jerseyServlet, "/*");
 
+        util.DatabaseEnsurer.ensureDatabase();
+        util.FlywayMigrator.migrate();
         server.start();
+        util.DatabaseSeeder.seedAdminIfMissing();
         System.out.println("✅ Server started at http://localhost:" + port);
         server.join();
     }

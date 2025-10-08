@@ -6,11 +6,9 @@ import network.dto.user.RestaurantResponseDto;
 import network.dto.restaurant.*;
 import util.SessionManager;
 
-import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpRequest;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
 import java.util.List;
 
 public class RestaurantEndpoint {
@@ -21,15 +19,7 @@ public class RestaurantEndpoint {
     }
     public MenuItemResponseDto addMenuItem(Long restaurantId, MenuItemRequestDto dto) throws Exception {
         String path = "restaurants/" + restaurantId + "/item";
-        String json = ApiClient.getInstance().getObjectMapper().writeValueAsString(dto);
-
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(new URI("http://localhost:8080/" + path))
-                .timeout(Duration.ofSeconds(10))
-                .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + SessionManager.getInstance().getToken())
-                .POST(HttpRequest.BodyPublishers.ofString(json))
-                .build();
+        HttpRequest request = ApiClient.getInstance().buildPost(path, dto);
 
         return ApiClient.getInstance().send(request, MenuItemResponseDto.class);
     }
@@ -48,15 +38,7 @@ public class RestaurantEndpoint {
 
 
         MenuItemToMenuRequestDto dto = new MenuItemToMenuRequestDto(itemIds);
-        String json = ApiClient.getInstance().getObjectMapper().writeValueAsString(dto);
-
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(new URI("http://localhost:8080/" + path))
-                .timeout(Duration.ofSeconds(10))
-                .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + SessionManager.getInstance().getToken())
-                .PUT(HttpRequest.BodyPublishers.ofString(json))
-                .build();
+        HttpRequest request = ApiClient.getInstance().buildPut(path, dto);
 
         return ApiClient.getInstance().send(request, MenuItemToMenuResponseDto.class);
     }
@@ -97,7 +79,7 @@ public class RestaurantEndpoint {
     }
     public List<MenuItemResponseDto> getUnassignedItems(Long restaurantId) throws Exception {
         // First, refresh restaurant menus from backend
-        List<RestaurantResponseDto> refreshed = new RestaurantEndpoint().getMyRestaurantsAndStore();
+        new RestaurantEndpoint().getMyRestaurantsAndStore();
         RestaurantResponseDto restaurant = SessionManager.getInstance().getCurrentRestaurant();
 
         // Now get all items

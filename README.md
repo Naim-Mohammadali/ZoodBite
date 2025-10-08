@@ -58,40 +58,67 @@ Originally built for the **Spring 2025 Advanced Programming curriculum**, now up
 
 ## 🚀 Quick Start
 
+### 1) Start MySQL (Docker)
+
 ```bash
-git clone https://github.com/your-org/zoodbite.git
-cd zoodbite
-./mvnw clean install
+cd Database
+docker compose up -d
 ```
 
-### Start the Backend Server
+By default the app uses:
+- DB: `foodapp`
+- URL: `jdbc:mysql://localhost:3306/foodapp`
+- User: `root`  Password: `foodpass`
+
+You can override via env vars: `JDBC_URL`, `JDBC_USER`, `JDBC_PASSWORD`.
+
+### 2) Build All Modules
+
+```bash
+./mvnw -q -DskipTests clean install
+```
+
+### 3) Run the Backend Server
 
 ```bash
 cd Server
-../mvnw compile exec:java
+../mvnw -q compile exec:java
 ```
 
-Access the API at: [http://localhost:8080/api](http://localhost:8080/api)
+On start the server will:
+- Ensure the `foodapp` database exists
+- Run Flyway migrations (V1…V6)
+- Seed a default admin if missing (phone: `admin`, password: `admin`)
 
-### Run the JavaFX Client
+Environment variables that the server honors:
+- `JDBC_URL`, `JDBC_USER`, `JDBC_PASSWORD`
+- `JWT_SECRET` (recommended; raw or `base64:` prefixed)
+
+API base: `http://localhost:8080`
+
+### 4) Run the JavaFX Client
 
 ```bash
 cd Client
-../mvnw clean javafx:run
+../mvnw -q clean javafx:run
 ```
+
+Optionally configure the server URL via:
+- System property: `-DAPI_BASE_URL=http://localhost:8080`
+- or env var: `API_BASE_URL=http://localhost:8080`
 
 ---
 
 ## 📖 Documentation
 
-* [Server Documentation](./Server/README.md) → API setup, endpoints, and testing
-* [Client Documentation](./Client/README.md) → JavaFX setup, dashboard navigation, and usage
+* [Server Documentation](./Server/README.md) → DB config, migrations, endpoints, testing
+* [Client Documentation](./Client/README.md) → JavaFX setup, configuration, usage
 
 ---
 
 ## 📌 Version
 
-* Current Release: **v2.0**
+* Current Release: **v2.2**
 * Status: **Stable But In Development**
 
 ---

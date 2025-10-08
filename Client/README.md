@@ -78,20 +78,27 @@ Client/src/main/resources
 
 ### Step 1: Ensure Backend is Running
 
-The client connects to the ZoodBite server at `http://localhost:8080`.
+The client connects to the ZoodBite server (default: `http://localhost:8080`).
 
-Start the server first (see [server README](../server/README.md)).
+Start the server first (see [server README](../Server/README.md)).
 
 ### Step 2: Run the Client
 
 ```bash
-./mvnw clean javafx:run
+./mvnw -q clean javafx:run
 ```
 or, if you have Maven globally:
 
 ```bash
 mvn clean javafx:run
 ```
+
+## ⚙️ Configuration
+
+You can point the client to a different server URL:
+
+- System property: `-DAPI_BASE_URL=http://localhost:8080`
+- Or environment variable: `API_BASE_URL=http://localhost:8080`
 
 ## 🎨 Design & Styling
 
